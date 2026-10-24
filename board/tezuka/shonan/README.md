@@ -329,6 +329,115 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
    → プレリリース `plutoplus_shonan_dvb-build<番号>`
 4. SD カードの作り方は plutoplus_shonan と同じ(zip の `sdimg/` の中身をコピー)
 
+### tezuka.xsa ができた後(Mac)
+
+Linux から持ってきたファイルが `~/Downloads/plutoplus_dvb_out/` にある前提。
+
+1. 中身を確かめる(DVB-S2 エンコーダが入り、Maia-SDR が入っていないこと)
+
+   ```
+   cd ~/Downloads/plutoplus_dvb_out
+   unzip -l tezuka.xsa | grep -E "system_top.bit|\.hwh"
+   unzip -p tezuka.xsa '*.hwh' | grep -c dvbs2_encoder_wrapper     # 1 以上
+   unzip -p tezuka.xsa '*.hwh' | grep -c maia_sdr                   # 0
+   grep -E "^\| (Slice LUTs|Block RAM Tile|DSPs) " system_top_utilization_placed.rpt
+   grep "timing constraints are" system_top_timing_summary_routed.rpt   # All ... are met.
+   ```
+
+2. リポジトリに置いてコミット・push(レポートも一緒に残す)
+
+   ```
+   cd ~/AppDev/tezuka_fw-shonan
+   B=board/tezuka/plutoplus_dvb/bitstream
+   cp ~/Downloads/plutoplus_dvb_out/tezuka.xsa $B/
+   mkdir -p $B/reports && cp ~/Downloads/plutoplus_dvb_out/*.rpt $B/reports/
+   git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025.2" && git push origin shonan
+   ```
+
+3. ファームをビルドする(GitHub Actions)
+
+   ```
+   gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref shonan -f boards=plutoplus_shonan_dvb
+   gh run list --repo kazushinjo/plutoplus_fw-shonan --workflow main.yml --limit 3
+   gh run watch <run の番号> --repo kazushinjo/plutoplus_fw-shonan
+   ```
+
+   キャッシュが効くので plutoplus_shonan の初回(2 時間 40 分)より短い見込み。pluto_stream などが増えるので rootfs は少し長くなる。
+
+4. プレリリースから取ってくる
+
+   ```
+   gh release list --repo kazushinjo/plutoplus_fw-shonan --limit 5
+   gh release download plutoplus_shonan_dvb-build<番号> --repo kazushinjo/plutoplus_fw-shonan --dir ~/Downloads/plutoplus_dvb
+   cd ~/Downloads/plutoplus_dvb && unzip plutoplus_shonan_dvb.zip
+   ```
+
+5. SD カードへ書き込む: 上の「SD カードの作り方(Mac)」の 2〜5 と同じ(`sdimg/` の中身をコピー、照合、取り出し)。
+   **plutoplus_shonan の SD カードは残しておき、別の SD カードを使う**と、元に戻すのが楽
+
+### 実機での確かめ方(FPGA 版)
+
+起動・ネットワーク・SSH は「起動後の確認」と同じ。そのあと Pluto+ に SSH で入って確かめる。
+
+1. 動いているもの
+
+   ```
+   cat /opt/VERSIONS
+   ps | grep -E "pluto_stream|pluto_mqtt_ctrl|udpts|rtmppluto|lighttpd|mosquitto" | grep -v grep
+   ls -l /root/pluto_dvb /root/pluto_dvb.sw     # pluto_dvb はスクリプト、pluto_dvb.sw は元のソフト版
+   ```
+
+2. MQTT の様子を見ておく(別の SSH 画面で)
+
+   ```
+   mosquitto_sub -h 127.0.0.1 -t 'dt/pluto/#' -t 'cmd/pluto/#' -v
+   ```
+
+3. 送信する
+   - まず **アッテネーター(40dB など)とダミーロード/受信機をつなぐ**
+   - Shonan_Lite から送信する(いつもどおり UDP 8282)。または、ブラウザで `http://<IP>/pluto.php` を開いて設定を保存し、
+     Mac から試験映像を送る(Mac に ffmpeg が要る):
+
+     ```
+     ffmpeg -re -f lavfi -i testsrc=size=640x360:rate=25 -f lavfi -i sine=frequency=1000 \
+       -c:v libx264 -b:v 300k -g 50 -c:a aac -b:a 64k -f mpegts "udp://<IP>:8282?pkt_size=1316"
+     ```
+
+   - 2 の画面に `cmd/pluto/<call>/tx/dvbs2/...`・`tx/frequency`・`tx/mute 0`・`tx/stream/run 1` が流れればよい
+   - 周波数・出力・LO の状態
+
+     ```
+     iio_attr -c ad9361-phy altvoltage1 frequency    # 送信周波数(Hz)
+     iio_attr -c ad9361-phy altvoltage1 powerdown    # 0 なら LO オン
+     iio_attr -c -o ad9361-phy voltage0 hardwaregain # 送信ゲイン(dB)
+     ```
+
+   - 受信側(MiniTiouner、Shonan_Lite の受信など)でロックし、MER・映像・音声を見る。スペクトラムアナライザーがあれば帯域と肩も見る
+   - 送るのをやめると、2 の画面に `tx/stream/run 0`・`tx/mute 1` が出る
+4. 受信まわり: Shonan_Lite の RSSI 測定、Langstone が今までどおり動くか
+5. うまくいかないとき: pluto_stream のメッセージを見る(S96plutostream は出力を捨てているので、手で起動し直す)
+
+   ```
+   killall pluto_stream; pluto_stream 2>&1 | tee /tmp/pluto_stream.log &
+   ```
+
+### 元に戻す方法
+
+FPGA 版は SD カードにしか入っていない。QSPI(内蔵フラッシュ)には触れていない。
+
+- **SD カードを差し替える**: plutoplus_shonan(build2)の SD カードに戻して電源を入れ直す
+- **同じ SD カードを書き戻す**: Mac で build2 の `sdimg/` の中身を上書きコピー(「SD カードの作り方(Mac)」の 4〜5)。
+  `overclock/`・`system_top_top.bin`・`tezuka_top.bin` も上書きされる
+- **SD カードを抜かずに戻す**(Pluto+ が起動していてネットワークが使えるとき)
+
+  ```
+  cd ~/Downloads/plutoplus/sdimg      # build2 を展開した場所
+  scp -r * root@<IP>:/boot/
+  ssh root@<IP> "sync; reboot"
+  ```
+
+- **SD カードから起動しないようにする**: SD-H ジャンパを外すと QSPI の元のファームで起動する
+
 ### 現状(2026-10-24)
 
 | 作業 | 状態 |

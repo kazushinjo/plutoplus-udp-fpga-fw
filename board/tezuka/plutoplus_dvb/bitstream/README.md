@@ -1,12 +1,12 @@
-# plutoplus_dvb bitstream
+# plutoplus_dvb のビットストリーム
 
-`tezuka.xsa` here is built from kazushinjo/maia-sdr-plutoplus-dvb, branch
-`plutoplus-dvb` (F5OEO maia-sdr `refactor` + project `plutoplus_dvb`: Pluto+
-xc7z010 with the dvb_fpga DVB-S2 encoder, RRC x4 and TX FIR x8, no Maia-SDR,
-1R1T). See `maia-hdl/projects/tezuka/PLUTOPLUS_DVB.md` there for the Vivado
-2025.2 build; copy its `tezuka.xsa` to this directory.
+ここに置く `tezuka.xsa` は、kazushinjo/maia-sdr-plutoplus-dvb のブランチ `plutoplus-dvb` からビルドしたもの。
+中身は F5OEO/maia-sdr の `refactor` にプロジェクト `plutoplus_dvb` を足したもので、
+Pluto+(xc7z010)に dvb_fpga の DVB-S2 エンコーダ・RRC ×4・TX FIR ×8 を入れ、Maia-SDR を外し、1R1T にしてある。
 
-`fsbl.elf` and `overclock/` are copies of `../../plutoplus/bitstream/` (same
-board and PS7 configuration).
+Vivado 2025.2 でのビルド手順は、そのリポジトリの `maia-hdl/projects/tezuka/PLUTOPLUS_DVB.md`。
+できた `tezuka.xsa` をこのフォルダに置く(レポートは `reports/` に)。
 
-Until `tezuka.xsa` is present, `plutoplus_shonan_dvb` does not build.
+`fsbl.elf` と `overclock/` は `../../plutoplus/bitstream/` の写し(基板と PS7 の設定が同じため)。
+
+`tezuka.xsa` を置くまでは、`plutoplus_shonan_dvb` はビルドできない。
