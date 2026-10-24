@@ -121,6 +121,9 @@ jobs:
 
       - name: Upload PR number
         if: github.event_name == 'workflow_dispatch'
+        # Only feeds pr-comment.yml; must not stop the build when a private
+        # repository is out of artifact storage.
+        continue-on-error: ${{ github.event.repository.private }}
         uses: actions/upload-artifact@v7
         with:
           name: pr-number
