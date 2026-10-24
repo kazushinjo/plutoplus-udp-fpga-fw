@@ -130,7 +130,8 @@ jobs:
     runs-on: ubuntu-22.04
     name: ${{ matrix.defconfig }}
     permissions:
-      contents: read
+      # write: dispatch runs publish the zip as a prerelease (see below)
+      contents: write
       id-token: write
       attestations: write
     strategy:
@@ -363,6 +364,9 @@ jobs:
           ls -la "${ARTIFACT}/"
 
       - name: Attest artifact with SBOM
+        # Artifact attestations are not available for private repositories
+        # on a free plan.
+        if: ${{ !github.event.repository.private }}
         uses: actions/attest@v4
         with:
           subject-path: ${{ github.workspace }}/build/${{ matrix.board }}.zip
@@ -387,11 +391,26 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload artifact
+        # A private repository can run out of artifact storage; the
+        # prerelease below still carries the zip then.
+        continue-on-error: ${{ github.event.repository.private }}
         uses: actions/upload-artifact@v7
         with:
           name: tezuka-${{ matrix.board }}
           path: artifacts/tezuka-${{ matrix.board }}/
           if-no-files-found: error
+
+      - name: Publish prerelease
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="${{ matrix.board }}-build${{ github.run_number }}"
+          gh release create "$tag" "build/${{ matrix.board }}.zip" \
+            --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --prerelease --title "$tag (untested)" \
+            --notes "Built from $GITHUB_SHA (run ${{ github.run_id }}). Not tested on hardware."
 
   release:
     needs: tezuka

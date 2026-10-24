@@ -1,0 +1,30 @@
+#!/bin/sh
+# Runs after board/tezuka/common/post-build.sh for the Shonan_Lite DATV build
+# (configs/plutoplus_shonan_defconfig).
+set -e
+
+BOARD_DIR="$(dirname "$0")"
+
+# lighttpd takes port 80 for the DATV PHP pages and proxies the rest to
+# maia-httpd (etc/lighttpd/lighttpd.conf), so maia-httpd moves to 8000.
+grep -q -- '--listen 0.0.0.0:80 ' "${TARGET_DIR}/etc/init.d/S60maia-httpd"
+sed -i 's/--listen 0\.0\.0\.0:80 /--listen 127.0.0.1:8000 /' "${TARGET_DIR}/etc/init.d/S60maia-httpd"
+
+# USB network defaults to CDC-NCM (macOS and Windows 10 2004 or later work
+# without a driver); usb_ethernet_mode in the u-boot env still overrides it.
+sed -i 's/usb_ethernet_mode 2> \/dev\/null || echo rndis/usb_ethernet_mode 2> \/dev\/null || echo ncm/' \
+	"${TARGET_DIR}/etc/init.d/S23udc" "${TARGET_DIR}/etc/init.d/S40network"
+
+# Portsdown 4 (scripts/pluto_fw_version.sh) shows the first line starting
+# with "v" that a plain "ssh root@pluto" prints; tezuka's banner has none.
+SHONAN_VERSION=$(cd "${BOARD_DIR}" && (git describe --abbrev=4 --always --tags 2>/dev/null || echo unknown))
+case "${SHONAN_VERSION}" in v*) ;; *) SHONAN_VERSION="v${SHONAN_VERSION}" ;; esac
+SHONAN_VERSION="${SHONAN_VERSION}-shonan"
+sed -i "s/#BUILD#/${SHONAN_VERSION}/" "${TARGET_DIR}/etc/motd.plain"
+echo "${SHONAN_VERSION}" >> "${TARGET_DIR}/etc/motd.plain"
+
+# Shown in the DVB service provider name by udpts.sh / rtmppluto.sh
+date +"%d%m" > "${TARGET_DIR}/www/fwversion.txt"
+(cd "${BOARD_DIR}" && git log --pretty=oneline --abbrev-commit -20) > "${TARGET_DIR}/www/releasenote.txt" || true
+
+chmod 755 "${TARGET_DIR}"/root/*.sh "${TARGET_DIR}/root/pluto_dvb" "${TARGET_DIR}/usr/bin/tsp"

@@ -1,6 +1,7 @@
 [
   {"board": "pluto",              "defconfig": "pluto_maiasdr_defconfig"},
   {"board": "plutoplus",          "defconfig": "plutoplus_maiasdr_defconfig"},
+  {"board": "plutoplus_shonan",   "defconfig": "plutoplus_shonan_defconfig"},
   {"board": "e200",               "defconfig": "e200_maiasdr_defconfig"},
   {"board": "e310",               "defconfig": "e310_maiasdr_defconfig"},
   {"board": "libre",              "defconfig": "libre_maiasdr_defconfig"},

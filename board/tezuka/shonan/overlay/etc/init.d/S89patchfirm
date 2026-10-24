@@ -1,0 +1,20 @@
+#! /bin/sh
+
+# Save the SSH host keys (see device_persistent_keys) and extract patch.zip
+# in /mnt/jffs2 for patching firmware
+# start/stop/restart
+case "$1" in
+  start)
+	grep -q mtd2 /proc/mounts && /usr/sbin/device_persistent_keys >/dev/null 2>&1
+	[ -f /mnt/jffs2/patch.zip ] && unzip -ox /mnt/jffs2/patch.zip -d /
+	;;
+  stop)
+	;;
+  restart)
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit 0
