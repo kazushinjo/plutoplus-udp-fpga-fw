@@ -22,6 +22,7 @@ tezuka の機能(maia-sdr、IQEngine、ダッシュボード、MQTT など)は�
 11. [リポジトリと CI の注意](#リポジトリと-ci-の注意)
 12. [ビルド履歴](#ビルド履歴)
 13. [未確認](#未確認)
+14. [ライセンス](#ライセンス)
 
 ## 元にしたもの
 
@@ -226,3 +227,13 @@ Portsdown 4 の設定(`plutoip`)は Pluto+ の LAN の IP にする。
 - maia-sdr の受信と pluto_dvb の送信を同時に使ったときの動き
 - Pluto+ の PTT(GPIO0/MIO0)と、requests.php の PTT ボタン(AD9361 の GPO を操作する)の対応
 - Shonan_Lite 各版・Portsdown 4 からの接続
+
+## ライセンス
+
+詳しくは [LICENSE.md](LICENSE.md)。
+
+- tezuka_fw とこのリポジトリで足した設定・スクリプト・文書: GPL-3.0(リポジトリ直下の [LICENSE](../../../LICENSE))
+- ファームに入る各 OSS パッケージ: それぞれのライセンス。ライセンス文と SBOM はプレリリースの `plutoplus_shonan-licenses.zip`
+- TSDuck: BSD-2-Clause、jQuery・Chart.js・Socket.IO など Web 画面のライブラリ: MIT
+- datvplutofrm から持ってきた DATV の部品(udpts.sh・PHP ページ・pluto_dvb など): 元の F5OEO/datvplutofrm に
+  ライセンスの明記が無い。**公開・配布する前に作者(F5OEO)の許可かライセンスの確認が必要**

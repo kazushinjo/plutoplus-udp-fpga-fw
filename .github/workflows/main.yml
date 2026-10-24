@@ -412,7 +412,12 @@ jobs:
         run: |
           set -euo pipefail
           tag="${{ matrix.board }}-build${{ github.run_number }}"
-          gh release create "$tag" "build/${{ matrix.board }}.zip" \
+          # License texts of every package and the SBOM (Buildroot
+          # legal-info, see "Generate SBOM") travel with the image.
+          (cd "artifacts/tezuka-${{ matrix.board }}" && zip -qr "${{ github.workspace }}/build/${{ matrix.board }}-licenses.zip" bom README.md LICENSE)
+          extra=""
+          [ -f board/tezuka/shonan/LICENSE.md ] && extra="board/tezuka/shonan/LICENSE.md"
+          gh release create "$tag" "build/${{ matrix.board }}.zip" "build/${{ matrix.board }}-licenses.zip" $extra \
             --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
             --prerelease --title "$tag (untested)" \
             --notes "Built from $GITHUB_SHA (run ${{ github.run_id }}). Not tested on hardware."
