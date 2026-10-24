@@ -1,4 +1,4 @@
-> **plutoplus_fw-shonan**: this branch adds `plutoplus_shonan`, a Pluto+ SD card build with the Shonan_Lite / Portsdown 4 DATV tools. See [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md).
+> **plutoplus_fw-shonan**: this branch adds `plutoplus_shonan`, a Pluto+ SD card build that adds the Shonan_Lite / Portsdown 4 DATV tools to tezuka. See [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md).
 
 ![tezuka banner](/doc/tezuka.png)
 
