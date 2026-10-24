@@ -20,9 +20,12 @@ cat /proc/mounts | grep -q mtd2 || (echo "Filesystem not mounted use device_form
 # persist - avoids wearing the flash on every reboot when the keys
 # were just restored from there in the first place (see S49dropbearkeys).
 cd /etc/dropbear
-if ! md5sum -c /mnt/jffs2/etc/dropbear/keys.md5 >/dev/null 2>&1; then
-	install -D /etc/dropbear/dropbear_* -t /mnt/jffs2/etc/dropbear
-	md5sum dropbear_* > /mnt/jffs2/etc/dropbear/keys.md5
+# Compare the whole key set, not "md5sum -c" against the stored list: a
+# keys.md5 written when only the ecdsa key existed still verifies, so the
+# ed25519/rsa keys created above would never be saved.
+if ! md5sum dropbear_*_host_key | cmp -s - /mnt/jffs2/etc/dropbear/keys.md5; then
+	install -D dropbear_*_host_key -t /mnt/jffs2/etc/dropbear
+	md5sum dropbear_*_host_key > /mnt/jffs2/etc/dropbear/keys.md5
 fi
 
 if [ -f ${IDFILE} ]; then

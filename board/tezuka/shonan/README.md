@@ -20,6 +20,7 @@ tezuka の機能(maia-sdr、IQEngine、ダッシュボード、MQTT など)は�
 9. [Portsdown 4 から使う機能](#portsdown-4-から使う機能)
 10. [datvplutofrm から持ってこなかったもの](#datvplutofrm-から持ってこなかったもの)
 11. [リポジトリと CI の注意](#リポジトリと-ci-の注意)
+12. [SD 起動しなかった件(2026-10-24)](#sd-起動しなかった件2026-10-24)
 12. [ビルド履歴](#ビルド履歴)
 13. [未確認](#未確認)
 14. [FPGA 版(plutoplus_shonan_dvb)](#fpga-版plutoplus_shonan_dvb)
@@ -97,13 +98,12 @@ gh run list --repo kazushinjo/plutoplus_fw-shonan --workflow main.yml --limit 3
 
    | ファイル | 中身 |
    |---|---|
-   | `BOOT.bin` | FSBL + U-Boot |
+   | `BOOT.bin` | **tezuka 0.2.4 の BOOT.bin**(FSBL + 0.2.4 のビットストリーム + U-Boot 2016.07)。今の tezuka の U-Boot 2025.01 はこの Pluto+ で SD 起動しないため(下の「SD 起動しなかった件」) |
    | `system_top.bin` | FPGA ビットストリーム(U-Boot が読み込む。`tezuka_top.bin` は同じもの、`system_top_top.bin` は別の候補) |
-   | `uImage` | Linux カーネル |
+   | `uImage` | Linux カーネル(**無圧縮**。U-Boot 2016.07 が LZMA を開けないため) |
    | `uramdisk.image.xz` | rootfs(起動時に RAM へ展開) |
    | `devicetree.dtb` | Pluto+ のデバイスツリー(model「Pluto+ (Z7010/AD9363)」) |
    | `uEnv.txt` | U-Boot の設定 |
-   | `overclock/` | CPU・DDR のクロックを変えた BOOT.bin(使うときは `BOOT.bin` と差し替え) |
 
    macOS が作る `.fseventsd`・`.Spotlight-V100` は消せないことがあるが、起動には影響しない。
 
@@ -123,12 +123,14 @@ gh run list --repo kazushinjo/plutoplus_fw-shonan --workflow main.yml --limit 3
 
    | ジャンパ | 設定 | 理由 |
    |---|---|---|
-   | SD-H | **1V8** に接続(版によっては 3V3) | SD カードから起動する |
+   | SD-H | **1V8** または **3V3** に接続(基板のシルクにある方。この Pluto+ は **3V3**) | SD カードから起動する。修理記事では v1 基板は 1.8V |
    | URST | **MIO46** に接続 | 内蔵 LAN(ギガビット)を使う。MIO52 は ADI 公式ファーム用 |
    | EXCLK | 外部基準クロックを使うときだけ GND | 普段は外す |
 
 3. SD カードを挿し、電源を入れる(5V 2A 以上、micro USB)
-4. 起動中は LED が点滅する。青 LED が消えて緑が点きっぱなしなら起動失敗(SD カードの中身・ジャンパを見直す)
+4. LED: 緑と青が点けば FPGA まで進んでいる(青は FPGA の DONE)。20〜40 秒で Linux が起動し、USB ドライブ(`TEZUKA`)が出る。
+   **緑だけが点きっぱなし(青が消えている)なら起動失敗**(FSBL か U-Boot で止まっている。SD カードの中身・ジャンパを見直す)
+5. 元のファーム(内蔵フラッシュ)に戻すときは SD-H のジャンパを外す
 
 ## 起動後の確認
 
@@ -142,6 +144,20 @@ gh run list --repo kazushinjo/plutoplus_fw-shonan --workflow main.yml --limit 3
 | 版 | `cat /opt/VERSIONS` | `device-fw tezuka-…`、`buildroot 2026.05.2` |
 
 LAN の固定 IP は tezuka の仕組み(USB ドライブの `config.txt` の `[USB_ETHERNET] ipaddr_eth` / `fw_setenv ipaddr_eth`)で設定する。
+
+### 設定についての注意
+
+- 設定(u-boot の環境変数)は **内蔵フラッシュ(QSPI)に保存**される。SD 起動でも内蔵フラッシュのファームと同じ設定を使う。
+  `fw_setenv` や USB ドライブの `config.txt`(書き換えてドライブを取り出すと保存、`SUCCESS_ENV_UPDATE` が出る)で変える
+- **USB ネットワーク**: 内蔵フラッシュに `usb_ethernet_mode = rndis` が入っていると、このビルドの既定(NCM)より優先される。
+  Mac で使うには `config.txt` の `usb_ethernet_mode = ncm` にして取り出し、再起動する(この Pluto+ は 2026-10-24 に ncm に変更済み)
+- **周波数範囲**: 内蔵フラッシュの 0.2.4 の設定は `attr_val=ad9363a`。tezuka のカーネルは ad9363a のままでも 46.875MHz〜6GHz を受け付けたが、
+  今までの Pluto と同じにするため `fw_setenv attr_val ad9364`(`attr_name=compatible`)にして再起動した。
+  起動ログが `ad9361_probe : enter (ad9364)` になる。`mode=1r1t`(受信 1・送信 1)
+- **起動直後の UDP 8282**: `settings.txt` が無い間は udpts.sh が空の設定で待つ(datvplutofrm v0.39 と同じ)。
+  Shonan_Lite から設定を保存(save.php)すると待ち受けを始める
+- **SSH のホスト鍵**: build2 では ed25519・rsa の鍵が内蔵フラッシュに保存されず、再起動のたびに変わっていた
+  (下の「SD 起動しなかった件」の後の修正を参照)。この Pluto+ では 2026-10-24 に手で 3 種類とも保存済み
 
 ## 使い方(ポート・URL)
 
@@ -216,17 +232,48 @@ Portsdown 4 の設定(`plutoip`)は Pluto+ の LAN の IP にする。
 - FPGA 版の HDL は別の非公開リポジトリ kazushinjo/maia-sdr-plutoplus-dvb(Actions は無効)。詳しくは「FPGA 版」の節。
 - tezuka 本家の更新を取り込むとき: `git fetch upstream && git merge upstream/main`(shonan ブランチで)
 
+## SD 起動しなかった件(2026-10-24)
+
+### 症状
+
+build2 の SD カード(SD-H=3V3)で電源を入れると、**緑 LED だけが点きっぱなし**(青が点かない)で、Mac に USB 機器が何も出なかった。
+SD-H を外すと内蔵フラッシュ(tezuka 0.2.4)は今までどおり起動した(ケーブル・基板は正常)。
+
+### 切り分け
+
+| 試したこと | 結果 | 分かったこと |
+|---|---|---|
+| 本家 tezuka 0.2.4 の `plutoplus.zip` の `sdimg/` を SD に | **起動した** | 基板・SD-H=3V3・SD カード(32GB、MBR/FAT32)は問題ない |
+| build2 の BOOT.bin と本家 v0.3.24 の BOOT.bin を比較 | 版の文字の 8 バイトだけ違う | 本家の最新版もこの Pluto+ では SD 起動しない見込み |
+| 0.2.4 の BOOT.bin + build2 の残り | 緑と青(FPGA まで)。USB は出ない | 0.2.4 の FSBL・U-Boot は動く。Linux まで行かない |
+| FSBL を 0.2.4 時代(3355a86)に戻してビルド(ブランチ test-oldfsbl、build4) | 書き込み前に中身を比較して不要と判断 | 新旧 fsbl.elf の**書き込まれる中身は同じ**(違いは ELF の付属情報だけ)。FSBL は原因でない |
+| U-Boot の版 | 0.2.4 は **U-Boot 2016.07**、今の tezuka は **U-Boot 2025.01** | 新しい U-Boot がこの基板の SD 起動で動かない(シリアルが無いので詳しい原因は未確認) |
+| カーネルの形式 | 0.2.4 は無圧縮(zImage)、今は **LZMA 圧縮**の uImage | 0.2.4 の U-Boot は LZMA を開けない(3 行目で Linux まで行かなかった理由) |
+| **0.2.4 の BOOT.bin + build2 のカーネルを無圧縮の uImage に作り直したもの + build2 の残り** | **起動した** | 版 `tezuka-6822`・`v6822-shonan`、全プロセスと全ポート、pluto.php・ダッシュボードを確認 |
+
+### 対処(ビルドに反映)
+
+- `postimage-legacy-sd.sh`(新規、両方の defconfig の post-image に追加): SD 用の BOOT.bin を `legacy-boot/plutoplus-0.2.4-BOOT.bin` にし、
+  カーネルを無圧縮の uImage(load/entry 0x8000)にする。`overclock/`(新しい U-Boot 入り)は作らない
+- 0.2.4 の U-Boot は SD の `uEnv.txt`(このビルドのもの)を読み込み、このビルドのビットストリーム・デバイスツリー・ramdisk で起動する
+- `device_persistent_keys`: 保存済みの `keys.md5`(ecdsa だけ)に対する `md5sum -c` が通ってしまい、ed25519・rsa が保存されていなかった。
+  3 種類の鍵の md5 一式を比べるように直した
+- CI: 出力キャッシュを使うと `images/system_top.bit` が無くて BOOT.bin が作れなかった(postimage-sd.sh が古い `system_top.xsa` の処理で
+  同じ名前のファイルを消すため)。イメージ組み立ての前に `board-fpga-reinstall` するようにした
+
 ## ビルド履歴
 
 | 版 | コミット | 日付 | 結果 |
 |---|---|---|---|
-| plutoplus_shonan-build2 | 6822(shonan) | 2026-10-24 | ビルド成功(2h39m、zip 33.5MB、uramdisk 26MB)。rootfs の中身を確認、SD カード(32GB)へ書き込み済み。実機起動は未確認 |
+| plutoplus_shonan-build2 | 6822(shonan) | 2026-10-24 | ビルド成功(2h39m、zip 33.5MB、uramdisk 26MB)。**そのままでは SD 起動しない**(U-Boot 2025.01)。0.2.4 の BOOT.bin と無圧縮カーネルに手で入れ替えて起動・動作確認(上の「SD 起動しなかった件」) |
+| plutoplus_shonan-build4 | test-oldfsbl | 2026-10-24 | FSBL を戻した試験。FSBL は原因でないと分かったので使っていない(ブランチは削除) |
 | plutoplus_shonan_dvb | — | — | 未ビルド(FPGA の tezuka.xsa 待ち) |
 
 ## 未確認
 
-- 実機での起動・送信・各 PHP ページ
-- lighttpd 経由での tezuka ダッシュボード(WebSocket を含む)
+- 実機での送信(Shonan_Lite・Portsdown 4 から)。起動・Web(pluto.php・pluto_temp.php・ダッシュボードの表示)・iiod・SSH は確認済み
+- lighttpd 経由での tezuka ダッシュボードの WebSocket(ウォーターフォールなど)
+- U-Boot 2025.01 が SD 起動しない詳しい原因(シリアルコンソールで確認したい)
 - maia-sdr の受信と pluto_dvb の送信を同時に使ったときの動き
 - Pluto+ の PTT(GPIO0/MIO0)と、requests.php の PTT ボタン(AD9361 の GPO を操作する)の対応
 - Shonan_Lite 各版・Portsdown 4 からの接続

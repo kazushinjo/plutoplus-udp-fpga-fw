@@ -21,6 +21,17 @@ OpenSSL(Apache-2.0)、maia-sdr ほか、Buildroot が組み込む各パッケー
 - GPL・LGPL の部品のソースは、Buildroot の各パッケージの取得元(`legal-info` の manifest に一覧)と、
   このリポジトリ(defconfig・パッチ・overlay)から得られる。
 
+## SD 起動用の BOOT.bin(tezuka 0.2.4)
+
+`board/tezuka/shonan/legacy-boot/plutoplus-0.2.4-BOOT.bin` は F5OEO/tezuka_fw リリース 0.2.4(コミット 365ea2e)の
+`plutoplus.zip` の `sdimg/BOOT.bin` をそのまま使っている(SD 用の BOOT.bin はこれに置き換わる)。
+
+| 中身 | ライセンス |
+|---|---|
+| U-Boot 2016.07(ADI u-boot-xlnx) | GPL-2.0+。ソースは tezuka_fw 0.2.4 が使っていた u-boot-xlnx |
+| FSBL | Xilinx(AMD)の FSBL のライセンス |
+| ビットストリーム(0.2.4 の Maia-SDR 版) | maia-sdr(MIT)・ADI HDL など。起動後は U-Boot がこのビルドのビットストリームを読み直す |
+
 ## FPGA 版(plutoplus_shonan_dvb)で増えるもの
 
 | 部品 | ライセンス | 備考 |
