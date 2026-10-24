@@ -1,0 +1,86 @@
+#!/bin/sh
+# pluto_dvb stand-in for the plutoplus_dvb bitstream (DVB-S2 encoder in the
+# FPGA). Installed as /root/pluto_dvb by board/tezuka/shonan/post-build.sh.
+#
+# Takes the same options as the software pluto_dvb used by udpts.sh and
+# rtmppluto.sh, hands the modulation settings to pluto_stream /
+# pluto_mqtt_ctrl over MQTT and forwards the TS (stdin, or -i <file>) to
+# pluto_stream's UDP input. -d (TS bitrate) is still answered by the software
+# pluto_dvb (pluto_dvb.sw), which only computes it.
+#
+# Not supported by the FPGA path, ignored: -r (roll-off), -T, -L, -P, -q.
+
+SW=/root/pluto_dvb.sw
+TS_IN=127.0.0.1:1314
+
+MODE=DVBS2 CONSTEL=QPSK SR="" FEC=12 FREQ="" GAIN="" PILOTS=0 FRAME=long INPUT=""
+ARGS="$*"
+while getopts "m:c:s:f:t:g:T:L:P:r:i:q:pvd" opt; do
+	case "$opt" in
+	m) MODE=$OPTARG ;;
+	c) CONSTEL=$OPTARG ;;
+	s) SR=$OPTARG ;;
+	f) FEC=$OPTARG ;;
+	t) FREQ=$OPTARG ;;
+	g) GAIN=$OPTARG ;;
+	i) INPUT=$OPTARG ;;
+	p) PILOTS=1 ;;
+	v) FRAME=short ;;
+	d) exec $SW $ARGS ;;
+	*) ;;
+	esac
+done
+
+CALL=$(fw_printenv -n call 2>/dev/null)
+[ -z "$CALL" ] && CALL=nocall
+ROOT="cmd/pluto/$CALL"
+
+pub() {
+	mosquitto_pub -h 127.0.0.1 -t "$ROOT/$1" -m "$2"
+}
+
+[ -n "$INPUT" ] && exec <"$INPUT"
+
+# Wait for the first TS packet before keying the transmitter, as the
+# software pluto_dvb did: udpts.sh starts this as soon as it is waiting on
+# UDP 8282, long before anything is sent.
+FIRST=/tmp/pluto_dvb_first.$$
+dd bs=188 count=1 of="$FIRST" 2>/dev/null
+if [ ! -s "$FIRST" ]; then
+	rm -f "$FIRST"
+	exit 0
+fi
+
+# MQTT commands are not retained: make sure pluto_stream (S96plutostream,
+# started after S90datv) and pluto_mqtt_ctrl are listening first.
+i=0
+while ! { pidof pluto_stream && pidof pluto_mqtt_ctrl; } >/dev/null 2>&1 && [ $i -lt 30 ]; do
+	sleep 1
+	i=$((i + 1))
+done
+
+case "$MODE" in
+DVBS | dvbs | DVB-S) TXMODE=dvbs ;;
+*) TXMODE=dvbs2-ts ;;
+esac
+
+pub tx/stream/run 0
+pub tx/stream/mode "$TXMODE"
+pub tx/dvbs2/tssourcemode 0
+pub tx/dvbs2/tssourceaddress "$TS_IN"
+pub tx/dvbs2/constellation "$(echo "$CONSTEL" | tr 'A-Z' 'a-z')"
+pub tx/dvbs2/fec "$FEC"
+pub tx/dvbs2/frame "$FRAME"
+pub tx/dvbs2/pilots "$PILOTS"
+[ -n "$SR" ] && pub tx/dvbs2/sr "$SR"
+[ -n "$FREQ" ] && pub tx/frequency "$(awk -v f="$FREQ" 'BEGIN { printf "%.0f", f }')"
+[ -n "$GAIN" ] && pub tx/gain "$GAIN"
+pub tx/mute 0
+pub tx/stream/run 1
+
+# Input ended (sender stopped, or the tsp in front was killed): unkey.
+# udpts.sh / watchudp.sh restart the chain with "killall -9 tsp pluto_dvb"
+# when settings.txt changes; the next run publishes the new settings.
+{ cat "$FIRST"; rm -f "$FIRST"; cat; } | tsp -O ip "$TS_IN"
+pub tx/stream/run 0
+pub tx/mute 1

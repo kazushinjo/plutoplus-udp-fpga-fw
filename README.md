@@ -1,4 +1,4 @@
-> **plutoplus_fw-shonan**: this branch adds `plutoplus_shonan`, a Pluto+ SD card build that adds the Shonan_Lite / Portsdown 4 DATV tools to tezuka. See [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md) and the [License](#license) section.
+> **plutoplus_fw-shonan**: this branch adds `plutoplus_shonan`, a Pluto+ SD card build that adds the Shonan_Lite / Portsdown 4 DATV tools to tezuka. A second variant, `plutoplus_shonan_dvb`, moves the DVB-S2 modulation into the FPGA (Maia-SDR removed to fit the 7010; work in progress). See [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md) and the [License](#license) section.
 
 ![tezuka banner](/doc/tezuka.png)
 

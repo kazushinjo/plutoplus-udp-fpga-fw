@@ -1,14 +1,35 @@
 #!/bin/sh
-# Runs after board/tezuka/common/post-build.sh for the Shonan_Lite DATV build
-# (configs/plutoplus_shonan_defconfig).
+# Runs after board/tezuka/common/post-build.sh for the Shonan_Lite DATV builds
+# (configs/plutoplus_shonan_defconfig and plutoplus_shonan_dvb_defconfig).
 set -e
 
 BOARD_DIR="$(dirname "$0")"
 
-# lighttpd takes port 80 for the DATV PHP pages and proxies the rest to
-# maia-httpd (etc/lighttpd/lighttpd.conf), so maia-httpd moves to 8000.
-grep -q -- '--listen 0.0.0.0:80 ' "${TARGET_DIR}/etc/init.d/S60maia-httpd"
-sed -i 's/--listen 0\.0\.0\.0:80 /--listen 127.0.0.1:8000 /' "${TARGET_DIR}/etc/init.d/S60maia-httpd"
+if [ -e "${TARGET_DIR}/etc/init.d/S60maia-httpd" ]; then
+	# lighttpd takes port 80 for the DATV PHP pages and proxies the rest to
+	# maia-httpd (etc/lighttpd/lighttpd.conf), so maia-httpd moves to 8000.
+	grep -q -- '--listen 0.0.0.0:80 ' "${TARGET_DIR}/etc/init.d/S60maia-httpd"
+	sed -i 's/--listen 0\.0\.0\.0:80 /--listen 127.0.0.1:8000 /' "${TARGET_DIR}/etc/init.d/S60maia-httpd"
+else
+	# No Maia-SDR (plutoplus_shonan_dvb): nothing to proxy to; lighttpd
+	# serves the Tezuka Dashboard (/root/index.html, MQTT over websocket)
+	# itself for everything that is not a DATV page.
+	CONF="${TARGET_DIR}/etc/lighttpd/lighttpd.conf"
+	grep -q 'proxy.server = ( "" => ( ( "host" => "127.0.0.1", "port" => 8000 ) ) )' "${CONF}"
+	sed -i -e 's|^\tproxy.server = .*|\tserver.document-root = "/root"|' \
+		-e '/^\tproxy.header = /d' "${CONF}"
+	echo 'index-file.names = ( "index.html" )' >> "${CONF}"
+fi
+
+if [ -e "${TARGET_DIR}/root/pluto_dvb.fpga" ]; then
+	# plutoplus_dvb bitstream: the TX DAC path goes through the FPGA DVB-S2
+	# encoder, driven by pluto_stream. udpts.sh / rtmppluto.sh keep calling
+	# /root/pluto_dvb, now the stand-in that feeds pluto_stream; the software
+	# modulator stays as pluto_dvb.sw for its TS bitrate calculation (-d).
+	mv "${TARGET_DIR}/root/pluto_dvb" "${TARGET_DIR}/root/pluto_dvb.sw"
+	mv "${TARGET_DIR}/root/pluto_dvb.fpga" "${TARGET_DIR}/root/pluto_dvb"
+	chmod 755 "${TARGET_DIR}/root/pluto_dvb.sw"
+fi
 
 # USB network defaults to CDC-NCM (macOS and Windows 10 2004 or later work
 # without a driver); usb_ethernet_mode in the u-boot env still overrides it.

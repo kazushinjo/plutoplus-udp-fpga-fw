@@ -21,6 +21,17 @@ OpenSSL(Apache-2.0)、maia-sdr ほか、Buildroot が組み込む各パッケー
 - GPL・LGPL の部品のソースは、Buildroot の各パッケージの取得元(`legal-info` の manifest に一覧)と、
   このリポジトリ(defconfig・パッチ・overlay)から得られる。
 
+## FPGA 版(plutoplus_shonan_dvb)で増えるもの
+
+| 部品 | ライセンス | 備考 |
+|---|---|---|
+| pluto_stream・pluto_mqtt_ctrl(F5OEO/pluto-ori-ps `tezukadvb`) | GPL-2.0+ | tezuka の `package/pluto_stream` でソースからビルド |
+| plutoplus_dvb ビットストリーム(`board/tezuka/plutoplus_dvb/bitstream/tezuka.xsa`) | 下の各ライセンスの組み合わせ | kazushinjo/maia-sdr-plutoplus-dvb からビルド |
+| ・maia-hdl のプロジェクト(F5OEO/maia-sdr) | MIT | Copyright (c) Daniel Estevez ほか。この版の変更も MIT |
+| ・ADI HDL(analogdevicesinc/hdl) | ADI の各ライセンス(ファイルごと、BSD 系・GPL など) | |
+| ・dvb_fpga(Suoto / Open Research Institute) | **CERN-OHL-W v2** | これを使ったハードウェアを作るときは、ソースの場所 https://github.com/phase4ground/dvb_fpga を製品の外装に見えるように書くこと(CERN-OHL-W v2 4.1 項) |
+| `overlay_dvb/root/pluto_dvb.fpga`(差し替えスクリプト) | GPL-3.0 | Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX) |
+
 ## datvplutofrm から持ってきた DATV の部品
 
 `board/tezuka/shonan/overlay/` の次のものは、F5OEO/datvplutofrm(F5OEO、F5UII ほか)を
