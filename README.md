@@ -1,4 +1,4 @@
-> **plutoplus_fw-shonan**: this branch adds `plutoplus_shonan`, a Pluto+ SD card build that adds the Shonan_Lite / Portsdown 4 DATV tools to tezuka. See [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md).
+> **plutoplus_fw-shonan**: this branch adds `plutoplus_shonan`, a Pluto+ SD card build that adds the Shonan_Lite / Portsdown 4 DATV tools to tezuka. See [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md) and the [License](#license) section.
 
 ![tezuka banner](/doc/tezuka.png)
 
@@ -188,3 +188,15 @@ All materials are in buildroot/output/images
 - LamaBleu for helping me with buildroot and introduce me Plutosdr
 - https://github.com/hz12opensource/libresdr for overclock and fpga inspiration
 - All the opensource community !
+
+---
+
+## License
+
+* **tezuka firmware** (F5OEO and contributors): [GNU General Public License v3.0](LICENSE).
+* **plutoplus_shonan additions** (`configs/plutoplus_shonan_defconfig`, `board/tezuka/shonan/`, CI changes): GPL-3.0, Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX).
+* **Packages built into the firmware** (Linux, U-Boot, BusyBox, PHP, lighttpd, FFmpeg, ...): their own licenses. The license texts and the SBOM of every package are collected by Buildroot `legal-info` and attached to each prerelease as `plutoplus_shonan-licenses.zip`.
+* **Bundled third-party files**: TSDuck (BSD-2-Clause), jQuery, Chart.js, chartjs-plugin-labels, Socket.IO, js-cookie (MIT).
+* **DATV parts taken from F5OEO/datvplutofrm** (`udpts.sh`, `rtmppluto.sh`, the PHP web UI, the `pluto_dvb` binary): the original repository states no license. Ask the author (F5OEO) before publishing or distributing a firmware that contains them.
+
+Details: [board/tezuka/shonan/LICENSE.md](board/tezuka/shonan/LICENSE.md).
