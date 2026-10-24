@@ -289,7 +289,16 @@ jobs:
         run: make -C buildroot O="${OUTPUT_DIR}" target-finalize
 
       - name: Assemble image
-        run: make -C buildroot O="${OUTPUT_DIR}"
+        # postimage-sd.sh deletes images/<name>.bit for every .xsa in the
+        # board's bitstream/ folder, and plutoplus carries a stale
+        # system_top.xsa, so a restored output cache lacks
+        # images/system_top.bit while board-fpga counts as installed.
+        # Reinstall it so bootgen finds the bitstream again.
+        run: |
+          if [ -d "${OUTPUT_DIR}/build/board-fpga-1.0" ]; then
+            make -C buildroot O="${OUTPUT_DIR}" board-fpga-reinstall
+          fi
+          make -C buildroot O="${OUTPUT_DIR}"
 
       # Save phase. 'if cache-hit != true' avoids re-uploading
       # already-cached content and prevents duplicate entries on
