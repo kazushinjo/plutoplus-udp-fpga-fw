@@ -7,7 +7,7 @@
 - tezuka_fw(F5OEO and contributors): **GNU General Public License v3.0**(リポジトリ直下の [LICENSE](../../../LICENSE))
 - このリポジトリで足した設定・スクリプト・文書
   (`configs/plutoplus_shonan_defconfig`、`board/tezuka/shonan/` の post-build.sh・lighttpd.conf・S89patchfirm・README.md など、
-  `.github/workflows/main.yml` の変更): tezuka_fw に合わせて **GPL-3.0**。Copyright (C) 2026 Kazu Shinjo
+  `.github/workflows/main.yml` の変更): tezuka_fw に合わせて **GPL-3.0**。Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)
 
 ## ファームに入る OSS パッケージ
 
@@ -28,8 +28,8 @@ kazushinjo/datvplutofrm の `v0.39-shonan` ブランチで手直ししたもの�
 
 | 部品 | 作者 | ライセンス |
 |---|---|---|
-| `root/udpts.sh`、`rtmppluto.sh`、`watchudp.sh`、`strategy.sh`、`report*.sh`、`readconfig_from_env.sh`、`writeconfig_to_env.sh`、`update_frm_reboot.sh`、`pluto_temp.sh`、`etc/init.d/S90datv`、`etc/php.ini` | F5OEO、F5UII ほか(手直し: Kazu Shinjo) | 元リポジトリにライセンスの明記なし |
-| `www/` の PHP・画像・`lib/wf.js`・`lib/u16Websocket.js`・`lib/tooltip.js` | F5OEO、F5UII ほか(手直し: Kazu Shinjo) | 元リポジトリにライセンスの明記なし |
+| `root/udpts.sh`、`rtmppluto.sh`、`watchudp.sh`、`strategy.sh`、`report*.sh`、`readconfig_from_env.sh`、`writeconfig_to_env.sh`、`update_frm_reboot.sh`、`pluto_temp.sh`、`etc/init.d/S90datv`、`etc/php.ini` | F5OEO、F5UII ほか(手直し: Kazu Shinjo (JA6FUF/JH1XHX)) | 元リポジトリにライセンスの明記なし |
+| `www/` の PHP・画像・`lib/wf.js`・`lib/u16Websocket.js`・`lib/tooltip.js` | F5OEO、F5UII ほか(手直し: Kazu Shinjo (JA6FUF/JH1XHX)) | 元リポジトリにライセンスの明記なし |
 | `root/pluto_dvb`(ビルド済みの実行ファイル) | F5OEO | 元リポジトリにライセンスの明記なし。ソースは公開されているものを見つけられていない |
 
 元の F5OEO/datvplutofrm には LICENSE ファイルが無く、ライセンスが決められていない。
