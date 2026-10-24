@@ -1,4 +1,6 @@
 name: CI
+# plutoplus_fw-shonan: dispatch with boards=plutoplus_shonan to build the
+# Pluto+ Shonan SD card image (published as a prerelease).
 
 on:
   # Tag pushes publish a GitHub release with git-cliff notes and per-board
