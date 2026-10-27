@@ -3,7 +3,7 @@
 DVB-S2 の変調を ARM のソフト(pluto_dvb)ではなく **FPGA の DVB-S2 送信回路**で行う Pluto+ 用ファームを、
 FPGA のビルドから実機での確認まで通して作る手順。
 設計の背景・仕組みは [README.md の「FPGA 版」](README.md#fpga-版plutoplus_shonan_dvb)、
-Vivado まわりの細かい説明は kazushinjo/maia-sdr-plutoplus-dvb の `maia-hdl/projects/tezuka/PLUTOPLUS_DVB.md` を参照。
+Vivado まわりの細かい説明は kazushinjo/Plutoplus-FPGA-firm の `maia-hdl/projects/tezuka/PLUTOPLUS_DVB.md` を参照。
 
 ## 目次
 
@@ -30,7 +30,7 @@ Vivado まわりの細かい説明は kazushinjo/maia-sdr-plutoplus-dvb の `mai
 
 | リポジトリ(どちらも非公開) | 中身 | 作業する場所 |
 |---|---|---|
-| kazushinjo/maia-sdr-plutoplus-dvb(ブランチ `plutoplus-dvb`) | FPGA の設計(Maia-SDR を外し DVB-S2 送信回路を入れた構成) | Linux PC |
+| kazushinjo/Plutoplus-FPGA-firm(ブランチ `plutoplus-dvb`) | FPGA の設計(Maia-SDR を外し DVB-S2 送信回路を入れた構成) | Linux PC |
 | kazushinjo/plutoplus_fw-shonan(ブランチ `shonan`、このリポジトリ) | ファーム本体(Buildroot) | Mac → GitHub Actions |
 
 FPGA のビルドには Vivado(x86_64 Linux 専用)が、ファームのビルドには Linux が要る(ファームは GitHub Actions で作る)。
@@ -92,8 +92,8 @@ sudo locale-gen en_US.UTF-8
 
 ```
 gh auth login     # GitHub.com → HTTPS → ブラウザでログイン(非公開リポジトリのため)
-gh repo clone kazushinjo/maia-sdr-plutoplus-dvb -- -b plutoplus-dvb
-cd maia-sdr-plutoplus-dvb
+gh repo clone kazushinjo/Plutoplus-FPGA-firm -- -b plutoplus-dvb
+cd Plutoplus-FPGA-firm
 
 VIVADO_SETTINGS=/tools/Xilinx/2025.2/Vivado/settings64.sh \
   maia-hdl/projects/tezuka/build_plutoplus_dvb.sh ~/plutoplus_dvb_out
@@ -294,7 +294,7 @@ FPGA 版は SD カードにしか入っていない(内蔵フラッシュには�
 
 | 作業 | 状態 |
 |---|---|
-| HDL の変更・ビルドスクリプト・手順書 | 済み(maia-sdr-plutoplus-dvb に push) |
+| HDL の変更・ビルドスクリプト・手順書 | 済み(Plutoplus-FPGA-firm に push) |
 | Vivado でのビルド(②) | まだ(Linux PC の準備から) |
 | ファーム側の設定・差し替えスクリプト | 済み(変調方式の命令名を 2026-10-28 に修正、1518007) |
 | ファームのビルド(④)・実機(⑥) | まだ(tezuka.xsa 待ち) |

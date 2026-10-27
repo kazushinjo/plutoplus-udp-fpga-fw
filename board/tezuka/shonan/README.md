@@ -246,7 +246,7 @@ Portsdown 4 の設定(`plutoip`)は Pluto+ の LAN の IP にする。
   `main.yml` を変更するコミットを push したら登録された。
 - Artifacts の容量が上限(Artifact storage quota has been hit)のため、zip はプレリリースで受け取る。
 - tezuka の CLAUDE.md に合わせ、コミットメッセージは ASCII のみ。
-- FPGA 版の HDL は別の非公開リポジトリ kazushinjo/maia-sdr-plutoplus-dvb(Actions は無効)。詳しくは「FPGA 版」の節。
+- FPGA 版の HDL は別の非公開リポジトリ kazushinjo/Plutoplus-FPGA-firm(Actions は無効)。詳しくは「FPGA 版」の節。
 - tezuka 本家の更新を取り込むとき: `git fetch upstream && git merge upstream/main`(shonan ブランチで)
 
 ## SD 起動しなかった件(2026-10-24)
@@ -325,7 +325,7 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 
 ### FPGA の設計(HDL)
 
-- リポジトリ: **kazushinjo/maia-sdr-plutoplus-dvb**(非公開)、ブランチ `plutoplus-dvb`
+- リポジトリ: **kazushinjo/Plutoplus-FPGA-firm**(非公開)、ブランチ `plutoplus-dvb`
   - 元: F5OEO/maia-sdr の `refactor` ブランチ `5f28808`(2026-10-20)。tezuka 用の FPGA プロジェクト `maia-hdl/projects/tezuka` が入っている
   - 変更: `6f37fcd`(plutoplus_dvb の追加)、`95c0f68`(手順書 `maia-hdl/projects/tezuka/PLUTOPLUS_DVB.md`)
   - 手元の作業場所: `~/AppDev/maia-sdr-dvb`(remote: `origin` = このリポジトリ、`upstream` = F5OEO/maia-sdr)
@@ -365,7 +365,7 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 
 ### 作り方
 
-1. FPGA: Linux PC(Vivado 2025.2)で kazushinjo/maia-sdr-plutoplus-dvb をビルドし `tezuka.xsa` を作る
+1. FPGA: Linux PC(Vivado 2025.2)で kazushinjo/Plutoplus-FPGA-firm をビルドし `tezuka.xsa` を作る
    (詳しい手順はそのリポジトリの `maia-hdl/projects/tezuka/PLUTOPLUS_DVB.md`)
    1. Ubuntu 22.04 / 24.04(x86_64、空き 100GB 前後、メモリ 16GB 以上)に必要なものを入れる
 
@@ -380,8 +380,8 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 
       ```
       gh auth login
-      gh repo clone kazushinjo/maia-sdr-plutoplus-dvb -- -b plutoplus-dvb
-      cd maia-sdr-plutoplus-dvb
+      gh repo clone kazushinjo/Plutoplus-FPGA-firm -- -b plutoplus-dvb
+      cd Plutoplus-FPGA-firm
       ```
 
    4. ビルド(1〜2 時間の見込み)
@@ -511,7 +511,7 @@ FPGA 版は SD カードにしか入っていない。QSPI(内蔵フラッシュ
 
 | 作業 | 状態 |
 |---|---|
-| HDL の変更・ビルドスクリプト・手順書 | 済み(kazushinjo/maia-sdr-plutoplus-dvb に push)。**Vivado でのビルドはまだ** |
+| HDL の変更・ビルドスクリプト・手順書 | 済み(kazushinjo/Plutoplus-FPGA-firm に push)。**Vivado でのビルドはまだ** |
 | Linux PC の準備(Vivado 2025.2) | まだ(ユーザーの Linux PC、Ubuntu。操作はユーザー) |
 | ファーム側(`configs/plutoplus_shonan_dvb_defconfig`・`boards.json`・`board/tezuka/plutoplus_dvb/`・`shonan/overlay_dvb/`・`post-build.sh`) | 作成済み。`tezuka.xsa` が無いのでビルドはまだ |
 | 差し替えスクリプト `pluto_dvb.fpga` | Mac 上で仮のコマンド(mosquitto_pub・tsp など)に置き換えて動作確認済み(DVB-S2・DVB-S・`-i` のファイル入力・入力なし) |
