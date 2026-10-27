@@ -46,7 +46,10 @@ SHONAN_COMMIT=$(cd "${BOARD_DIR}" && (git rev-parse --short=4 HEAD 2>/dev/null |
 EDITION=ShonanLite-Portsdown4
 [ -e "${TARGET_DIR}/root/pluto_dvb.sw" ] && EDITION=ShonanLite-Portsdown4-FPGA
 FW_NAME="${EDITION}_v${SHONAN_VER}-${SHONAN_COMMIT}"
-BASE=$(grep '^device-fw ' "${TARGET_DIR}/opt/VERSIONS" | cut -d ' ' -f 2)
+# The tezuka release this branch is based on; git describe cannot tell (the
+# tezuka tags are not pushed here), so it is kept in TEZUKA_BASE and must be
+# updated when upstream tezuka is merged.
+BASE=$(cat "${BOARD_DIR}/TEZUKA_BASE")
 sed -i "s/^device-fw .*/device-fw ${FW_NAME}/" "${TARGET_DIR}/opt/VERSIONS"
 echo "base ${BASE}" >> "${TARGET_DIR}/opt/VERSIONS"
 

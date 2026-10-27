@@ -196,7 +196,8 @@ tezuka の正式版と間違えないよう、build6 から独自の名前にし
 - `v1.0` は `board/tezuka/shonan/VERSION` の数字。版を上げるときはこのファイルを書き換える。最後はこのリポジトリのコミット番号(4 桁)
 - 出る場所: `/opt/VERSIONS` の `device-fw`、USB ドライブの `info.html` の Build、iiod の `fw_version`(Shonan_Lite の「Pluto 情報」・tezuka ダッシュボード)、
   SSH のログイン表示、U-Boot の起動表示(シリアル)
-- 元の tezuka の版は `/opt/VERSIONS` の `base tezuka-…` と、ログイン表示の `(base tezuka-…)` に残す
+- 元にした tezuka の版は `board/tezuka/shonan/TEZUKA_BASE`(今は `tezuka-v0.3.24-a304a1f`)に書いておき、`/opt/VERSIONS` の `base` とログイン表示の `(base …)` に出す。
+  本家 tezuka を取り込んだら、このファイルも書き換える
 - Portsdown 4 は SSH の出力のうち `v` で始まる行を版として表示する → `v1.0-ShonanLite-Portsdown4-e019`
 - USB ドライブの名前(`TEZUKA`)とログイン表示の tezuka のロゴ・「By F5OEO and contributors」は、元の作者の表示としてそのまま
 
@@ -284,6 +285,7 @@ SD-H を外すと内蔵フラッシュ(tezuka 0.2.4)は今までどおり起動�
 | plutoplus_shonan-build2 | 6822(shonan) | 2026-10-24 | ビルド成功(2h39m、zip 33.5MB、uramdisk 26MB)。**そのままでは SD 起動しない**(U-Boot 2025.01)。0.2.4 の BOOT.bin と無圧縮カーネルに手で入れ替えて起動・動作確認(上の「SD 起動しなかった件」) |
 | plutoplus_shonan-build4 | test-oldfsbl | 2026-10-24 | FSBL を戻した試験。FSBL は原因でないと分かったので使っていない(ブランチは削除) |
 | plutoplus_shonan-build5 | e0191b1(shonan) | 2026-10-24 | SD 用 BOOT.bin が 0.2.4 のもの(md5 a6ce0ad4…)・カーネル無圧縮(0x8000)・overclock なし・鍵保存の修正入りを確認。版の表示はまだ `tezuka-e019`。実機は未書込み |
+| plutoplus_shonan-build6 | 8c48a34(shonan) | 2026-10-28 | 版の名前 `ShonanLite-Portsdown4_v1.0-8c48` を確認。`base` が `tezuka-8c48`(このリポジトリのコミット)になっていたので TEZUKA_BASE で直した |
 | plutoplus_shonan_dvb | — | — | 未ビルド(FPGA の tezuka.xsa 待ち) |
 
 ## 未確認
