@@ -328,7 +328,7 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 - リポジトリ: **kazushinjo/Plutoplus-FPGA-firm**(非公開)、ブランチ `plutoplus-dvb`
   - 元: F5OEO/maia-sdr の `refactor` ブランチ `5f28808`(2026-10-20)。tezuka 用の FPGA プロジェクト `maia-hdl/projects/tezuka` が入っている
   - 変更: `6f37fcd`(plutoplus_dvb の追加)、`95c0f68`(手順書 `maia-hdl/projects/tezuka/PLUTOPLUS_DVB.md`)
-  - 手元の作業場所: `~/AppDev/maia-sdr-dvb`(remote: `origin` = このリポジトリ、`upstream` = F5OEO/maia-sdr)
+  - 手元の作業場所: `~/AppDev/Plutoplus-FPGA-firm`(remote: `origin` = このリポジトリ、`upstream` = F5OEO/maia-sdr)
   - 元の maia-sdr の GitHub Actions(maia-hdl・maia-httpd など)が push で動いたので、全部取り消し、このリポジトリの Actions は無効にした
 - プロジェクト `plutoplus_dvb`(`maia-hdl/projects/tezuka/system_bd.tcl`): `nomaia`・`mode1r1t`・`txfir`・`dvb`
 
