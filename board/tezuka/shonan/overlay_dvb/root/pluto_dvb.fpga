@@ -68,7 +68,7 @@ pub tx/stream/run 0
 pub tx/stream/mode "$TXMODE"
 pub tx/dvbs2/tssourcemode 0
 pub tx/dvbs2/tssourceaddress "$TS_IN"
-pub tx/dvbs2/constellation "$(echo "$CONSTEL" | tr 'A-Z' 'a-z')"
+pub tx/dvbs2/constel "$(echo "$CONSTEL" | tr 'A-Z' 'a-z')"
 pub tx/dvbs2/fec "$FEC"
 pub tx/dvbs2/frame "$FRAME"
 pub tx/dvbs2/pilots "$PILOTS"

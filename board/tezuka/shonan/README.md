@@ -350,7 +350,7 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 
 - `/root/pluto_dvb` を差し替えスクリプト(`overlay_dvb/root/pluto_dvb.fpga`)にした。udpts.sh・rtmppluto.sh は変えていない
   - 同じオプション(`-m -c -s -f -t -g -p -v -i`)を受け取り、MQTT で設定を送る
-    - pluto_stream へ: `cmd/pluto/<call>/tx/stream/mode`(dvbs2-ts / dvbs)、`tx/dvbs2/constellation`・`fec`・`frame`・`pilots`・`sr`、
+    - pluto_stream へ: `cmd/pluto/<call>/tx/stream/mode`(dvbs2-ts / dvbs)、`tx/dvbs2/constel`・`fec`・`frame`・`pilots`・`sr`、
       `tx/dvbs2/tssourceaddress`(127.0.0.1:1314)、`tx/stream/run`
     - pluto_mqtt_ctrl へ: `tx/frequency`(Hz)、`tx/gain`、`tx/mute`
     - `<call>` は `fw_printenv call`(無ければ `nocall`)。pluto_stream と同じ決め方
