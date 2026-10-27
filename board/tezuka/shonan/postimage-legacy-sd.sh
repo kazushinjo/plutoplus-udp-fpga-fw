@@ -21,3 +21,7 @@ rm -rf "${SDIMGDIR}/overclock"
 
 mkimage -A arm -O linux -T kernel -C none -a 0x8000 -e 0x8000 \
 	-n "Linux kernel" -d "${BIN_DIR}/Image" "${SDIMGDIR}/uImage"
+
+# U-Boot banner: the firmware name from post-build.sh instead of the tezuka one
+FW_NAME=$(grep '^device-fw ' "${TARGET_DIR}/opt/VERSIONS" | cut -d ' ' -f 2)
+sed -i "s/echo \"Version [^\"]*\"/echo \"Version ${FW_NAME}\"/" "${SDIMGDIR}/uEnv.txt"

@@ -139,9 +139,9 @@ gh run list --repo kazushinjo/plutoplus_fw-shonan --workflow main.yml --limit 3
 | ネットワーク | LAN(DHCP)または USB(Pluto 側 192.168.2.1、PC 側 192.168.2.10) | ping が返る。LAN の IP はルーターで確認。mDNS では `pluto.local` |
 | DATV の Web 画面 | `http://<IP>/pluto.php` | Controller 画面が出る |
 | tezuka のダッシュボード | `http://<IP>/` | maia-sdr / Tezuka Dashboard が出る(lighttpd 経由) |
-| SSH | `ssh root@<IP>`(パスワード analog) | ログイン表示に `v…-shonan` の行(build2 は `v6822-shonan`) |
+| SSH | `ssh root@<IP>`(パスワード analog) | ログイン表示に `Version ShonanLite-Portsdown4_v1.0-…`・`Shonan_Lite / Portsdown 4 edition for Pluto+`・`v1.0-ShonanLite-Portsdown4-…` の行(build5 までは `v6822-shonan` など) |
 | iio | `iio_info -u ip:<IP>` | ad9361-phy などが見える |
-| 版 | `cat /opt/VERSIONS` | `device-fw tezuka-…`、`buildroot 2026.05.2` |
+| 版 | `cat /opt/VERSIONS` | `device-fw ShonanLite-Portsdown4_v1.0-<コミット>`、`base tezuka-<コミット>`、`buildroot 2026.05.2`(build5 までは `device-fw tezuka-…`) |
 
 LAN の固定 IP は tezuka の仕組み(USB ドライブの `config.txt` の `[USB_ETHERNET] ipaddr_eth` / `fw_setenv ipaddr_eth`)で設定する。
 
@@ -183,6 +183,22 @@ RNDIS にしたいときは `fw_setenv usb_ethernet_mode rndis` して再起動�
 scp sdimg/{BOOT.bin,uImage,uramdisk.image.xz,devicetree.dtb,uEnv.txt,system_top.bin} root@<IP>:/boot/
 ssh root@<IP> "sync; reboot"
 ```
+
+## 版の名前
+
+tezuka の正式版と間違えないよう、build6 から独自の名前にしている(`post-build.sh`)。
+
+| 版 | 名前の例 |
+|---|---|
+| plutoplus_shonan | `ShonanLite-Portsdown4_v1.0-e019` |
+| plutoplus_shonan_dvb(FPGA 版) | `ShonanLite-Portsdown4-FPGA_v1.0-e019` |
+
+- `v1.0` は `board/tezuka/shonan/VERSION` の数字。版を上げるときはこのファイルを書き換える。最後はこのリポジトリのコミット番号(4 桁)
+- 出る場所: `/opt/VERSIONS` の `device-fw`、USB ドライブの `info.html` の Build、iiod の `fw_version`(Shonan_Lite の「Pluto 情報」・tezuka ダッシュボード)、
+  SSH のログイン表示、U-Boot の起動表示(シリアル)
+- 元の tezuka の版は `/opt/VERSIONS` の `base tezuka-…` と、ログイン表示の `(base tezuka-…)` に残す
+- Portsdown 4 は SSH の出力のうち `v` で始まる行を版として表示する → `v1.0-ShonanLite-Portsdown4-e019`
+- USB ドライブの名前(`TEZUKA`)とログイン表示の tezuka のロゴ・「By F5OEO and contributors」は、元の作者の表示としてそのまま
 
 ## 足したもの
 
@@ -267,6 +283,7 @@ SD-H を外すと内蔵フラッシュ(tezuka 0.2.4)は今までどおり起動�
 |---|---|---|---|
 | plutoplus_shonan-build2 | 6822(shonan) | 2026-10-24 | ビルド成功(2h39m、zip 33.5MB、uramdisk 26MB)。**そのままでは SD 起動しない**(U-Boot 2025.01)。0.2.4 の BOOT.bin と無圧縮カーネルに手で入れ替えて起動・動作確認(上の「SD 起動しなかった件」) |
 | plutoplus_shonan-build4 | test-oldfsbl | 2026-10-24 | FSBL を戻した試験。FSBL は原因でないと分かったので使っていない(ブランチは削除) |
+| plutoplus_shonan-build5 | e0191b1(shonan) | 2026-10-24 | SD 用 BOOT.bin が 0.2.4 のもの(md5 a6ce0ad4…)・カーネル無圧縮(0x8000)・overclock なし・鍵保存の修正入りを確認。版の表示はまだ `tezuka-e019`。実機は未書込み |
 | plutoplus_shonan_dvb | — | — | 未ビルド(FPGA の tezuka.xsa 待ち) |
 
 ## 未確認

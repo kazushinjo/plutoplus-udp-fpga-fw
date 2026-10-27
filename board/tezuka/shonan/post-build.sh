@@ -36,13 +36,27 @@ fi
 sed -i 's/usb_ethernet_mode 2> \/dev\/null || echo rndis/usb_ethernet_mode 2> \/dev\/null || echo ncm/' \
 	"${TARGET_DIR}/etc/init.d/S23udc" "${TARGET_DIR}/etc/init.d/S40network"
 
-# Portsdown 4 (scripts/pluto_fw_version.sh) shows the first line starting
-# with "v" that a plain "ssh root@pluto" prints; tezuka's banner has none.
-SHONAN_VERSION=$(cd "${BOARD_DIR}" && (git describe --abbrev=4 --always --tags 2>/dev/null || echo unknown))
-case "${SHONAN_VERSION}" in v*) ;; *) SHONAN_VERSION="v${SHONAN_VERSION}" ;; esac
-SHONAN_VERSION="${SHONAN_VERSION}-shonan"
-sed -i "s/#BUILD#/${SHONAN_VERSION}/" "${TARGET_DIR}/etc/motd.plain"
-echo "${SHONAN_VERSION}" >> "${TARGET_DIR}/etc/motd.plain"
+# Firmware name: make clear this is the Shonan_Lite / Portsdown 4 build,
+# not a tezuka release. /opt/VERSIONS "device-fw" feeds the USB drive
+# info.html (S45msd), the iiod fw_version context attribute (S23udc) and
+# the Tezuka Dashboard; the tezuka version stays as "base".
+# board/tezuka/shonan/VERSION holds our own version number.
+SHONAN_VER=$(cat "${BOARD_DIR}/VERSION")
+SHONAN_COMMIT=$(cd "${BOARD_DIR}" && (git rev-parse --short=4 HEAD 2>/dev/null || echo unknown))
+EDITION=ShonanLite-Portsdown4
+[ -e "${TARGET_DIR}/root/pluto_dvb.sw" ] && EDITION=ShonanLite-Portsdown4-FPGA
+FW_NAME="${EDITION}_v${SHONAN_VER}-${SHONAN_COMMIT}"
+BASE=$(grep '^device-fw ' "${TARGET_DIR}/opt/VERSIONS" | cut -d ' ' -f 2)
+sed -i "s/^device-fw .*/device-fw ${FW_NAME}/" "${TARGET_DIR}/opt/VERSIONS"
+echo "base ${BASE}" >> "${TARGET_DIR}/opt/VERSIONS"
+
+# Login banner. Portsdown 4 (scripts/pluto_fw_version.sh) shows the first
+# line starting with "v" that a plain "ssh root@pluto" prints.
+sed -i "s/^Version #BUILD#/Version ${FW_NAME} (base ${BASE})/" "${TARGET_DIR}/etc/motd.plain"
+{
+	echo "Shonan_Lite / Portsdown 4 edition for Pluto+"
+	echo "v${SHONAN_VER}-${EDITION}-${SHONAN_COMMIT}"
+} >> "${TARGET_DIR}/etc/motd.plain"
 
 # Shown in the DVB service provider name by udpts.sh / rtmppluto.sh
 date +"%d%m" > "${TARGET_DIR}/www/fwversion.txt"
