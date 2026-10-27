@@ -3,7 +3,7 @@
 DVB-S2 の変調を ARM のソフト(pluto_dvb)ではなく **FPGA の DVB-S2 送信回路**で行う Pluto+ 用ファームを、
 FPGA のビルドから実機での確認まで通して作る手順。
 設計の背景・仕組みは [README.md の「FPGA 版」](README.md#fpga-版plutoplus_shonan_dvb)、
-Vivado まわりの細かい説明は kazushinjo/Plutoplus-FPGA-firm の `maia-hdl/projects/tezuka/PLUTOPLUS_DVB.md` を参照。
+Vivado まわりの細かい説明は kazushinjo/Plutoplus-FPGA-firm の `hdl/projects/tezuka/PLUTOPLUS_DVB.md` を参照。
 
 ## 目次
 
@@ -96,7 +96,7 @@ gh repo clone kazushinjo/Plutoplus-FPGA-firm -- -b plutoplus-dvb
 cd Plutoplus-FPGA-firm
 
 VIVADO_SETTINGS=/tools/Xilinx/2025.2/Vivado/settings64.sh \
-  maia-hdl/projects/tezuka/build_plutoplus_dvb.sh ~/plutoplus_dvb_out
+  hdl/projects/tezuka/build_plutoplus_dvb.sh ~/plutoplus_dvb_out
 ```
 
 - サブモジュール(ADI の HDL、DVB-S2 送信回路 `dvb_fpga` とその third_party)はスクリプトが自動で取ってきて、`dvb_fpga` に修正を当てる
@@ -128,8 +128,8 @@ grep "timing constraints are" ~/plutoplus_dvb_out/system_top_timing_summary_rout
 
 ### 失敗したとき
 
-- `maia-hdl/projects/tezuka/plutoplus_dvb_vivado.log` の最後の ERROR を見る
-- やり直す前に片付ける: `cd maia-hdl/projects/tezuka && make clean PROJECT_NAME=plutoplus_dvb`
+- `hdl/projects/tezuka/plutoplus_dvb_vivado.log` の最後の ERROR を見る
+- やり直す前に片付ける: `cd hdl/projects/tezuka && make clean PROJECT_NAME=plutoplus_dvb`
 - 資源が足りない(`Placement failed` など)、タイミングが負のときは、レポート 2 つとログを Mac へ持ってきて相談
 
 ### Mac へ持っていく

@@ -326,23 +326,23 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 ### FPGA の設計(HDL)
 
 - リポジトリ: **kazushinjo/Plutoplus-FPGA-firm**(非公開)、ブランチ `plutoplus-dvb`
-  - 元: F5OEO/maia-sdr の `refactor` ブランチ `5f28808`(2026-10-20)。tezuka 用の FPGA プロジェクト `maia-hdl/projects/tezuka` が入っている
-  - 変更: `6f37fcd`(plutoplus_dvb の追加)、`95c0f68`(手順書 `maia-hdl/projects/tezuka/PLUTOPLUS_DVB.md`)、`da82dc5`(plutoplus_dvb に使うファイルだけに整理。整理前はブランチ `backup/before-cleanup-20261028`)
+  - 元: F5OEO/maia-sdr の `refactor` ブランチ `5f28808`(2026-10-20)。tezuka 用の FPGA プロジェクト `hdl/projects/tezuka` が入っている
+  - 変更: `6f37fcd`(plutoplus_dvb の追加)、`95c0f68`(手順書 `hdl/projects/tezuka/PLUTOPLUS_DVB.md`)、`da82dc5`(plutoplus_dvb に使うファイルだけに整理。整理前はブランチ `backup/before-cleanup-20261028`)
   - 手元の作業場所: `~/AppDev/Plutoplus-FPGA-firm`(remote: `origin` = このリポジトリ、`upstream` = F5OEO/maia-sdr)
   - 元の maia-sdr の GitHub Actions(maia-hdl・maia-httpd など)が push で動いたので、全部取り消し、このリポジトリの Actions は無効にした
-- プロジェクト `plutoplus_dvb`(`maia-hdl/projects/tezuka/system_bd.tcl`): `nomaia`・`mode1r1t`・`txfir`・`dvb`
+- プロジェクト `plutoplus_dvb`(`hdl/projects/tezuka/system_bd.tcl`): `mode1r1t`・`txfir`・`dvb`
 
 | ファイル | 変更 |
 |---|---|
 | `tezuka/system_bd.tcl` | `plutoplus_dvb` の設定。`nomaia` のとき maia.tcl・maiafirtoiq.tcl・sweeper.tcl・cs12_cs8.tcl を読まない(どれも Maia-SDR の経路に依存) |
 | `tezuka/system_project.tcl` | `plutoplus_dvb` のデバイス `xc7z010clg400-1` |
-| `common/nomaia.tcl`(新規) | ADC/DAC の DMA を HP2 へ(maia.tcl がしていたこと)、HP1 を無効に |
+| `common/dma.tcl`(新規、旧 nomaia.tcl) | ADC/DAC の DMA を HP2 へ(maia.tcl がしていたこと)、HP1 を無効に |
 | `common/xilinx_ad9361.tcl` | `mode1r1t` のとき `MODE_1R1T 1`(F5OEO が plutoskyr2 で試した変更と同じ考え方。refactor ブランチには未反映だった) |
 | `tezuka/Makefile` | 既定のプロジェクトを `plutoplus_dvb` に。Maia-SDR の IP 生成(Python/Amaranth・Yosys)はしない |
 | `boards/plutoplus_dvb/` | tezuka の `boards/plutoplus/` と同じ内容(基板は同じ) |
-| `tezuka/build_plutoplus_dvb.sh` | Linux 用のビルドスクリプト。サブモジュール(adi-hdl・dvb_fpga とその third_party)の取得 → dvb_fpga に `maia-hdl/patches/dvb_fpga` の修正 2 つを当てる → `make plutoplus_dvb.sdk/system_top.xsa` → `make install`、レポートをコピー |
+| `tezuka/build_plutoplus_dvb.sh` | Linux 用のビルドスクリプト。サブモジュール(adi-hdl・dvb_fpga とその third_party)の取得 → dvb_fpga に `hdl/patches/dvb_fpga` の修正 2 つを当てる → `make plutoplus_dvb.sdk/system_top.xsa` → `make install`、レポートをコピー |
 
-- DVB-S2 送信回路は `maia-hdl/dvb_fpga` サブモジュール(OpenResearchInstitute/dvb_fpga、CERN-OHL-W v2)
+- DVB-S2 送信回路は `hdl/dvb_fpga` サブモジュール(OpenResearchInstitute/dvb_fpga、CERN-OHL-W v2)
 - FPGA 側の DVB 回路のつながり(`common/dvb.tcl`): DAC DMA → switchsrc → エンコーダ → switchfir → RRC ×4 → switchdest → upack → AD9361。
   スイッチ・エンコーダのレジスタ(0x43C01000〜0x43C10000)は pluto_stream が `/dev/mem` で直接操作する(デバイスツリーの追加は不要)
 - このスイッチは起動直後どこにもつながっていないため、FPGA 版ではソフトの pluto_dvb(DMA で IQ を送る)では電波が出ない。
@@ -366,7 +366,7 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 ### 作り方
 
 1. FPGA: Linux PC(Vivado 2025.2)で kazushinjo/Plutoplus-FPGA-firm をビルドし `tezuka.xsa` を作る
-   (詳しい手順はそのリポジトリの `maia-hdl/projects/tezuka/PLUTOPLUS_DVB.md`)
+   (詳しい手順はそのリポジトリの `hdl/projects/tezuka/PLUTOPLUS_DVB.md`)
    1. Ubuntu 22.04 / 24.04(x86_64、空き 100GB 前後、メモリ 16GB 以上)に必要なものを入れる
 
       ```
@@ -388,7 +388,7 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 
       ```
       VIVADO_SETTINGS=/tools/Xilinx/2025.2/Vivado/settings64.sh \
-        maia-hdl/projects/tezuka/build_plutoplus_dvb.sh ~/plutoplus_dvb_out
+        hdl/projects/tezuka/build_plutoplus_dvb.sh ~/plutoplus_dvb_out
       ```
 
    5. `~/plutoplus_dvb_out/` の `tezuka.xsa`・`system_top_utilization_placed.rpt`・`system_top_timing_summary_routed.rpt` を Mac へ持ってくる
