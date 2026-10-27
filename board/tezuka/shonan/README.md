@@ -286,6 +286,7 @@ SD-H を外すと内蔵フラッシュ(tezuka 0.2.4)は今までどおり起動�
 | plutoplus_shonan-build4 | test-oldfsbl | 2026-10-24 | FSBL を戻した試験。FSBL は原因でないと分かったので使っていない(ブランチは削除) |
 | plutoplus_shonan-build5 | e0191b1(shonan) | 2026-10-24 | SD 用 BOOT.bin が 0.2.4 のもの(md5 a6ce0ad4…)・カーネル無圧縮(0x8000)・overclock なし・鍵保存の修正入りを確認。版の表示はまだ `tezuka-e019`。実機は未書込み |
 | plutoplus_shonan-build6 | 8c48a34(shonan) | 2026-10-28 | 版の名前 `ShonanLite-Portsdown4_v1.0-8c48` を確認。`base` が `tezuka-8c48`(このリポジトリのコミット)になっていたので TEZUKA_BASE で直した |
+| plutoplus_shonan-build7 | f953bfa(shonan) | 2026-10-28 | `device-fw ShonanLite-Portsdown4_v1.0-f953`・`base tezuka-v0.3.24-a304a1f`・ログイン表示・U-Boot の表示を確認。BOOT.bin は 0.2.4(md5 一致)。実機は未書込み |
 | plutoplus_shonan_dvb | — | — | 未ビルド(FPGA の tezuka.xsa 待ち) |
 
 ## 未確認
