@@ -99,7 +99,7 @@ VIVADO_SETTINGS=/tools/Xilinx/2025.2/Vivado/settings64.sh \
   maia-hdl/projects/tezuka/build_plutoplus_dvb.sh ~/plutoplus_dvb_out
 ```
 
-- サブモジュール(ADI の HDL、DVB-S2 送信回路 `dvb_fpga` とその third_party)はスクリプトが自動で取ってくる
+- サブモジュール(ADI の HDL、DVB-S2 送信回路 `dvb_fpga` とその third_party)はスクリプトが自動で取ってきて、`dvb_fpga` に修正を当てる
 - ADI の IP 生成 → 合成 → 配置配線で **1〜2 時間**の見込み
 - 終わると `~/plutoplus_dvb_out/` に次ができる
 

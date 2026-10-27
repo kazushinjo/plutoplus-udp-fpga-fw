@@ -327,7 +327,7 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 
 - リポジトリ: **kazushinjo/Plutoplus-FPGA-firm**(非公開)、ブランチ `plutoplus-dvb`
   - 元: F5OEO/maia-sdr の `refactor` ブランチ `5f28808`(2026-10-20)。tezuka 用の FPGA プロジェクト `maia-hdl/projects/tezuka` が入っている
-  - 変更: `6f37fcd`(plutoplus_dvb の追加)、`95c0f68`(手順書 `maia-hdl/projects/tezuka/PLUTOPLUS_DVB.md`)
+  - 変更: `6f37fcd`(plutoplus_dvb の追加)、`95c0f68`(手順書 `maia-hdl/projects/tezuka/PLUTOPLUS_DVB.md`)、`da82dc5`(plutoplus_dvb に使うファイルだけに整理。整理前はブランチ `backup/before-cleanup-20261028`)
   - 手元の作業場所: `~/AppDev/Plutoplus-FPGA-firm`(remote: `origin` = このリポジトリ、`upstream` = F5OEO/maia-sdr)
   - 元の maia-sdr の GitHub Actions(maia-hdl・maia-httpd など)が push で動いたので、全部取り消し、このリポジトリの Actions は無効にした
 - プロジェクト `plutoplus_dvb`(`maia-hdl/projects/tezuka/system_bd.tcl`): `nomaia`・`mode1r1t`・`txfir`・`dvb`
@@ -338,9 +338,9 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 | `tezuka/system_project.tcl` | `plutoplus_dvb` のデバイス `xc7z010clg400-1` |
 | `common/nomaia.tcl`(新規) | ADC/DAC の DMA を HP2 へ(maia.tcl がしていたこと)、HP1 を無効に |
 | `common/xilinx_ad9361.tcl` | `mode1r1t` のとき `MODE_1R1T 1`(F5OEO が plutoskyr2 で試した変更と同じ考え方。refactor ブランチには未反映だった) |
-| `tezuka/Makefile` | `SKIP_IP_CORES=1` で Maia-SDR の IP 生成(Python/Amaranth・Yosys)を飛ばす |
-| `boards/plutoplus_dvb/` | `boards/plutoplus/` へのシンボリックリンク(基板は同じ) |
-| `tezuka/build_plutoplus_dvb.sh` | Linux 用のビルドスクリプト。サブモジュール(adi-hdl・dvb_fpga とその third_party)の取得 → `make SKIP_IP_CORES=1 plutoplus_dvb.sdk/system_top.xsa` → `make install`、レポートをコピー |
+| `tezuka/Makefile` | 既定のプロジェクトを `plutoplus_dvb` に。Maia-SDR の IP 生成(Python/Amaranth・Yosys)はしない |
+| `boards/plutoplus_dvb/` | tezuka の `boards/plutoplus/` と同じ内容(基板は同じ) |
+| `tezuka/build_plutoplus_dvb.sh` | Linux 用のビルドスクリプト。サブモジュール(adi-hdl・dvb_fpga とその third_party)の取得 → dvb_fpga に `maia-hdl/patches/dvb_fpga` の修正 2 つを当てる → `make plutoplus_dvb.sdk/system_top.xsa` → `make install`、レポートをコピー |
 
 - DVB-S2 送信回路は `maia-hdl/dvb_fpga` サブモジュール(OpenResearchInstitute/dvb_fpga、CERN-OHL-W v2)
 - FPGA 側の DVB 回路のつながり(`common/dvb.tcl`): DAC DMA → switchsrc → エンコーダ → switchfir → RRC ×4 → switchdest → upack → AD9361。
