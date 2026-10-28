@@ -3,7 +3,7 @@
 DVB-S2 の変調を ARM のソフト(pluto_dvb)ではなく **FPGA の DVB-S2 送信回路**で行う Pluto+ 用ファームを、
 FPGA のビルドから実機での確認まで通して作る手順。
 設計の背景・仕組みは [README.md の「FPGA 版」](README.md#fpga-版plutoplus_shonan_dvb)、
-Vivado まわりの細かい説明は kazushinjo/Plutoplus-FPGA-firm の `hdl/projects/tezuka/PLUTOPLUS_DVB.md` を参照。
+Vivado まわりの細かい説明は kazushinjo/Plutoplus-FPGA-firm の `hdl/projects/plutoplus_dvb/PLUTOPLUS_DVB.md` を参照。
 
 ## 目次
 
@@ -20,9 +20,9 @@ Vivado まわりの細かい説明は kazushinjo/Plutoplus-FPGA-firm の `hdl/pr
 ## 全体の流れ
 
 ```
-[Linux PC]  ① Vivado を入れる → ② FPGA(HDL)をビルド → tezuka.xsa
+[Linux PC]  ① Vivado を入れる → ② FPGA(HDL)をビルド → plutoplus_dvb.xsa
                                               │ USB メモリ / scp
-[Mac]       ③ tezuka.xsa を確認してこのリポジトリへ push
+[Mac]       ③ plutoplus_dvb.xsa を確認してこのリポジトリへ push
 [GitHub]    ④ Actions でファーム(plutoplus_shonan_dvb)をビルド → プレリリースの zip
 [Mac]       ⑤ SD カードへ書き込む
 [Pluto+]    ⑥ SD から起動して確認・送信試験
@@ -96,7 +96,7 @@ gh repo clone kazushinjo/Plutoplus-FPGA-firm -- -b plutoplus-dvb
 cd Plutoplus-FPGA-firm
 
 VIVADO_SETTINGS=/tools/Xilinx/2025.2/Vivado/settings64.sh \
-  hdl/projects/tezuka/build_plutoplus_dvb.sh ~/plutoplus_dvb_out
+  hdl/projects/plutoplus_dvb/build_plutoplus_dvb.sh ~/plutoplus_dvb_out
 ```
 
 - サブモジュール(ADI の HDL、DVB-S2 送信回路 `dvb_fpga` とその third_party)はスクリプトが自動で取ってきて、`dvb_fpga` に修正を当てる
@@ -105,7 +105,7 @@ VIVADO_SETTINGS=/tools/Xilinx/2025.2/Vivado/settings64.sh \
 
 | ファイル | 中身 |
 |---|---|
-| `tezuka.xsa` | ビットストリーム入りのハードウェア定義(これをファームに入れる) |
+| `plutoplus_dvb.xsa` | ビットストリーム入りのハードウェア定義(これをファームに入れる) |
 | `system_top_utilization_placed.rpt` | FPGA 資源の使用量 |
 | `system_top_timing_summary_routed.rpt` | タイミング |
 | `*.log` | Vivado のログ |
@@ -128,18 +128,18 @@ grep "timing constraints are" ~/plutoplus_dvb_out/system_top_timing_summary_rout
 
 ### 失敗したとき
 
-- `hdl/projects/tezuka/plutoplus_dvb_vivado.log` の最後の ERROR を見る
-- やり直す前に片付ける: `cd hdl/projects/tezuka && make clean PROJECT_NAME=plutoplus_dvb`
+- `hdl/projects/plutoplus_dvb/plutoplus_dvb_vivado.log` の最後の ERROR を見る
+- やり直す前に片付ける: `cd hdl/projects/plutoplus_dvb && make clean PROJECT_NAME=plutoplus_dvb`
 - 資源が足りない(`Placement failed` など)、タイミングが負のときは、レポート 2 つとログを Mac へ持ってきて相談
 
 ### Mac へ持っていく
 
-持っていくもの: `tezuka.xsa`・`system_top_utilization_placed.rpt`・`system_top_timing_summary_routed.rpt`(ログは失敗したときだけ)。
+持っていくもの: `plutoplus_dvb.xsa`・`system_top_utilization_placed.rpt`・`system_top_timing_summary_routed.rpt`(ログは失敗したときだけ)。
 
 - USB メモリ
 
   ```
-  cp ~/plutoplus_dvb_out/tezuka.xsa ~/plutoplus_dvb_out/*.rpt /media/$USER/<USBメモリの名前>/ && sync
+  cp ~/plutoplus_dvb_out/plutoplus_dvb.xsa ~/plutoplus_dvb_out/*.rpt /media/$USER/<USBメモリの名前>/ && sync
   ```
 
   Mac では `~/Downloads/plutoplus_dvb_out/` にコピーする。
@@ -148,7 +148,7 @@ grep "timing constraints are" ~/plutoplus_dvb_out/system_top_timing_summary_rout
 
   ```
   ssh <Macのユーザー名>@<Macの名前>.local "mkdir -p ~/Downloads/plutoplus_dvb_out"
-  scp ~/plutoplus_dvb_out/tezuka.xsa ~/plutoplus_dvb_out/*.rpt <Macのユーザー名>@<Macの名前>.local:~/Downloads/plutoplus_dvb_out/
+  scp ~/plutoplus_dvb_out/plutoplus_dvb.xsa ~/plutoplus_dvb_out/*.rpt <Macのユーザー名>@<Macの名前>.local:~/Downloads/plutoplus_dvb_out/
   ```
 
   終わったらリモートログインはオフに戻してよい。
@@ -157,15 +157,15 @@ grep "timing constraints are" ~/plutoplus_dvb_out/system_top_timing_summary_rout
 
 ```
 cd ~/Downloads/plutoplus_dvb_out
-unzip -l tezuka.xsa | grep -E "system_top.bit|\.hwh"
-unzip -p tezuka.xsa '*.hwh' | grep -c dvbs2_encoder_wrapper   # 1 以上(DVB-S2 送信回路が入っている)
-unzip -p tezuka.xsa '*.hwh' | grep -c maia_sdr                # 0(Maia-SDR は入っていない)
+unzip -l plutoplus_dvb.xsa | grep -E "system_top.bit|\.hwh"
+unzip -p plutoplus_dvb.xsa '*.hwh' | grep -c dvbs2_encoder_wrapper   # 1 以上(DVB-S2 送信回路が入っている)
+unzip -p plutoplus_dvb.xsa '*.hwh' | grep -c maia_sdr                # 0(Maia-SDR は入っていない)
 grep -E "^\| (Slice LUTs|Block RAM Tile|DSPs) " system_top_utilization_placed.rpt
 grep "timing constraints are" system_top_timing_summary_routed.rpt   # All ... are met.
 
 cd ~/AppDev/tezuka_fw-shonan
 B=board/tezuka/plutoplus_dvb/bitstream
-cp ~/Downloads/plutoplus_dvb_out/tezuka.xsa $B/
+cp ~/Downloads/plutoplus_dvb_out/plutoplus_dvb.xsa $B/
 mkdir -p $B/reports && cp ~/Downloads/plutoplus_dvb_out/*.rpt $B/reports/
 git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025.2" && git push origin shonan
 ```
@@ -297,4 +297,4 @@ FPGA 版は SD カードにしか入っていない(内蔵フラッシュには�
 | HDL の変更・ビルドスクリプト・手順書 | 済み(Plutoplus-FPGA-firm に push) |
 | Vivado でのビルド(②) | まだ(Linux PC の準備から) |
 | ファーム側の設定・差し替えスクリプト | 済み(変調方式の命令名を 2026-10-28 に修正、1518007) |
-| ファームのビルド(④)・実機(⑥) | まだ(tezuka.xsa 待ち) |
+| ファームのビルド(④)・実機(⑥) | まだ(plutoplus_dvb.xsa 待ち) |

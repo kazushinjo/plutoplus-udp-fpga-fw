@@ -37,7 +37,7 @@ OpenSSL(Apache-2.0)、maia-sdr ほか、Buildroot が組み込む各パッケー
 | 部品 | ライセンス | 備考 |
 |---|---|---|
 | pluto_stream・pluto_mqtt_ctrl(F5OEO/pluto-ori-ps `tezukadvb`) | GPL-2.0+ | tezuka の `package/pluto_stream` でソースからビルド |
-| plutoplus_dvb ビットストリーム(`board/tezuka/plutoplus_dvb/bitstream/tezuka.xsa`) | 下の各ライセンスの組み合わせ | kazushinjo/Plutoplus-FPGA-firm からビルド |
+| plutoplus_dvb ビットストリーム(`board/tezuka/plutoplus_dvb/bitstream/plutoplus_dvb.xsa`) | 下の各ライセンスの組み合わせ | kazushinjo/Plutoplus-FPGA-firm からビルド |
 | ・maia-hdl のプロジェクト(F5OEO/maia-sdr) | MIT | Copyright (c) Daniel Estevez ほか。この版の変更も MIT |
 | ・ADI HDL(analogdevicesinc/hdl) | ADI の各ライセンス(ファイルごと、BSD 系・GPL など) | |
 | ・dvb_fpga(Suoto / Open Research Institute) | **CERN-OHL-W v2** | これを使ったハードウェアを作るときは、ソースの場所 https://github.com/phase4ground/dvb_fpga を製品の外装に見えるように書くこと(CERN-OHL-W v2 4.1 項) |
