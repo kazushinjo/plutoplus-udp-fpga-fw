@@ -1,4 +1,6 @@
 > **plutoplus_fw-shonan**: このブランチは `plutoplus_shonan` を足したもの。tezuka に Shonan_Lite / Portsdown 4 の DATV 送信の部品を加えた、Pluto+ の SD カード起動用ファームです。もう 1 つの `plutoplus_shonan_dvb` は、DVB-S2 の変調を FPGA で行う版です(7010 に収めるため Maia-SDR を外す。作業中)。詳しくは [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md) と [ライセンス](#license) の節を見てください。
+>
+> **plutoplus_fw-shonan**: this branch adds `plutoplus_shonan`, a Pluto+ SD card boot firmware that adds the Shonan_Lite / Portsdown 4 DATV transmit components to tezuka. The other variant, `plutoplus_shonan_dvb`, performs DVB-S2 modulation in the FPGA (Maia-SDR is removed to fit the 7010; work in progress). See [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md) and the [License](#license) section.
 
 ![tezuka banner](/doc/tezuka.png)
 
@@ -44,7 +46,7 @@ This firmware is developed entirely in my free time. Maintaining multiple boards
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | PlutoSDR | 7010 | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | micro | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | [digikey](https://www.digikey.com/) [mouser](https://mouser.com/)|
 | PlutoPlus | 7010 | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | micro | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | [OpenSdrLab](https://opensourcesdrlab.com/products/opensourcesdr-lab-pluto-sdr-ad9363-2t2r-radio-sdr-transceiver-radio-70mhz-6ghz-software-defined-radio?DIST=RkVFGVU%3D)|
-| PlutoPlus (plutoplus_shonan) | 7010 | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> SD のみ | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> ¹ | micro | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | PlutoPlus と同じ |
+| PlutoPlus (plutoplus_shonan) | 7010 | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> SD のみ (SD only) | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> ¹ | micro | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | PlutoPlus と同じ (same as PlutoPlus) |
 | Antsdr E200 | 7020 | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | usb-c | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | [CrowdSupply](https://www.crowdsupply.com/microphase-technology/antsdr-e200)|
 | Antsdr E310 | 7020 | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | usb-c | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | [Microphase](https://www.microphase.cn/)|
 | Fishball/PlutoSky | 7010 | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | usb-c | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | [OpenSDRLab obsolete -> 7020](https://opensourcesdrlab.com/products/new-7020-ad9363-plutosdr?DIST=RkVFGVU%3D) [OpenSDRLab with box](https://opensourcesdrlab.com/products/opensourcesdrlab-new-7020-sdr-ad9363-for-pluto-software-defined-radio-without-pa?DIST=RkVFGVU%3D)|
@@ -57,6 +59,8 @@ This firmware is developed entirely in my free time. Maintaining multiple boards
 | OpenSDRLab 7010 Mini | 7010 | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | usb-c | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | [OpenSDRLab](https://opensourcesdrlab.com/products/7010-ad9363-sdr-mini?DIST=RkVFGVU%3D)|
 
 ¹ `plutoplus_shonan`(このリポジトリ): DATV の変調は FPGA の DVB 回路ではなくソフトで行う。Shonan_Lite(UDP 8282、`save.php`/`pluto.php`)と Portsdown 4(rtmp 7272)の TS を `pluto_dvb` と TSDuck の `tsp` で送信する。SD カード起動専用(イメージが QSPI のファーム領域に入らない)。詳しくは [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md)。
+
+¹ `plutoplus_shonan` (this repository): DATV modulation is done in software rather than the FPGA DVB chain. TS from Shonan_Lite (UDP 8282, `save.php`/`pluto.php`) and Portsdown 4 (rtmp 7272) is transmitted with `pluto_dvb` and TSDuck's `tsp`. SD card boot only (the image does not fit in the QSPI firmware area). See [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md).
 
 
 ---
@@ -201,3 +205,12 @@ All materials are in buildroot/output/images
 * **同梱しているサードパーティのファイル**: TSDuck(BSD-2-Clause)、jQuery・Chart.js・chartjs-plugin-labels・Socket.IO・js-cookie(MIT)
 * **FPGA 版(plutoplus_shonan_dvb)**: pluto_stream(GPL-2.0+)、ビットストリームは maia-hdl(MIT)・ADI HDL(各ライセンス)・dvb_fpga(CERN-OHL-W v2。ハードウェアを作るときはソースの場所を外装に書く)の組み合わせ
 * **F5OEO/datvplutofrm から持ってきた DATV の部品**(`udpts.sh`、`rtmppluto.sh`、PHP の Web 画面、`pluto_dvb` の実行ファイル): 元のリポジトリにライセンスの明記がない。これを含むファームを公開・配布する前に、作者(F5OEO)の許可かライセンスの確認が必要
+
+Licenses (details in [board/tezuka/shonan/LICENSE.md](board/tezuka/shonan/LICENSE.md))
+
+* **tezuka firmware** (F5OEO and others): [GNU General Public License v3.0](LICENSE)
+* **What plutoplus_shonan adds** (`configs/plutoplus_shonan*_defconfig`, `board/tezuka/shonan/`, `board/tezuka/plutoplus_dvb/`, CI changes): GPL-3.0, Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)
+* **Packages in the firmware** (Linux, U-Boot, BusyBox, PHP, lighttpd, FFmpeg and others): their own licenses. License texts and the SBOM for all packages are collected by Buildroot's `legal-info` and attached to the prerelease as `plutoplus_shonan-licenses.zip`
+* **Bundled third-party files**: TSDuck (BSD-2-Clause); jQuery, Chart.js, chartjs-plugin-labels, Socket.IO, js-cookie (MIT)
+* **FPGA version (plutoplus_shonan_dvb)**: pluto_stream (GPL-2.0+); the bitstream combines maia-hdl (MIT), ADI HDL (its licenses) and dvb_fpga (CERN-OHL-W v2; hardware built with it must show the source location on its exterior)
+* **DATV components from F5OEO/datvplutofrm** (`udpts.sh`, `rtmppluto.sh`, the PHP web pages, the `pluto_dvb` executable): the original repository states no license. Before publishing or distributing firmware containing them, obtain the author's (F5OEO) permission or confirm the license

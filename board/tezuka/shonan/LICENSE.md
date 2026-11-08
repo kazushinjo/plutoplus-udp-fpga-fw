@@ -1,5 +1,7 @@
 # ライセンス(plutoplus_shonan)
 
+**日本語** | [English](#english)
+
 このファームは、いくつものソフトウェアを組み合わせて作っている。部品ごとのライセンスは次のとおり。
 
 ## 全体(tezuka_fw と、このリポジトリで足したもの)
@@ -120,3 +122,79 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
+---
+
+# English
+
+*This English text is a translation for convenience. The full BSD-2-Clause and MIT license texts are in the Japanese part above, and they are in English.*
+
+## Licenses (plutoplus_shonan)
+
+This firmware combines many pieces of software. The license of each part is as follows.
+
+### Overall (tezuka_fw and what this repository adds)
+
+- tezuka_fw (F5OEO and contributors): **GNU General Public License v3.0** ([LICENSE](../../../LICENSE) at the repository root)
+- Settings, scripts and documents added in this repository
+  (`configs/plutoplus_shonan_defconfig`; post-build.sh, lighttpd.conf, S89patchfirm, README.md and others in `board/tezuka/shonan/`;
+  the changes to `.github/workflows/main.yml`): **GPL-3.0**, matching tezuka_fw. Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)
+
+### OSS packages in the firmware
+
+The Linux kernel (GPL-2.0), U-Boot (GPL-2.0+), BusyBox (GPL-2.0), glibc (LGPL-2.1+), libiio (LGPL-2.1+),
+PHP (PHP-3.01), lighttpd (BSD-3-Clause), FFmpeg (LGPL-2.1+, or GPL-2.0+ when GPL components are enabled),
+OpenSSL (Apache-2.0), maia-sdr and the other packages Buildroot includes follow their own licenses.
+
+- The license texts and an SBOM (CycloneDX) for all packages are collected by Buildroot's `legal-info` on every build.
+  They are in the prerelease `plutoplus_shonan-licenses.zip` (`bom/licenses/`, `bom/sbom.json`).
+- A running Pluto+ also has `LICENSE.html` on its USB drive (a tezuka feature).
+- Sources for GPL and LGPL components are available from each Buildroot package's origin (listed in the `legal-info` manifest)
+  and from this repository (defconfig, patches, overlay).
+
+### BOOT.bin for SD boot (tezuka 0.2.4)
+
+`board/tezuka/shonan/legacy-boot/plutoplus-0.2.4-BOOT.bin` is `sdimg/BOOT.bin` from `plutoplus.zip` in F5OEO/tezuka_fw release 0.2.4 (commit 365ea2e), unchanged (the SD BOOT.bin is replaced by it).
+
+| Contents | License |
+|---|---|
+| U-Boot 2016.07 (ADI u-boot-xlnx) | GPL-2.0+. Source: the u-boot-xlnx used by tezuka_fw 0.2.4 |
+| FSBL | Xilinx (AMD) FSBL license |
+| Bitstream (0.2.4 Maia-SDR version) | maia-sdr (MIT), ADI HDL and others. After boot, U-Boot reloads this build's bitstream |
+
+### Additions in the FPGA version (plutoplus_shonan_dvb)
+
+| Component | License | Notes |
+|---|---|---|
+| pluto_stream, pluto_mqtt_ctrl (F5OEO/pluto-ori-ps `tezukadvb`) | GPL-2.0+ | Built from source by tezuka's `package/pluto_stream` |
+| plutoplus_dvb bitstream (`board/tezuka/plutoplus_dvb/bitstream/plutoplus_dvb.xsa`) | Combination of the licenses below | Built from kazushinjo/Plutoplus-FPGA-firm |
+| - maia-hdl project (F5OEO/maia-sdr) | MIT | Copyright (c) Daniel Estevez and others. Changes in this version are also MIT |
+| - ADI HDL (analogdevicesinc/hdl) | ADI's licenses (per file, BSD-style, GPL and others) | |
+| - dvb_fpga (Suoto / Open Research Institute) | **CERN-OHL-W v2** | Hardware built with it must show the source location https://github.com/phase4ground/dvb_fpga visibly on the product's exterior (CERN-OHL-W v2 section 4.1) |
+| `overlay_dvb/root/pluto_dvb.fpga` (replacement script) | GPL-3.0 | Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX) |
+
+### DATV components taken from datvplutofrm
+
+The following items in `board/tezuka/shonan/overlay/` are taken as is from F5OEO/datvplutofrm (F5OEO, F5UII and others),
+as modified on the `v0.39-shonan` branch of kazushinjo/datvplutofrm.
+
+| Component | Authors | License |
+|---|---|---|
+| `root/udpts.sh`, `rtmppluto.sh`, `watchudp.sh`, `strategy.sh`, `report*.sh`, `readconfig_from_env.sh`, `writeconfig_to_env.sh`, `update_frm_reboot.sh`, `pluto_temp.sh`, `etc/init.d/S90datv`, `etc/php.ini` | F5OEO, F5UII and others (modified by Kazu Shinjo (JA6FUF/JH1XHX)) | No license stated in the original repository |
+| PHP, images, `lib/wf.js`, `lib/u16Websocket.js`, `lib/tooltip.js` in `www/` | F5OEO, F5UII and others (modified by Kazu Shinjo (JA6FUF/JH1XHX)) | No license stated in the original repository |
+| `root/pluto_dvb` (prebuilt executable) | F5OEO | No license stated in the original repository. No published source could be found |
+
+The original F5OEO/datvplutofrm has no LICENSE file, so no license has been set.
+For this reason, **before publishing or distributing this firmware containing these components, obtain permission from the author (F5OEO) or confirm the license**.
+This repository is private and intended for personal use.
+
+### Bundled third-party libraries
+
+| Component | Version | License | Copyright |
+|---|---|---|---|
+| TSDuck (`usr/bin/tsp`, `usr/lib/tsduck.so`, `usr/lib/tsplugin_*.so`) | Prebuilt, bundled with datvplutofrm | BSD-2-Clause | Copyright (c) Thierry Lelegard |
+| jQuery (`www/lib/jquery-3.5.1.min.js`) | 3.5.1 | MIT | (c) JS Foundation and other contributors |
+| Chart.js (`www/Chart.bundle.js`) | 2.9.3 | MIT | (c) 2019 Chart.js Contributors |
+| chartjs-plugin-labels (`www/lib/chartjs-plugin-labels.js`) | 1.1.0 | MIT | Chen, Yi-Cyuan |
+| Socket.IO client (`www/lib/socket.io-2.3.0.min.js`) | 2.3.0 | MIT | (c) 2014-2019 Guillermo Rauch |
+| js-cookie (`www/lib/js.cookie.min.js`) | 3.0.0-rc.1 | MIT | Klaus Hartl & Fagner Brack |

@@ -1,5 +1,7 @@
 # Pluto+ FPGA 版ファーム(plutoplus_shonan_dvb)の作り方
 
+**日本語** | [English](#english)
+
 DVB-S2 の変調を ARM のソフト(pluto_dvb)ではなく **FPGA の DVB-S2 送信回路**で行う Pluto+ 用ファームを、
 FPGA のビルドから実機での確認まで通して作る手順。
 設計の背景・仕組みは [README.md の「FPGA 版」](README.md#fpga-版plutoplus_shonan_dvb)、
@@ -298,3 +300,294 @@ FPGA 版は SD カードにしか入っていない(内蔵フラッシュには�
 | Vivado でのビルド(②) | まだ(Linux PC の準備から) |
 | ファーム側の設定・差し替えスクリプト | 済み(変調方式の命令名を 2026-10-28 に修正、1518007) |
 | ファームのビルド(④)・実機(⑥) | まだ(plutoplus_dvb.xsa 待ち) |
+
+---
+
+# English
+
+## Building the Pluto+ FPGA firmware (plutoplus_shonan_dvb)
+
+How to build, from the FPGA through to hardware checks, the Pluto+ firmware that performs DVB-S2 modulation in the **FPGA DVB-S2 transmit chain** instead of the ARM software (pluto_dvb).
+For the design background and how it works, see the FPGA version section of [README.md](README.md). For details on Vivado, see `hdl/projects/plutoplus_dvb/PLUTOPLUS_DVB.md` in kazushinjo/Plutoplus-FPGA-firm.
+
+### Overall flow
+
+```
+[Linux PC]  (1) Install Vivado → (2) Build the FPGA (HDL) → plutoplus_dvb.xsa
+                                              | USB memory / scp
+[Mac]       (3) Check plutoplus_dvb.xsa and push it to this repository
+[GitHub]    (4) Build the firmware (plutoplus_shonan_dvb) with Actions → prerelease zip
+[Mac]       (5) Write the SD card
+[Pluto+]    (6) Boot from SD, check, and run a transmit test
+```
+
+| Repository (both private) | Contents | Where the work is done |
+|---|---|---|
+| kazushinjo/Plutoplus-FPGA-firm (branch `main`) | FPGA design (Maia-SDR removed, DVB-S2 chain added) | Linux PC |
+| kazushinjo/plutoplus_fw-shonan (branch `shonan`, this repository) | The firmware (Buildroot) | Mac → GitHub Actions |
+
+The FPGA build needs Vivado (x86_64 Linux only), and the firmware build needs Linux (the firmware is built with GitHub Actions).
+**Steps 1, 2 and 4 cannot be done on a Mac.**
+
+### (1) Preparing the Linux PC (first time only)
+
+Target: x86_64 Ubuntu 22.04 / 24.04, around 100 GB free, 16 GB of memory or more.
+
+```
+sudo apt update
+sudo apt install -y git make build-essential python3 libtinfo-dev libncurses-dev locales gh
+sudo locale-gen en_US.UTF-8
+```
+
+#### Installing Vivado 2025.2
+
+1. Create an AMD account (https://www.amd.com/en/registration/create-account.html).
+   The download asks for your name and address (a US export-control check, so enter it correctly)
+2. Open https://www.xilinx.com/support/download.html and select **2025.2** in the version tabs.
+   Download "**AMD Unified Installer for FPGAs & Adaptive SoCs 2025.2: Linux Self Extracting Web Installer**" (`.bin`)
+3. Run it
+
+   ```
+   cd ~/Downloads
+   chmod +x FPGAs_AdaptiveSoCs_Unified_SDI_2025.2_*_Lin64.bin
+   sudo ./FPGAs_AdaptiveSoCs_Unified_SDI_2025.2_*_Lin64.bin
+   ```
+
+4. Choose the following (screen names may differ slightly as AMD changes them)
+
+   | Screen | Choose |
+   |---|---|
+   | Welcome | Next (stay on 2025.2 even if told a newer version exists) |
+   | Select Install Type | Log in with your AMD account, "Download and Install Now" |
+   | Select Product to Install | **Vivado** |
+   | Select Edition to Install | **Vivado ML Standard** (free, includes Zynq-7010) |
+   | Component selection | Under Devices, **Production Devices → SoCs → Zynq-7000 only**. Uncheck other devices, Vitis and Kria |
+   | License Agreements | I Agree on all three |
+   | Install location | The default `/tools/Xilinx` |
+   | Install Cable Drivers | Not needed (JTAG is not used) |
+
+   This is a web installer, so the main part is downloaded during installation (tens of GB for Zynq-7000 alone, one to several hours depending on the connection).
+
+5. Confirm the installation
+
+   ```
+   source /tools/Xilinx/2025.2/Vivado/settings64.sh
+   vivado -version        # should print "Vivado v2025.2"
+   ```
+
+   If Ubuntu 24.04 reports a missing `libtinfo.so.5`:
+
+   ```
+   sudo ln -s /lib/x86_64-linux-gnu/libtinfo.so.6 /lib/x86_64-linux-gnu/libtinfo.so.5
+   ```
+
+### (2) Building the FPGA (HDL) on the Linux PC
+
+```
+gh auth login     # GitHub.com → HTTPS → log in with a browser (the repository is private)
+gh repo clone kazushinjo/Plutoplus-FPGA-firm -- -b main
+cd Plutoplus-FPGA-firm
+
+VIVADO_SETTINGS=/tools/Xilinx/2025.2/Vivado/settings64.sh \
+  hdl/projects/plutoplus_dvb/build_plutoplus_dvb.sh ~/plutoplus_dvb_out
+```
+
+- The script fetches the submodules (ADI HDL, the DVB-S2 chain `dvb_fpga` and its third_party) and patches `dvb_fpga` automatically
+- ADI IP generation → synthesis → place and route is expected to take **1 to 2 hours**
+- When finished, `~/plutoplus_dvb_out/` contains:
+
+| File | Contents |
+|---|---|
+| `plutoplus_dvb.xsa` | Hardware definition including the bitstream (this goes into the firmware) |
+| `system_top_utilization_placed.rpt` | FPGA resource use |
+| `system_top_timing_summary_routed.rpt` | Timing |
+| `*.log` | Vivado logs |
+
+#### Checking the reports (the most important step)
+
+Whether it fits in the Zynq-7010 is still only an estimate (LUT about 80%, DSP about 88%).
+
+```
+grep -E "^\| (Slice LUTs|Slice Registers|Block RAM Tile|DSPs) " ~/plutoplus_dvb_out/system_top_utilization_placed.rpt
+grep -A6 "Design Timing Summary" ~/plutoplus_dvb_out/system_top_timing_summary_routed.rpt
+grep "timing constraints are" ~/plutoplus_dvb_out/system_top_timing_summary_routed.rpt
+```
+
+| What to check | Pass |
+|---|---|
+| Slice LUTs (17,600), Slice Registers (35,200), Block RAM Tile (60), DSPs (80) | Util% all below 100 |
+| WNS(ns), WHS(ns) | Both 0 or more |
+| The last grep | `All user specified timing constraints are met.` |
+
+#### If it fails
+
+- Look at the last ERROR in `hdl/projects/plutoplus_dvb/plutoplus_dvb_vivado.log`
+- Clean up before retrying: `cd hdl/projects/plutoplus_dvb && make clean PROJECT_NAME=plutoplus_dvb`
+- If resources run out (`Placement failed` and the like) or timing is negative, bring the two reports and the log to the Mac and discuss
+
+#### Moving the files to the Mac
+
+Take: `plutoplus_dvb.xsa`, `system_top_utilization_placed.rpt`, `system_top_timing_summary_routed.rpt` (the logs only if something failed).
+
+- USB memory
+
+  ```
+  cp ~/plutoplus_dvb_out/plutoplus_dvb.xsa ~/plutoplus_dvb_out/*.rpt /media/$USER/<USB-drive-name>/ && sync
+  ```
+
+  On the Mac, copy them to `~/Downloads/plutoplus_dvb_out/`.
+
+- scp (same LAN). On the Mac, turn on System Settings → General → Sharing → Remote Login, then:
+
+  ```
+  ssh <mac-user>@<mac-name>.local "mkdir -p ~/Downloads/plutoplus_dvb_out"
+  scp ~/plutoplus_dvb_out/plutoplus_dvb.xsa ~/plutoplus_dvb_out/*.rpt <mac-user>@<mac-name>.local:~/Downloads/plutoplus_dvb_out/
+  ```
+
+  You can turn Remote Login off again afterwards.
+
+### (3) Checking on the Mac and adding it to the repository
+
+```
+cd ~/Downloads/plutoplus_dvb_out
+unzip -l plutoplus_dvb.xsa | grep -E "system_top.bit|\.hwh"
+unzip -p plutoplus_dvb.xsa '*.hwh' | grep -c dvbs2_encoder_wrapper   # 1 or more (DVB-S2 chain present)
+unzip -p plutoplus_dvb.xsa '*.hwh' | grep -c maia_sdr                # 0 (Maia-SDR absent)
+grep -E "^\| (Slice LUTs|Block RAM Tile|DSPs) " system_top_utilization_placed.rpt
+grep "timing constraints are" system_top_timing_summary_routed.rpt   # All ... are met.
+
+cd ~/AppDev/tezuka_fw-shonan
+B=board/tezuka/plutoplus_dvb/bitstream
+cp ~/Downloads/plutoplus_dvb_out/plutoplus_dvb.xsa $B/
+mkdir -p $B/reports && cp ~/Downloads/plutoplus_dvb_out/*.rpt $B/reports/
+git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025.2" && git push origin shonan
+```
+
+Commit messages must be English and ASCII only (a rule of this repository).
+
+### (4) Building the firmware (GitHub Actions)
+
+```
+gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref shonan -f boards=plutoplus_shonan_dvb
+gh run list  --repo kazushinjo/plutoplus_fw-shonan --workflow main.yml --limit 3
+gh run watch <run-number> --repo kazushinjo/plutoplus_fw-shonan
+```
+
+- The zip is attached to the prerelease `plutoplus_shonan_dvb-build<number>` (Artifacts are not relied on because of the storage quota)
+- Caches apply, so it should be shorter than the first plutoplus_shonan build (2 h 40 min). The repository is private, so it uses the free Actions allowance (2000 minutes per month)
+- The following are included automatically
+  - The SD boot workaround (tezuka 0.2.4 BOOT.bin and an uncompressed kernel; see the SD boot failure section of the README)
+  - The version name `ShonanLite-Portsdown4-FPGA_v1.0-<commit>`
+  - The replacement script `overlay_dvb/root/pluto_dvb.fpga` (including fix 1518007, which sends the modulation to `tx/dvbs2/constel`)
+
+### (5) Writing the SD card (Mac)
+
+**Keep the plutoplus_shonan (normal version) SD card and use a separate SD card** (so going back only takes swapping cards).
+Use 32 GB or smaller, MBR, FAT32.
+
+```
+gh release download plutoplus_shonan_dvb-build<number> --repo kazushinjo/plutoplus_fw-shonan --dir ~/Downloads/plutoplus_dvb
+cd ~/Downloads/plutoplus_dvb && unzip plutoplus_shonan_dvb.zip
+
+diskutil list external physical                              # always confirm the SD card number (a mistake erases another disk)
+diskutil eraseDisk FAT32 PLUTOPLUS MBRFormat /dev/diskN      # erases everything on it
+mdutil -i off /Volumes/PLUTOPLUS
+COPYFILE_DISABLE=1 cp -R sdimg/ /Volumes/PLUTOPLUS/          # the contents of sdimg go at the top level (not the folder itself)
+dot_clean -m /Volumes/PLUTOPLUS
+for f in BOOT.bin devicetree.dtb system_top.bin uEnv.txt uImage uramdisk.image.xz; do
+  [ "$(md5 -q sdimg/$f)" = "$(md5 -q /Volumes/PLUTOPLUS/$f)" ] && echo "match $f" || echo "MISMATCH $f"
+done
+diskutil eject /dev/diskN
+```
+
+### (6) Checking on the Pluto+
+
+#### Booting
+
+1. Jumpers: **SD-H = 3V3** (for this Pluto+), **URST = MIO46**. Insert the SD card and power on (5 V, 2 A or more)
+2. LEDs: green and blue on means it has reached the FPGA. Linux boots in 20 to 40 seconds and a USB drive (`TEZUKA`) appears.
+   **Green alone staying on means the boot failed** (recheck the SD card contents and jumpers)
+3. Network and SSH checks are the same as in the README's post-boot checks (SSH is root / analog)
+
+#### Versions and running processes
+
+```
+cat /opt/VERSIONS          # device-fw ShonanLite-Portsdown4-FPGA_v1.0-...
+ps | grep -E "pluto_stream|pluto_mqtt_ctrl|udpts|rtmppluto|lighttpd|mosquitto" | grep -v grep
+ls -l /root/pluto_dvb /root/pluto_dvb.sw     # pluto_dvb is the script, pluto_dvb.sw is the original software version
+```
+
+#### Transmit test
+
+**Always connect an attenuator (40 dB or so) and a dummy load or receiver.**
+
+1. Watch the MQTT traffic in another SSH session
+
+   ```
+   mosquitto_sub -h 127.0.0.1 -t 'cmd/pluto/#' -t 'dt/pluto/#' -v
+   ```
+
+2. Transmit from Shonan_Lite (V2 and so on) as usual (UDP 8282). Or save the settings at `http://<IP>/pluto.php` and send a test video from the Mac:
+
+   ```
+   ffmpeg -re -f lavfi -i testsrc=size=640x360:rate=25 -f lavfi -i sine=frequency=1000 \
+     -c:v libx264 -b:v 300k -g 50 -c:a aac -b:a 64k -f mpegts "udp://<IP>:8282?pkt_size=1316"
+   ```
+
+3. The settings have arrived if the session from step 1 shows `cmd/pluto/<call>/tx/dvbs2/constel`, `fec`, `frame`, `pilots`, `sr`, `tx/frequency`, `tx/mute 0` and `tx/stream/run 1`
+4. Frequency, LO and gain
+
+   ```
+   iio_attr -c ad9361-phy altvoltage1 frequency    # TX frequency (Hz)
+   iio_attr -c ad9361-phy altvoltage1 powerdown    # 0 means the LO is on
+   iio_attr -c -o ad9361-phy voltage0 hardwaregain # TX gain (dB)
+   ```
+
+5. On the receiver (MiniTiouner, Shonan_Lite receive and so on), check lock, MER, video and audio.
+   **Also select 8PSK, 16APSK and 32APSK and confirm that the signal really uses that modulation** (before fix 1518007 it was always QPSK).
+   If you have a spectrum analyzer, also check the bandwidth and shoulders
+6. When you stop sending, `tx/stream/run 0` and `tx/mute 1` appear
+
+#### Receive functions
+
+Check whether Shonan_Lite RSSI measurement and receive, and Langstone, work as before (the FPGA version is 1R1T with no Maia-SDR).
+
+#### If it does not work
+
+Look at the pluto_stream messages (S96plutostream discards the output, so restart it by hand):
+
+```
+killall pluto_stream; pluto_stream 2>&1 | tee /tmp/pluto_stream.log &
+```
+
+### Going back
+
+The FPGA version exists only on the SD card (the internal flash is not touched).
+
+- **Swap the SD card**: put the plutoplus_shonan SD card back and power cycle
+- **Go back without removing the SD card** (when the network is available)
+
+  ```
+  cd ~/Downloads/plutoplus/sdimg      # where plutoplus_shonan was extracted
+  scp -r * root@<IP>:/boot/
+  ssh root@<IP> "sync; reboot"
+  ```
+
+- **Stop booting from the SD card**: remove the SD-H jumper to boot the original firmware in internal flash
+
+### Notes
+
+- Maia-SDR (waterfall, IQ recording, IQEngine) is removed and cannot be used. The MQTT controls of the tezuka dashboard can be used
+- The roll-off cannot be changed on the FPGA side (it stays at 0.35; `-r` is ignored)
+- One transmit and one receive channel (1R1T)
+- dvb_fpga (Open Research Institute) is **CERN-OHL-W v2**. Equipment built with it must show the source location
+  https://github.com/phase4ground/dvb_fpga where it can be seen from outside (section 4.1)
+
+### Status (2026-10-28)
+
+| Task | Status |
+|---|---|
+| HDL changes, build script, guides | Done (pushed to Plutoplus-FPGA-firm) |
+| Build in Vivado (step 2) | Not yet (starting with the Linux PC setup) |
+| Firmware settings and replacement script | Done (modulation command name fixed on 2026-10-28, 1518007) |
+| Firmware build (step 4), hardware (step 6) | Not yet (waiting for plutoplus_dvb.xsa) |
