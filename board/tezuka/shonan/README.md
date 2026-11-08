@@ -325,7 +325,7 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 
 ### FPGA の設計(HDL)
 
-- リポジトリ: **kazushinjo/Plutoplus-FPGA-firm**(非公開)、ブランチ `plutoplus-dvb`
+- リポジトリ: **kazushinjo/Plutoplus-FPGA-firm**(非公開)、ブランチ `main`
   - 元: F5OEO/maia-sdr の `refactor` ブランチ `5f28808`(2026-10-20)。tezuka 用の FPGA プロジェクト(元は `maia-hdl/projects/tezuka`)が入っている
   - 変更: `6f37fcd`(plutoplus_dvb の追加)、`95c0f68`(手順書 `hdl/projects/plutoplus_dvb/PLUTOPLUS_DVB.md`)、`da82dc5`(plutoplus_dvb に使うファイルだけに整理。整理前はブランチ `backup/before-cleanup-20261028`)、`3e2bed7`・`bf8b7c0`(名前から maia・tezuka を外す: `hdl/`・`projects/plutoplus_dvb`・`dma.tcl`、できるファイルは `plutoplus_dvb.xsa`)
   - 手元の作業場所: `~/AppDev/Plutoplus-FPGA-firm`(remote: `origin` = このリポジトリ、`upstream` = F5OEO/maia-sdr)
@@ -380,7 +380,7 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 
       ```
       gh auth login
-      gh repo clone kazushinjo/Plutoplus-FPGA-firm -- -b plutoplus-dvb
+      gh repo clone kazushinjo/Plutoplus-FPGA-firm -- -b main
       cd Plutoplus-FPGA-firm
       ```
 

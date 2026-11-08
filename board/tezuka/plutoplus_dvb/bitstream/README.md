@@ -1,6 +1,6 @@
 # plutoplus_dvb のビットストリーム
 
-ここに置く `plutoplus_dvb.xsa` は、kazushinjo/Plutoplus-FPGA-firm のブランチ `plutoplus-dvb` からビルドしたもの。
+ここに置く `plutoplus_dvb.xsa` は、kazushinjo/Plutoplus-FPGA-firm のブランチ `main` からビルドしたもの。
 中身は F5OEO/maia-sdr の `refactor` にプロジェクト `plutoplus_dvb` を足したもので、
 Pluto+(xc7z010)に dvb_fpga の DVB-S2 エンコーダ・RRC ×4・TX FIR ×8 を入れ、Maia-SDR を外し、1R1T にしてある。
 

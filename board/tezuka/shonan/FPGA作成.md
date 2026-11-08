@@ -30,7 +30,7 @@ Vivado まわりの細かい説明は kazushinjo/Plutoplus-FPGA-firm の `hdl/pr
 
 | リポジトリ(どちらも非公開) | 中身 | 作業する場所 |
 |---|---|---|
-| kazushinjo/Plutoplus-FPGA-firm(ブランチ `plutoplus-dvb`) | FPGA の設計(Maia-SDR を外し DVB-S2 送信回路を入れた構成) | Linux PC |
+| kazushinjo/Plutoplus-FPGA-firm(ブランチ `main`) | FPGA の設計(Maia-SDR を外し DVB-S2 送信回路を入れた構成) | Linux PC |
 | kazushinjo/plutoplus_fw-shonan(ブランチ `shonan`、このリポジトリ) | ファーム本体(Buildroot) | Mac → GitHub Actions |
 
 FPGA のビルドには Vivado(x86_64 Linux 専用)が、ファームのビルドには Linux が要る(ファームは GitHub Actions で作る)。
@@ -92,7 +92,7 @@ sudo locale-gen en_US.UTF-8
 
 ```
 gh auth login     # GitHub.com → HTTPS → ブラウザでログイン(非公開リポジトリのため)
-gh repo clone kazushinjo/Plutoplus-FPGA-firm -- -b plutoplus-dvb
+gh repo clone kazushinjo/Plutoplus-FPGA-firm -- -b main
 cd Plutoplus-FPGA-firm
 
 VIVADO_SETTINGS=/tools/Xilinx/2025.2/Vivado/settings64.sh \
