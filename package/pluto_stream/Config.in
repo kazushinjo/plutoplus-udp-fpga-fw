@@ -5,6 +5,8 @@ config BR2_PACKAGE_PLUTO_STREAM
 	select BR2_PACKAGE_LIBIIO
 	select BR2_PACKAGE_MOSQUITTO
 	select BR2_PACKAGE_JQ
+	select BR2_PACKAGE_NE10_ARCH_SUPPORTS
+	select BR2_PACKAGE_NE10
 	help
 	  PlutoSDR DVB-S2 streaming and MQTT control applications.
 
