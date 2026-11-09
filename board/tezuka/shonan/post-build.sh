@@ -29,6 +29,16 @@ if [ -e "${TARGET_DIR}/root/pluto_dvb.fpga" ]; then
 	mv "${TARGET_DIR}/root/pluto_dvb" "${TARGET_DIR}/root/pluto_dvb.sw"
 	mv "${TARGET_DIR}/root/pluto_dvb.fpga" "${TARGET_DIR}/root/pluto_dvb"
 	chmod 755 "${TARGET_DIR}/root/pluto_dvb.sw"
+
+	# Pages for this bitstream: the Tezuka dashboard relies on Maia-SDR.
+	# S45msd fills in the #TOKEN# placeholders of both pages at boot. It
+	# must not read the Maia-SDR version register, absent from this design.
+	cp "${BOARD_DIR}/fpga_pages/info.html" "${BOARD_DIR}/fpga_pages/index.html" "${TARGET_DIR}/root/"
+	cp "${BOARD_DIR}/../common/msd/paho-mqtt-min.js" "${TARGET_DIR}/root/"
+	S45="${TARGET_DIR}/etc/init.d/S45msd"
+	grep -q 'FPGA_REG=$(devmem 0x7c460004 32 2>/dev/null)' "${S45}"
+	sed -i -e 's|FPGA_REG=$(devmem 0x7c460004 32 2>/dev/null)|FPGA_REG=|' \
+		-e 's|^\(\s*\)patch_html_page /root/info.html /root/img/version.js|&\n\1patch_html_page /root/index.html /root/img/version.js|' "${S45}"
 fi
 
 # USB network defaults to CDC-NCM (macOS and Windows 10 2004 or later work

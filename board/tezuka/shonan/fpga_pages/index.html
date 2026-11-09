@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pluto+ Shonan Lite FPGA版</title>
+<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="img/style.css">
+</head>
+<body>
+
+<header>
+  <h1>Pluto+ Shonan Lite FPGA版</h1>
+</header>
+
+<nav>
+  <a class="btn" href="pluto.php">DATV 設定</a>
+</nav>
+
+<section>
+  <h2>デバイス</h2>
+  <table>
+    <tr><th>Build</th>  <td>#BUILD#</td></tr>
+    <tr><th>Model</th>  <td>#MODEL#</td></tr>
+    <tr><th>Serial</th> <td>#SERIAL#</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>送信の状態</h2>
+  <table>
+    <tr><th>接続</th>         <td id="conn">接続中…</td></tr>
+    <tr><th>送信</th>         <td id="tx">-</td></tr>
+    <tr><th>周波数</th>       <td id="freq">-</td></tr>
+    <tr><th>変調方式</th>     <td id="mod">-</td></tr>
+    <tr><th>シンボルレート</th><td id="sr">-</td></tr>
+    <tr><th>パイロット</th>   <td id="pilots">-</td></tr>
+    <tr><th>送信ゲイン</th>   <td id="gain">-</td></tr>
+  </table>
+</section>
+
+<script src="paho-mqtt-min.js"></script>
+<script>
+(function () {
+  var values = {};
+  function set(id, text) { document.getElementById(id).textContent = text; }
+
+  function render() {
+    if (values["tx/mute"] !== undefined || values["tx/stream/run"] !== undefined) {
+      var on = values["tx/mute"] === "0" && values["tx/stream/run"] === "1";
+      set("tx", on ? "送信中" : "停止");
+    }
+    if (values["tx/frequency"] !== undefined) {
+      set("freq", (parseFloat(values["tx/frequency"]) / 1e6).toFixed(3) + " MHz");
+    }
+    if (values["tx/dvbs2/constel"] !== undefined) {
+      set("mod", values["tx/dvbs2/constel"].toUpperCase() + " " + (values["tx/dvbs2/fec"] || ""));
+    }
+    if (values["tx/dvbs2/sr"] !== undefined) {
+      set("sr", Math.round(parseFloat(values["tx/dvbs2/sr"]) / 1000) + " kS/s");
+    }
+    if (values["tx/dvbs2/pilots"] !== undefined) {
+      set("pilots", values["tx/dvbs2/pilots"] === "1" ? "あり" : "なし");
+    }
+    if (values["tx/gain"] !== undefined) {
+      set("gain", parseFloat(values["tx/gain"]).toFixed(1) + " dB");
+    }
+  }
+
+  function connect() {
+    var client;
+    try {
+      client = new Paho.MQTT.Client(location.hostname, 9001, "status-" + Math.random().toString(16).slice(2, 10));
+    } catch (e) {
+      set("conn", "利用できません");
+      return;
+    }
+    client.onConnectionLost = function () {
+      set("conn", "切断(再接続します)");
+      setTimeout(connect, 3000);
+    };
+    client.onMessageArrived = function (m) {
+      // dt/pluto/<call>/tx/...
+      var parts = m.destinationName.split("/");
+      values[parts.slice(3).join("/")] = m.payloadString;
+      render();
+    };
+    client.connect({
+      timeout: 5,
+      onSuccess: function () {
+        set("conn", "接続済み");
+        client.subscribe("dt/pluto/+/tx/#");
+      },
+      onFailure: function () {
+        set("conn", "接続できません(再試行します)");
+        setTimeout(connect, 3000);
+      }
+    });
+  }
+
+  connect();
+})();
+</script>
+
+</body>
+</html>

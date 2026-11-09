@@ -1,0 +1,22 @@
+From: plutoplus_dvb
+Subject: [PATCH] tsinput: do not bind the same UDP address twice
+
+pluto_dvb sends tx/dvbs2/tssourceaddress every time it starts, so each
+start added another SO_REUSEADDR socket on 127.0.0.1:1314. The datagrams
+then went to an old socket that nothing reads, and the encoder sent only
+padding packets (PID 0x1FFE).
+
+---
+--- a/tsinputmux.cpp	2026-11-09 18:32:08
++++ b/tsinputmux.cpp	2026-11-09 18:32:08
+@@ -1484,6 +1484,10 @@
+     case tssource_udp:
+     {
+         if (arg == NULL)
++            break;
++        // Binding the same address again leaves several SO_REUSEADDR sockets
++        // on the port, and the datagrams may go to one nothing reads.
++        if (recv_ts_sock > 0 && strcmp(m_mcast_ts, arg) == 0)
+             break;
+         strcpy(m_mcast_ts, arg);
+         fprintf(stderr, "Try udp %s\n", m_mcast_ts);

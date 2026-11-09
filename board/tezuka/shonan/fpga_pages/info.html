@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pluto+ Shonan Lite FPGA版 - #HOSTNAME#</title>
+<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="img/style.css">
+</head>
+<body>
+
+<header>
+  <h1>Pluto+ Shonan Lite FPGA版</h1>
+  <p>DVB-S2 の変調を FPGA で行うファームウェアです。</p>
+</header>
+
+<nav>
+  <!-- This page is opened from the USB drive, so links use the device USB IP. -->
+  <a class="btn" href="http://#IP#/">状態</a>
+  <a class="btn" href="http://#IP#/pluto.php">DATV 設定</a>
+  <a class="btn-secondary" href="https://github.com/F5OEO/tezuka_fw/blob/main/LICENSE">License</a>
+</nav>
+
+<section>
+  <h2>デバイス</h2>
+  <table>
+    <tr><th>Model</th>   <td>#MODEL#</td></tr>
+    <tr><th>Serial</th>  <td>#SERIAL#</td></tr>
+    <tr><th>IIO</th>     <td>#IIO#</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>ファームウェア</h2>
+  <table>
+    <tr><th>Build</th>   <td>#BUILD#</td></tr>
+    <tr><th>Kernel</th>  <td>#LINUX#</td></tr>
+    <tr><th>U-Boot</th>  <td>#UBOOT#</td></tr>
+    <tr><th>Root FS</th> <td>#ROOTFS#</td></tr>
+    <tr><th>Boot</th>    <td>#UBOOT_MODEBOOT#</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>ネットワーク</h2>
+  <table>
+    <tr><th>Hostname</th>       <td>#HOSTNAME#</td></tr>
+    <tr><th>USB IP</th>         <td>#IP#</td></tr>
+    <tr><th>USB IP (host)</th>  <td>#HOSTIP#</td></tr>
+    <tr><th>USB MAC</th>        <td>#MAC#</td></tr>
+    <tr><th>ETH IP</th>         <td id="eth-ip">#IPADDR_ETH#</td></tr>
+    <tr><th>Wi-Fi SSID</th>     <td>#SSID_WLAN#</td></tr>
+    <tr><th>Wi-Fi IP</th>       <td>#IPADDR_WLAN#</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>このファームについて</h2>
+  <ul>
+    <li>SD カード起動専用です。</li>
+    <li>送受信は 1 系統(1R1T)です。</li>
+    <li>Maia SDR の機能(スペクトラム、録音など)はありません。</li>
+    <li>F5OEO 氏の Tezuka をもとにしています。</li>
+  </ul>
+</section>
+
+</body>
+</html>
