@@ -81,6 +81,8 @@ pub tx/stream/run 1
 # Input ended (sender stopped, or the tsp in front was killed): unkey.
 # udpts.sh / watchudp.sh restart the chain with "killall -9 tsp pluto_dvb"
 # when settings.txt changes; the next run publishes the new settings.
-{ cat "$FIRST"; rm -f "$FIRST"; cat; } | tsp -O ip "$TS_IN"
+# Same real-time buffering as the tsp in udpts.sh. With the default buffer tsp
+# sends nothing until it has filled, which takes minutes at low bitrates.
+{ cat "$FIRST"; rm -f "$FIRST"; cat; } | tsp -r --buffer-size-mb 0.01 --max-flushed-packets 100 --max-input-packets 50 -O ip "$TS_IN"
 pub tx/stream/run 0
 pub tx/mute 1
