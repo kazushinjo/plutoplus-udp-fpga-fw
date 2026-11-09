@@ -1,0 +1,62 @@
+From: plutoplus_dvb
+Subject: [PATCH] DVB-S2: run the TX at 2x the symbol rate
+
+The plutoplus_dvb bitstream interpolates the DVB-S2 symbols by 2 in the RRC
+filter (was 4), so the AD936x sample rate is 2x the symbol rate, the same as
+the software modulator. RX shares that rate, so applications can open RX at
+2x the symbol rate on the same device.
+
+Below the AD936x minimum rate use the AD9363 FIR x4 before the FPGA x8 path,
+and widen its low-pass to the interface Nyquist so that the signal, now up to
+0.6 of it, is not cut.
+
+---
+--- a/mqtthandlecommand.cpp	2026-11-09 15:34:11
++++ b/mqtthandlecommand.cpp	2026-11-09 15:34:11
+@@ -796,18 +796,20 @@
+         // No interpolation needed
+         fpgainterpol = 1.0;
+         ad9363interpol = 1.0;
++    }
++    else if (RequestSR * 4.0 >= MinDAC && RequestSR * 4.0 <= MaxDAC)
++    {
++        // AD9363 interpolation alone is enough. Tried before the FPGA x8 path:
++        // the AD936x sampling rate is shared with RX, and an application that
++        // opens RX at 2x the symbol rate must not change the DVB-S2 symbol rate.
++        fpgainterpol = 1.0;
++        ad9363interpol = 4.0;
+     }
+     else if (RequestSR * FPGA_INTERPOL >= MinDAC && RequestSR * FPGA_INTERPOL <= MaxDAC)
+     {
+         // FPGA interpolation alone is enough
+         fpgainterpol = FPGA_INTERPOL;
+         ad9363interpol = 1.0;
+-    }
+-    else if (RequestSR * 4.0 >= MinDAC && RequestSR * 4.0 <= MaxDAC)
+-    {
+-        // AD9363 interpolation alone is enough
+-        fpgainterpol = 1.0;
+-        ad9363interpol = 4.0;
+     }
+     else
+     {
+@@ -843,7 +845,7 @@
+     if (ad9363interpol > 1.0)
+     {
+         // Work for DVBS2 mode ! Fixme to see with general IQ
+-        setad9363filter(1, ad9363interpol, 2.0 / ((float)ad9363interpol), typelpf, 3.0, true, true, true);
++        setad9363filter(1, ad9363interpol, 1.0, typelpf, 3.0, true, true, true);
+ 
+         // setad9363filter(1, ad9363interpol, 0.7, typerrc, 1.0, false,true,true);
+         setad9363filter(1, ad9363interpol, 1, typelpf, 1.0, false, true, false); // WE need also to do it on RX
+--- a/mqtthandlestream.cpp	2026-11-09 15:34:11
++++ b/mqtthandlestream.cpp	2026-11-09 15:34:11
+@@ -2248,7 +2248,7 @@
+         }
+         m_s2sr = atol(svalue);
+ 
+-        publish("tx/sr", (float)4* m_s2sr, false);
++        publish("tx/sr", (float)2* m_s2sr, false);
+ 
+         break;
+     }

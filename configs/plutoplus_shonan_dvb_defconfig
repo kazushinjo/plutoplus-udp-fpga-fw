@@ -16,7 +16,7 @@ BR2_FORTIFY_SOURCE_2=y
 BR2_TIME_BITS_64=y
 BR2_TARGET_OPTIMIZATION="-mfpu=neon -ftree-vectorize -funsafe-math-optimizations"
 BR2_LINUX_KERNEL_PATCH="${BR2_EXTERNAL_PLUTOSDR_PATH}/board/tezuka/common/patches/linux/adi-6.12.y"
-BR2_GLOBAL_PATCH_DIR="${BR2_EXTERNAL_PLUTOSDR_PATH}/board/tezuka/common/patches"
+BR2_GLOBAL_PATCH_DIR="${BR2_EXTERNAL_PLUTOSDR_PATH}/board/tezuka/common/patches ${BR2_EXTERNAL_PLUTOSDR_PATH}/board/tezuka/plutoplus_dvb/patches"
 BR2_TARGET_GENERIC_HOSTNAME="pluto"
 BR2_TARGET_GENERIC_ISSUE="Welcome to Tezuka"
 BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_MDEV=y
