@@ -191,6 +191,7 @@ All materials are in buildroot/output/images
 - Gwenhael Goavec-Merou for inspiration https://github.com/oscimp/PlutoSDR
 - LamaBleu for helping me with buildroot and introduce me Plutosdr
 - https://github.com/hz12opensource/libresdr for overclock and fpga inspiration
+- Shonan 版の謝辞は [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md) を参照 / See that file for the acknowledgements of the Shonan edition
 - All the opensource community !
 
 ---

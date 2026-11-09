@@ -26,7 +26,8 @@ tezuka の機能(maia-sdr、IQEngine、ダッシュボード、MQTT など)は�
 12. [ビルド履歴](#ビルド履歴)
 13. [未確認](#未確認)
 14. [FPGA 版(plutoplus_shonan_dvb)](#fpga-版plutoplus_shonan_dvb)
-15. [ライセンス](#ライセンス)
+15. [謝辞](#謝辞)
+16. [ライセンス](#ライセンス)
 
 ## 元にしたもの
 
@@ -525,6 +526,22 @@ FPGA 版は SD カードにしか入っていない。QSPI(内蔵フラッシュ
 - 実機での送信(MER、スペクトラム、周波数・ゲイン・PTT の反映)
 - pluto_stream の MQTT 項目の値の書式(ソースから読んだもの。実機では未確認)
 - 受信(Shonan の RSSI、Langstone)が Maia-SDR なし・1R1T の FPGA で今までどおり動くか
+
+## 謝辞
+
+このファームは、次の方々とプロジェクトの成果の上に作られている。
+
+- F5OEO 氏と貢献者の方々: tezuka_fw、datvplutofrm、pluto-ori-ps(pluto_stream)
+- F5UII 氏ほか datvplutofrm の貢献者の方々
+- Daniel Estévez 氏: Maia-SDR
+- Suoto 氏と Open Research Institute: DVB-S2 エンコーダ dvb_fpga
+- Analog Devices: Linux・HDL・libiio
+- British Amateur Television Club: Portsdown 4
+- Thierry Lelegard 氏: TSDuck
+- CNES: libgse
+- Buildroot、FFmpeg、PHP、lighttpd ほか、ファームに入っているオープンソースの各プロジェクト
+
+謝辞は、ライセンスや許諾の代わりにはならない。datvplutofrm から持ってきた部品の扱いは [LICENSE.md](LICENSE.md) を参照。
 
 ## ライセンス
 
@@ -1045,6 +1062,22 @@ The FPGA version exists only on the SD card. The QSPI (internal flash) is not to
 - Transmitting on the hardware (MER, spectrum, whether frequency, gain and PTT take effect)
 - The value format of pluto_stream's MQTT items (read from source; not confirmed on hardware)
 - Whether receive (Shonan RSSI, Langstone) works as before on the FPGA with no Maia-SDR and 1R1T
+
+### Acknowledgements
+
+This firmware is built on the work of the following people and projects.
+
+- F5OEO and contributors: tezuka_fw, datvplutofrm, pluto-ori-ps (pluto_stream)
+- F5UII and the other datvplutofrm contributors
+- Daniel Estévez: Maia-SDR
+- Suoto and Open Research Institute: the dvb_fpga DVB-S2 encoder
+- Analog Devices: Linux, HDL, libiio
+- British Amateur Television Club: Portsdown 4
+- Thierry Lelegard: TSDuck
+- CNES: libgse
+- Buildroot, FFmpeg, PHP, lighttpd and the other open source projects included in the firmware
+
+These acknowledgements do not replace licenses or permissions. For the components taken from datvplutofrm, see [LICENSE.md](LICENSE.md).
 
 ### License
 
