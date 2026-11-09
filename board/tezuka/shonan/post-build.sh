@@ -35,6 +35,9 @@ if [ -e "${TARGET_DIR}/root/pluto_dvb.fpga" ]; then
 	# must not read the Maia-SDR version register, absent from this design.
 	cp "${BOARD_DIR}/fpga_pages/info.html" "${BOARD_DIR}/fpga_pages/index.html" "${TARGET_DIR}/root/"
 	cp "${BOARD_DIR}/../common/msd/paho-mqtt-min.js" "${TARGET_DIR}/root/"
+	# lighttpd sends /img/ to the DATV web UI, so the status page needs its own path.
+	mkdir -p "${TARGET_DIR}/root/status"
+	cp "${BOARD_DIR}/../common/msd/img/style.css" "${BOARD_DIR}/../common/msd/img/base.css" "${TARGET_DIR}/root/status/"
 	S45="${TARGET_DIR}/etc/init.d/S45msd"
 	grep -q 'FPGA_REG=$(devmem 0x7c460004 32 2>/dev/null)' "${S45}"
 	sed -i -e 's|FPGA_REG=$(devmem 0x7c460004 32 2>/dev/null)|FPGA_REG=|' \

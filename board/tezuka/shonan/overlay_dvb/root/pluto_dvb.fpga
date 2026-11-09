@@ -64,19 +64,35 @@ DVBS | dvbs | DVB-S) TXMODE=dvbs ;;
 *) TXMODE=dvbs2-ts ;;
 esac
 
-pub tx/stream/run 0
-pub tx/stream/mode "$TXMODE"
-pub tx/dvbs2/tssourcemode 0
-pub tx/dvbs2/tssourceaddress "$TS_IN"
-pub tx/dvbs2/constel "$(echo "$CONSTEL" | tr 'A-Z' 'a-z')"
-pub tx/dvbs2/fec "$FEC"
-pub tx/dvbs2/frame "$FRAME"
-pub tx/dvbs2/pilots "$PILOTS"
-[ -n "$SR" ] && pub tx/dvbs2/sr "$SR"
-[ -n "$FREQ" ] && pub tx/frequency "$(awk -v f="$FREQ" 'BEGIN { printf "%.0f", f }')"
-[ -n "$GAIN" ] && pub tx/gain "$GAIN"
-pub tx/mute 0
-pub tx/stream/run 1
+configure() {
+	pub tx/stream/run 0
+	pub tx/stream/mode "$TXMODE"
+	pub tx/dvbs2/tssourcemode 0
+	pub tx/dvbs2/tssourceaddress "$TS_IN"
+	pub tx/dvbs2/constel "$(echo "$CONSTEL" | tr 'A-Z' 'a-z')"
+	pub tx/dvbs2/fec "$FEC"
+	pub tx/dvbs2/frame "$FRAME"
+	pub tx/dvbs2/pilots "$PILOTS"
+	[ -n "$SR" ] && pub tx/dvbs2/sr "$SR"
+	[ -n "$FREQ" ] && pub tx/frequency "$(awk -v f="$FREQ" 'BEGIN { printf "%.0f", f }')"
+	[ -n "$GAIN" ] && pub tx/gain "$GAIN"
+	pub tx/mute 0
+	pub tx/stream/run 1
+}
+
+# Right after boot pluto_stream can miss these commands even though its process
+# exists, and stays in passthrough. Check that the mode took, and resend.
+mode_applied() {
+	[ "$(mosquitto_sub -h 127.0.0.1 -C 1 -W 2 -t "dt/pluto/$CALL/tx/stream/mode" 2>/dev/null)" = "$TXMODE" ]
+}
+
+i=0
+while [ $i -lt 5 ]; do
+	configure
+	sleep 1
+	mode_applied && break
+	i=$((i + 1))
+done
 
 # Input ended (sender stopped, or the tsp in front was killed): unkey.
 # udpts.sh / watchudp.sh restart the chain with "killall -9 tsp pluto_dvb"
