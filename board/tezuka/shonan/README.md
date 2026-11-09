@@ -290,7 +290,12 @@ SD-H を外すと内蔵フラッシュ(tezuka 0.2.4)は今までどおり起動�
 | plutoplus_shonan-build5 | e0191b1(shonan) | 2026-10-24 | SD 用 BOOT.bin が 0.2.4 のもの(md5 a6ce0ad4…)・カーネル無圧縮(0x8000)・overclock なし・鍵保存の修正入りを確認。版の表示はまだ `tezuka-e019`。実機は未書込み |
 | plutoplus_shonan-build6 | 8c48a34(shonan) | 2026-10-28 | 版の名前 `ShonanLite-Portsdown4_v1.0-8c48` を確認。`base` が `tezuka-8c48`(このリポジトリのコミット)になっていたので TEZUKA_BASE で直した |
 | plutoplus_shonan-build7 | f953bfa(shonan) | 2026-10-28 | `device-fw ShonanLite-Portsdown4_v1.0-f953`・`base tezuka-v0.3.24-a304a1f`・ログイン表示・U-Boot の表示を確認。BOOT.bin は 0.2.4(md5 一致)。実機は未書込み |
-| plutoplus_shonan_dvb | — | — | 未ビルド(FPGA の plutoplus_dvb.xsa 待ち) |
+| plutoplus_shonan_dvb-build10 | ea42271(shonan) | 2026-11-09 | RRC ×4 版。起動と DVB-S2 送信(4 方式のヘッダー解読)を確認。同じ Pluto での受信はできない(送信 4 倍・受信 2 倍の衝突) |
+| plutoplus_shonan_dvb-build11 | 260031c(rrc-x2) | 2026-11-09 | RRC ×2 版。元のアプリで 500 kS/s のロックを確認。TS がエンコーダへ届かないことがある |
+| plutoplus_shonan_dvb-build12 | 4c85fb3(rrc-x2) | 2026-11-09 | Actions のキャッシュで pluto_stream の修正が入らなかった。使わない |
+| plutoplus_shonan_dvb-build13 | 692f70e(rrc-x2) | 2026-11-09 | TS 入力のソケットの修正入り。映像が出るまで数分かかる |
+| plutoplus_shonan_dvb-build14 | 33b829d(rrc-x2) | 2026-11-09 | tsp のバッファ修正入り。500 / 1000 kS/s で映像を確認(約 3 秒)。起動直後の最初の送信は DVB-S2 にならない |
+| plutoplus_shonan_dvb-build15 | 351ae2b(rrc-x2) | 2026-11-09 | 起動直後の設定の送り直しと、状態ページの CSS の修正入り。実機確認中 |
 
 ## 未確認
 
@@ -310,10 +315,10 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 
 | 項目 | plutoplus_shonan | plutoplus_shonan_dvb |
 |---|---|---|
-| FPGA | tezuka 本家の plutoplus(Maia-SDR 入り、2R2T) | plutoplus_dvb(DVB-S2 エンコーダ + RRC ×4 + TX FIR ×8、1R1T、Maia-SDR なし) |
+| FPGA | tezuka 本家の plutoplus(Maia-SDR 入り、2R2T) | plutoplus_dvb(DVB-S2 エンコーダ + RRC ×2 + TX FIR ×8、1R1T、Maia-SDR なし) |
 | DATV の変調 | ARM のソフト(pluto_dvb) | FPGA(pluto_stream が操作) |
 | Maia-SDR・IQEngine・ウォーターフォール | あり | なし |
-| tezuka ダッシュボード | maia-httpd 経由 | lighttpd が `/root` をそのまま返す(MQTT の操作は使える。スペクトル表示などは使えない) |
+| トップページ(`http://<IP>/`) | tezuka ダッシュボード(maia-httpd 経由) | FPGA 版専用の状態ページ(版名・シリアル・送信の状態)。`info.html` も FPGA 版用 |
 | Shonan_Lite(UDP 8282)・Portsdown 4(rtmp 7272)・iiod・SSH | 使える | 使える(同じ URL・ポート) |
 
 ### なぜ Maia-SDR を外すか
@@ -328,7 +333,7 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 
 ### FPGA の設計(HDL)
 
-- リポジトリ: **kazushinjo/Plutoplus-FPGA-firm**(非公開)、ブランチ `main`
+- リポジトリ: **kazushinjo/Plutoplus-FPGA-firm**(非公開)、ブランチ `rrc-x2`(RRC ×2。`main` は RRC ×4)。機能の一覧は `hdl/projects/plutoplus_dvb/fpga.md`
   - 元: F5OEO/maia-sdr の `refactor` ブランチ `5f28808`(2026-10-20)。tezuka 用の FPGA プロジェクト(元は `maia-hdl/projects/tezuka`)が入っている
   - 変更: `6f37fcd`(plutoplus_dvb の追加)、`95c0f68`(手順書 `hdl/projects/plutoplus_dvb/PLUTOPLUS_DVB.md`)、`da82dc5`(plutoplus_dvb に使うファイルだけに整理。整理前はブランチ `backup/before-cleanup-20261028`)、`3e2bed7`・`bf8b7c0`(名前から maia・tezuka を外す: `hdl/`・`projects/plutoplus_dvb`・`dma.tcl`、できるファイルは `plutoplus_dvb.xsa`)
   - 手元の作業場所: `~/AppDev/Plutoplus-FPGA-firm`(remote: `origin` = このリポジトリ、`upstream` = F5OEO/maia-sdr)
@@ -346,7 +351,7 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 | `plutoplus_dvb/build_plutoplus_dvb.sh` | Linux 用のビルドスクリプト。サブモジュール(adi-hdl・dvb_fpga とその third_party)の取得 → dvb_fpga に `hdl/patches/dvb_fpga` の修正 2 つを当てる → `make plutoplus_dvb.sdk/system_top.xsa` → `make install`(`plutoplus_dvb.xsa`)、レポートをコピー |
 
 - DVB-S2 送信回路は `hdl/dvb_fpga` サブモジュール(OpenResearchInstitute/dvb_fpga、CERN-OHL-W v2)
-- FPGA 側の DVB 回路のつながり(`common/dvb.tcl`): DAC DMA → switchsrc → エンコーダ → switchfir → RRC ×4 → switchdest → upack → AD9361。
+- FPGA 側の DVB 回路のつながり(`common/dvb.tcl`): DAC DMA → switchsrc → エンコーダ → switchfir → RRC ×2 → switchdest → upack → AD9361。
   スイッチ・エンコーダのレジスタ(0x43C01000〜0x43C10000)は pluto_stream が `/dev/mem` で直接操作する(デバイスツリーの追加は不要)
 - このスイッチは起動直後どこにもつながっていないため、FPGA 版ではソフトの pluto_dvb(DMA で IQ を送る)では電波が出ない。
   そのため送信は pluto_stream 経由にした(下の「仕組み」)
@@ -360,10 +365,15 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
     - pluto_mqtt_ctrl へ: `tx/frequency`(Hz)、`tx/gain`、`tx/mute`
     - `<call>` は `fw_printenv call`(無ければ `nocall`)。pluto_stream と同じ決め方
   - **最初の TS パケットが届いてから**設定と送信開始を送る(起動直後に電波を出さない)。入力が終わると `tx/mute 1`
-  - TS は `tsp -O ip 127.0.0.1:1314` で pluto_stream の UDP 入力へ
+  - TS は `tsp -r --buffer-size-mb 0.01 … -O ip 127.0.0.1:1314` で pluto_stream の UDP 入力へ(既定のバッファだと、埋まるまで数分送られない)
+  - 起動直後は pluto_stream が命令を受け取れないことがあるので、`tx/stream/mode` が反映されるまで設定を送り直す(最大 5 回)
   - `-d`(TS レートの計算)は元のソフト版(`/root/pluto_dvb.sw`)が答える
   - ロールオフ(`-r`)は FPGA 側で変えられないので無視
 - pluto_stream・pluto_mqtt_ctrl は tezuka の `package/pluto_stream`(F5OEO/pluto-ori-ps `tezukadvb`、GPL-2.0+)。起動は S96plutostream
+- FPGA 版だけに当てる pluto_stream のパッチ(`board/tezuka/plutoplus_dvb/patches/pluto_stream/`、この defconfig の `BR2_GLOBAL_PATCH_DIR`):
+  - `0001`: サンプルレートをシンボルレートの 2 倍に。低レートでは FPGA ×8 より先にチップの FIR ×4 を使い、その帯域を広げる
+  - `0002`: 同じ UDP アドレスを開き直さない(ソケットが増え、TS が読まれないソケットへ届くのを防ぐ)
+- **サンプルレートはシンボルレートの 2 倍**で、ソフト版の pluto_dvb と同じ。AD936x の送受信は同じレートなので、同じ Pluto での受信も、アプリを変えずに動く。シンボルレートが約 260 kS/s 未満では FPGA ×8 の経路に入り、この受信はできない
 - デバイスツリーは `board/tezuka/plutoplus_dvb/kernel-dts`(Maia-SDR 用の maiasdr.dtsi を読まない。予約メモリ 128MB も無くなる)
 
 ### 作り方
@@ -397,7 +407,7 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
    5. `~/plutoplus_dvb_out/` の `plutoplus_dvb.xsa`・`system_top_utilization_placed.rpt`・`system_top_timing_summary_routed.rpt` を Mac へ持ってくる
       (資源が収まっているか、タイミング(WNS・WHS)が負になっていないかを確認)
 2. `plutoplus_dvb.xsa` を `board/tezuka/plutoplus_dvb/bitstream/` に置いてコミット
-3. ファーム: `gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref shonan -f boards=plutoplus_shonan_dvb`
+3. ファーム: `gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref rrc-x2 -f boards=plutoplus_shonan_dvb`
    → プレリリース `plutoplus_shonan_dvb-build<番号>`
 4. SD カードの作り方は plutoplus_shonan と同じ(zip の `sdimg/` の中身をコピー)
 
@@ -423,13 +433,13 @@ Linux から持ってきたファイルが `~/Downloads/plutoplus_dvb_out/` に�
    B=board/tezuka/plutoplus_dvb/bitstream
    cp ~/Downloads/plutoplus_dvb_out/plutoplus_dvb.xsa $B/
    mkdir -p $B/reports && cp ~/Downloads/plutoplus_dvb_out/*.rpt $B/reports/
-   git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025.2" && git push origin shonan
+   git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025.2" && git push origin rrc-x2
    ```
 
 3. ファームをビルドする(GitHub Actions)
 
    ```
-   gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref shonan -f boards=plutoplus_shonan_dvb
+   gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref rrc-x2 -f boards=plutoplus_shonan_dvb
    gh run list --repo kazushinjo/plutoplus_fw-shonan --workflow main.yml --limit 3
    gh run watch <run の番号> --repo kazushinjo/plutoplus_fw-shonan
    ```
@@ -485,7 +495,7 @@ Linux から持ってきたファイルが `~/Downloads/plutoplus_dvb_out/` に�
      ```
 
    - 受信側(MiniTiouner、Shonan_Lite の受信など)でロックし、MER・映像・音声を見る。スペクトラムアナライザーがあれば帯域と肩も見る
-   - 送るのをやめると、2 の画面に `tx/stream/run 0`・`tx/mute 1` が出る
+   - TS を止めても送信は自動では止まらない(UDP 入力の tsp が待ち続ける)。アプリの送信停止など、処理を止める操作が必要
 4. 受信まわり: Shonan_Lite の RSSI 測定、Langstone が今までどおり動くか
 5. うまくいかないとき: pluto_stream のメッセージを見る(S96plutostream は出力を捨てているので、手で起動し直す)
 
@@ -510,22 +520,39 @@ FPGA 版は SD カードにしか入っていない。QSPI(内蔵フラッシュ
 
 - **SD カードから起動しないようにする**: SD-H ジャンパを外すと QSPI の元のファームで起動する
 
-### 現状(2026-10-24)
+### FPGA 版のページ
+
+`index.html` と `info.html` は FPGA 版専用です(`board/tezuka/shonan/fpga_pages/`)。Maia-SDR に依存するダッシュボードの代わりに入っています。
+
+| ページ | 開き方 | 内容 |
+|---|---|---|
+| `index.html`(状態ページ) | ブラウザで `http://<IP>/` | 版名・モデル・シリアル、MQTT(WebSocket 9001)で読んだ送信の状態、DATV 設定へのボタン |
+| `info.html`(案内ページ) | USB ドライブ `TEZUKA` の中 | デバイス・ファームウェア・ネットワークの情報、状態ページと DATV 設定へのリンク |
+
+版名・シリアルなどは起動時に S45msd が埋め込む。下の画像のシリアルと MAC アドレスは伏せてある。
+
+| 状態ページ | 案内ページ |
+|---|---|
+| ![状態ページ](images/fpga-status-page.png) | ![案内ページ](images/fpga-info-page.png) |
+
+### 現状(2026-11-09)
 
 | 作業 | 状態 |
 |---|---|
-| HDL の変更・ビルドスクリプト・手順書 | 済み(kazushinjo/Plutoplus-FPGA-firm に push)。**Vivado でのビルドはまだ** |
-| Linux PC の準備(Vivado 2025.2) | まだ(ユーザーの Linux PC、Ubuntu。操作はユーザー) |
-| ファーム側(`configs/plutoplus_shonan_dvb_defconfig`・`boards.json`・`board/tezuka/plutoplus_dvb/`・`shonan/overlay_dvb/`・`post-build.sh`) | 作成済み。`plutoplus_dvb.xsa` が無いのでビルドはまだ |
-| 差し替えスクリプト `pluto_dvb.fpga` | Mac 上で仮のコマンド(mosquitto_pub・tsp など)に置き換えて動作確認済み(DVB-S2・DVB-S・`-i` のファイル入力・入力なし) |
-| 実機 | まだ |
+| FPGA(RRC ×2、ブランチ `rrc-x2`) | Vivado でビルド済み。LUT 66.90%、DSP 54/80、WNS +0.152 ns、WHS +0.025 ns |
+| ファーム | `plutoplus_shonan_dvb-build15`(`351ae2b`、rrc-x2)。`shonan` へは未統合 |
+| 元のアプリのままの送受信(同じ Pluto、USB) | 500 / 1000 kS/s でロックと映像を確認(build14) |
+
+同じ Pluto で送受信するときは、受信 IQ が多いので USB か有線 LAN で接続する。
 
 ### 未確認(FPGA 版)
 
-- 7010 に収まるか・タイミングが合うか(Vivado のビルド前)
-- 実機での送信(MER、スペクトラム、周波数・ゲイン・PTT の反映)
-- pluto_stream の MQTT 項目の値の書式(ソースから読んだもの。実機では未確認)
-- 受信(Shonan の RSSI、Langstone)が Maia-SDR なし・1R1T の FPGA で今までどおり動くか
+- build15 での起動直後の最初の送信
+- RRC ×2 版での 8PSK・16APSK・32APSK(RRC ×4 版ではヘッダーの解読まで確認)
+- 帯域外の不要輻射(RRC ×2 はスペクトラムアナライザーでの測定が必要)
+- 受信だけを開始し直したときの動作(`ADC clock below limit` で IQ が止まったことがある)
+- 他の受信機(MiniTiouner など)での受信、ショートフレーム
+- Shonan の RSSI 測定以外の受信機能、Langstone
 
 ## 謝辞
 
@@ -826,7 +853,9 @@ With SD-H removed, the internal flash (tezuka 0.2.4) booted as usual (cables and
 | plutoplus_shonan-build5 | e0191b1 (shonan) | 2026-10-24 | Confirmed the SD BOOT.bin is the 0.2.4 one (md5 a6ce0ad4...), kernel uncompressed (0x8000), no overclock, key-saving fix included. The version still shows `tezuka-e019`. Not yet written to hardware |
 | plutoplus_shonan-build6 | 8c48a34 (shonan) | 2026-10-28 | Confirmed version name `ShonanLite-Portsdown4_v1.0-8c48`. `base` was `tezuka-8c48` (this repository's commit), fixed with TEZUKA_BASE |
 | plutoplus_shonan-build7 | f953bfa (shonan) | 2026-10-28 | Confirmed `device-fw ShonanLite-Portsdown4_v1.0-f953`, `base tezuka-v0.3.24-a304a1f`, the login banner and the U-Boot message. BOOT.bin is 0.2.4 (md5 matches). Not yet written to hardware |
-| plutoplus_shonan_dvb | — | — | Not built yet (waiting for the FPGA plutoplus_dvb.xsa) |
+| plutoplus_shonan_dvb-build10 to build13 | see the Japanese table | 2026-11-09 | Intermediate builds |
+| plutoplus_shonan_dvb-build14 | 33b829d (rrc-x2) | 2026-11-09 | RRC x2. Lock and video confirmed at 500 and 1000 kS/s with the unmodified app. The first TX after boot does not enter DVB-S2 mode |
+| plutoplus_shonan_dvb-build15 | 351ae2b (rrc-x2) | 2026-11-09 | Resends the TX settings after boot, fixes the status page CSS. Being verified on hardware |
 
 ### Not yet confirmed
 
@@ -846,10 +875,10 @@ The 7010 in the Pluto+ cannot hold both Maia-SDR and the DVB-S2 chain, so **Maia
 
 | Item | plutoplus_shonan | plutoplus_shonan_dvb |
 |---|---|---|
-| FPGA | Upstream tezuka plutoplus (with Maia-SDR, 2R2T) | plutoplus_dvb (DVB-S2 encoder + RRC x4 + TX FIR x8, 1R1T, no Maia-SDR) |
+| FPGA | Upstream tezuka plutoplus (with Maia-SDR, 2R2T) | plutoplus_dvb (DVB-S2 encoder + RRC x2 + TX FIR x8, 1R1T, no Maia-SDR) |
 | DATV modulation | ARM software (pluto_dvb) | FPGA (controlled by pluto_stream) |
 | Maia-SDR, IQEngine, waterfall | Yes | No |
-| tezuka dashboard | Through maia-httpd | lighttpd serves `/root` as is (MQTT controls work; the spectrum display and so on do not) |
+| Top page (`http://<IP>/`) | Tezuka dashboard (through maia-httpd) | A status page for this build (version, serial, TX state). `info.html` is also specific to this build |
 | Shonan_Lite (UDP 8282), Portsdown 4 (rtmp 7272), iiod, SSH | Available | Available (same URLs and ports) |
 
 #### Why Maia-SDR is removed
@@ -864,7 +893,7 @@ The 7010 in the Pluto+ cannot hold both Maia-SDR and the DVB-S2 chain, so **Maia
 
 #### FPGA design (HDL)
 
-- Repository: **kazushinjo/Plutoplus-FPGA-firm** (private), branch `main`
+- Repository: **kazushinjo/Plutoplus-FPGA-firm** (private), branch `rrc-x2` (RRC x2; `main` is RRC x4). Function list: `hdl/projects/plutoplus_dvb/fpga.md`
   - Origin: the `refactor` branch `5f28808` of F5OEO/maia-sdr (2026-10-20), which contains the tezuka FPGA project (originally `maia-hdl/projects/tezuka`)
   - Changes: `6f37fcd` (adding plutoplus_dvb), `95c0f68` (the guide `hdl/projects/plutoplus_dvb/PLUTOPLUS_DVB.md`), `da82dc5` (cleaned up to only the files used for plutoplus_dvb; the earlier state is on the branch `backup/before-cleanup-20261028`), `3e2bed7` and `bf8b7c0` (removing maia and tezuka from the names: `hdl/`, `projects/plutoplus_dvb`, `dma.tcl`, output `plutoplus_dvb.xsa`)
   - Local working copy: `~/AppDev/Plutoplus-FPGA-firm` (remote: `origin` = this repository, `upstream` = F5OEO/maia-sdr)
@@ -882,7 +911,7 @@ The 7010 in the Pluto+ cannot hold both Maia-SDR and the DVB-S2 chain, so **Maia
 | `plutoplus_dvb/build_plutoplus_dvb.sh` | Linux build script. Fetches the submodules (adi-hdl, dvb_fpga and its third_party) → applies the two patches in `hdl/patches/dvb_fpga` to dvb_fpga → `make plutoplus_dvb.sdk/system_top.xsa` → `make install` (`plutoplus_dvb.xsa`), copies the reports |
 
 - The DVB-S2 chain is the `hdl/dvb_fpga` submodule (OpenResearchInstitute/dvb_fpga, CERN-OHL-W v2)
-- The DVB path on the FPGA side (`common/dvb.tcl`): DAC DMA → switchsrc → encoder → switchfir → RRC x4 → switchdest → upack → AD9361.
+- The DVB path on the FPGA side (`common/dvb.tcl`): DAC DMA → switchsrc → encoder → switchfir → RRC x2 → switchdest → upack → AD9361.
   pluto_stream operates the switch and encoder registers (0x43C01000 to 0x43C10000) directly through `/dev/mem` (no device tree additions needed)
 - These switches are not connected to anything right after boot, so in the FPGA version the software pluto_dvb (sending IQ through DMA) produces no RF output.
   Transmit therefore goes through pluto_stream (see How it works below)
@@ -896,7 +925,9 @@ The 7010 in the Pluto+ cannot hold both Maia-SDR and the DVB-S2 chain, so **Maia
     - To pluto_mqtt_ctrl: `tx/frequency` (Hz), `tx/gain`, `tx/mute`
     - `<call>` is `fw_printenv call` (`nocall` if absent), decided the same way as pluto_stream
   - The settings and transmit start are sent **after the first TS packet arrives** (no RF right after boot). When input ends, `tx/mute 1`
-  - The TS goes to pluto_stream's UDP input with `tsp -O ip 127.0.0.1:1314`
+  - The TS goes to pluto_stream's UDP input with `tsp -r --buffer-size-mb 0.01 ... -O ip 127.0.0.1:1314` (with the default buffer nothing is sent for minutes)
+  - Right after boot pluto_stream can miss commands, so the settings are resent until `tx/stream/mode` is applied (up to 5 times)
+  - The sample rate is 2x the symbol rate, the same as the software pluto_dvb, so receiving on the same device works with the unmodified apps
   - `-d` (TS rate calculation) is answered by the original software version (`/root/pluto_dvb.sw`)
   - The roll-off (`-r`) cannot be changed on the FPGA side and is ignored
 - pluto_stream and pluto_mqtt_ctrl are tezuka's `package/pluto_stream` (F5OEO/pluto-ori-ps `tezukadvb`, GPL-2.0+), started by S96plutostream
@@ -933,7 +964,7 @@ The 7010 in the Pluto+ cannot hold both Maia-SDR and the DVB-S2 chain, so **Maia
    5. Bring `plutoplus_dvb.xsa`, `system_top_utilization_placed.rpt` and `system_top_timing_summary_routed.rpt` from `~/plutoplus_dvb_out/` to the Mac
       (confirm that resources fit and that timing (WNS, WHS) is not negative)
 2. Put `plutoplus_dvb.xsa` in `board/tezuka/plutoplus_dvb/bitstream/` and commit
-3. Firmware: `gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref shonan -f boards=plutoplus_shonan_dvb`
+3. Firmware: `gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref rrc-x2 -f boards=plutoplus_shonan_dvb`
    → prerelease `plutoplus_shonan_dvb-build<number>`
 4. The SD card is made the same way as plutoplus_shonan (copy the contents of `sdimg/` from the zip)
 
@@ -959,13 +990,13 @@ Assumes the files brought from Linux are in `~/Downloads/plutoplus_dvb_out/`.
    B=board/tezuka/plutoplus_dvb/bitstream
    cp ~/Downloads/plutoplus_dvb_out/plutoplus_dvb.xsa $B/
    mkdir -p $B/reports && cp ~/Downloads/plutoplus_dvb_out/*.rpt $B/reports/
-   git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025.2" && git push origin shonan
+   git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025.2" && git push origin rrc-x2
    ```
 
 3. Build the firmware (GitHub Actions)
 
    ```
-   gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref shonan -f boards=plutoplus_shonan_dvb
+   gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref rrc-x2 -f boards=plutoplus_shonan_dvb
    gh run list --repo kazushinjo/plutoplus_fw-shonan --workflow main.yml --limit 3
    gh run watch <run-number> --repo kazushinjo/plutoplus_fw-shonan
    ```
@@ -1021,7 +1052,7 @@ Boot, network and SSH are the same as the post-boot checks. Then log in to the P
      ```
 
    - On the receiver (MiniTiouner, Shonan_Lite receive and so on), lock and check MER, video and audio. If you have a spectrum analyzer, also check the bandwidth and shoulders
-   - When you stop sending, the session from step 2 shows `tx/stream/run 0` and `tx/mute 1`
+   - Stopping the TS does not stop the transmitter automatically (the UDP-input tsp keeps waiting). Stop it from the app
 4. Receive functions: Shonan_Lite RSSI measurement, and whether Langstone works as before
 5. If it does not work: look at the pluto_stream messages (S96plutostream discards the output, so restart it by hand)
 
@@ -1046,22 +1077,36 @@ The FPGA version exists only on the SD card. The QSPI (internal flash) is not to
 
 - **Stop booting from the SD card**: remove the SD-H jumper to boot the original firmware in QSPI
 
-#### Status (2026-10-24)
+#### FPGA version pages
+
+`index.html` and `info.html` are specific to this build (`board/tezuka/shonan/fpga_pages/`). They replace the dashboard, which depends on Maia-SDR.
+
+| Page | How to open | Content |
+|---|---|---|
+| `index.html` (status page) | `http://<IP>/` in a browser | Version, model, serial, TX state read over MQTT (WebSocket 9001), a button to the DATV settings |
+| `info.html` (information page) | On the `TEZUKA` USB drive | Device, firmware and network information, links to the status page and DATV settings |
+
+S45msd fills in the version, serial and so on at boot. The serial number and MAC address are masked in the images below.
+
+| Status page | Information page |
+|---|---|
+| ![Status page](images/fpga-status-page.png) | ![Information page](images/fpga-info-page.png) |
+
+#### Status (2026-11-09)
 
 | Task | Status |
 |---|---|
-| HDL changes, build script, guides | Done (pushed to kazushinjo/Plutoplus-FPGA-firm). **Not yet built in Vivado** |
-| Linux PC setup (Vivado 2025.2) | Not yet (the user's Linux PC, Ubuntu; operated by the user) |
-| Firmware side (`configs/plutoplus_shonan_dvb_defconfig`, `boards.json`, `board/tezuka/plutoplus_dvb/`, `shonan/overlay_dvb/`, `post-build.sh`) | Created. Not built yet because `plutoplus_dvb.xsa` does not exist |
-| Replacement script `pluto_dvb.fpga` | Tested on the Mac with stand-in commands (mosquitto_pub, tsp and others) for DVB-S2, DVB-S, `-i` file input, and no input |
-| Hardware | Not yet |
+| FPGA (RRC x2, branch `rrc-x2`) | Built in Vivado. LUT 66.90%, DSP 54/80, WNS +0.152 ns, WHS +0.025 ns |
+| Firmware | `plutoplus_shonan_dvb-build15` (`351ae2b`, rrc-x2). Not merged into `shonan` |
+| TX and RX on the same device with the unmodified app (USB) | Lock and video confirmed at 500 and 1000 kS/s (build14) |
 
 #### Not yet confirmed (FPGA version)
 
-- Whether it fits in the 7010 and meets timing (before the Vivado build)
-- Transmitting on the hardware (MER, spectrum, whether frequency, gain and PTT take effect)
-- The value format of pluto_stream's MQTT items (read from source; not confirmed on hardware)
-- Whether receive (Shonan RSSI, Langstone) works as before on the FPGA with no Maia-SDR and 1R1T
+- The first TX after boot with build15
+- 8PSK, 16APSK and 32APSK with RRC x2 (their headers were decoded with RRC x4)
+- Out-of-band emissions with RRC x2
+- Restarting only the RX (the IQ once stopped with `ADC clock below limit`)
+- Other receivers (MiniTiouner and so on), short frames
 
 ### Acknowledgements
 

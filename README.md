@@ -1,6 +1,6 @@
-> **plutoplus_fw-shonan**: このブランチは `plutoplus_shonan` を足したもの。tezuka に Shonan_Lite / Portsdown 4 の DATV 送信の部品を加えた、Pluto+ の SD カード起動用ファームです。もう 1 つの `plutoplus_shonan_dvb` は、DVB-S2 の変調を FPGA で行う版です(7010 に収めるため Maia-SDR を外す。作業中)。詳しくは [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md) と [ライセンス](#license) の節を見てください。
+> **plutoplus_fw-shonan**: このブランチは `plutoplus_shonan` を足したもの。tezuka に Shonan_Lite / Portsdown 4 の DATV 送信の部品を加えた、Pluto+ の SD カード起動用ファームです。もう 1 つの `plutoplus_shonan_dvb` は、DVB-S2 の変調を FPGA で行う版です(7010 に収めるため Maia-SDR を外す。ブランチ `rrc-x2` で実機確認中)。詳しくは [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md) と [ライセンス](#license) の節を見てください。
 >
-> **plutoplus_fw-shonan**: this branch adds `plutoplus_shonan`, a Pluto+ SD card boot firmware that adds the Shonan_Lite / Portsdown 4 DATV transmit components to tezuka. The other variant, `plutoplus_shonan_dvb`, performs DVB-S2 modulation in the FPGA (Maia-SDR is removed to fit the 7010; work in progress). See [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md) and the [License](#license) section.
+> **plutoplus_fw-shonan**: this branch adds `plutoplus_shonan`, a Pluto+ SD card boot firmware that adds the Shonan_Lite / Portsdown 4 DATV transmit components to tezuka. The other variant, `plutoplus_shonan_dvb`, performs DVB-S2 modulation in the FPGA (Maia-SDR is removed to fit the 7010; being verified on hardware on branch `rrc-x2`). See [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md) and the [License](#license) section.
 
 ![tezuka banner](/doc/tezuka.png)
 
