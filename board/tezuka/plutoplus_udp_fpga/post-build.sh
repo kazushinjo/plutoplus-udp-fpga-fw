@@ -1,25 +1,18 @@
 #!/bin/sh
-# Runs after board/tezuka/common/post-build.sh for the the UDP sender app DATV builds
-# (configs/plutoplus_udp_defconfig and plutoplus_udp_fpga_defconfig).
+# Runs after board/tezuka/common/post-build.sh for the UDP sender app DATV FPGA build
+# (configs/plutoplus_udp_fpga_defconfig, DVB-S2 modulation in the FPGA).
 set -e
 
 BOARD_DIR="$(dirname "$0")"
 
-if [ -e "${TARGET_DIR}/etc/init.d/S60maia-httpd" ]; then
-	# lighttpd takes port 80 for the DATV PHP pages and proxies the rest to
-	# maia-httpd (etc/lighttpd/lighttpd.conf), so maia-httpd moves to 8000.
-	grep -q -- '--listen 0.0.0.0:80 ' "${TARGET_DIR}/etc/init.d/S60maia-httpd"
-	sed -i 's/--listen 0\.0\.0\.0:80 /--listen 127.0.0.1:8000 /' "${TARGET_DIR}/etc/init.d/S60maia-httpd"
-else
-	# No Maia-SDR (plutoplus_udp_fpga): nothing to proxy to; lighttpd
-	# serves the Tezuka Dashboard (/root/index.html, MQTT over websocket)
-	# itself for everything that is not a DATV page.
-	CONF="${TARGET_DIR}/etc/lighttpd/lighttpd.conf"
-	grep -q 'proxy.server = ( "" => ( ( "host" => "127.0.0.1", "port" => 8000 ) ) )' "${CONF}"
-	sed -i -e 's|^\tproxy.server = .*|\tserver.document-root = "/root"|' \
-		-e '/^\tproxy.header = /d' "${CONF}"
-	echo 'index-file.names = ( "index.html" )' >> "${CONF}"
-fi
+# No Maia-SDR in this bitstream: nothing to proxy to; lighttpd serves the
+# status pages (/root/index.html, MQTT over websocket) itself for everything
+# that is not a DATV page.
+CONF="${TARGET_DIR}/etc/lighttpd/lighttpd.conf"
+grep -q 'proxy.server = ( "" => ( ( "host" => "127.0.0.1", "port" => 8000 ) ) )' "${CONF}"
+sed -i -e 's|^\tproxy.server = .*|\tserver.document-root = "/root"|' \
+	-e '/^\tproxy.header = /d' "${CONF}"
+echo 'index-file.names = ( "index.html" )' >> "${CONF}"
 
 if [ -e "${TARGET_DIR}/root/pluto_dvb.fpga" ]; then
 	# plutoplus_dvb bitstream: the TX DAC path goes through the FPGA DVB-S2
@@ -49,15 +42,14 @@ fi
 sed -i 's/usb_ethernet_mode 2> \/dev\/null || echo rndis/usb_ethernet_mode 2> \/dev\/null || echo ncm/' \
 	"${TARGET_DIR}/etc/init.d/S23udc" "${TARGET_DIR}/etc/init.d/S40network"
 
-# Firmware name: make clear this is the the UDP sender app / Portsdown 4 build,
+# Firmware name: make clear this is the UDP sender app FPGA build,
 # not a tezuka release. /opt/VERSIONS "device-fw" feeds the USB drive
 # info.html (S45msd), the iiod fw_version context attribute (S23udc) and
 # the Tezuka Dashboard; the tezuka version stays as "base".
-# board/tezuka/plutoplus_udp/VERSION holds our own version number.
+# board/tezuka/plutoplus_udp_fpga/VERSION holds our own version number.
 FW_VER=$(cat "${BOARD_DIR}/VERSION")
 FW_COMMIT=$(cd "${BOARD_DIR}" && (git rev-parse --short=4 HEAD 2>/dev/null || echo unknown))
-EDITION=plutoplus-udp-firm
-[ -e "${TARGET_DIR}/root/pluto_dvb.sw" ] && EDITION=plutoplus-udp-fpga-firm
+EDITION=plutoplus-udp-fpga-firm
 FW_NAME="${EDITION}_v${FW_VER}-${FW_COMMIT}"
 # The tezuka release this branch is based on; git describe cannot tell (the
 # tezuka tags are not pushed here), so it is kept in TEZUKA_BASE and must be
@@ -70,21 +62,13 @@ echo "base ${BASE}" >> "${TARGET_DIR}/opt/VERSIONS"
 # line starting with "v" that a plain "ssh root@pluto" prints.
 sed -i "s/^Version #BUILD#/Version ${FW_NAME} (base ${BASE})/" "${TARGET_DIR}/etc/motd.plain"
 {
-	if [ "${EDITION}" = plutoplus-udp-fpga-firm ]; then
-		echo "plutoplus-udp-fpga-firm: UDP-only DVB-S2 FPGA firmware for Pluto+"
-	else
-		echo "plutoplus-udp-firm: UDP DATV firmware for Pluto+"
-	fi
+	echo "plutoplus-udp-fpga-firm: UDP-only DVB-S2 FPGA firmware for Pluto+"
 	echo "v${FW_VER}-${EDITION}-${FW_COMMIT}"
 } >> "${TARGET_DIR}/etc/motd.plain"
 
 # Shown in the DVB service provider name by udpts.sh / rtmppluto.sh
 date +"%d%m" > "${TARGET_DIR}/www/fwversion.txt"
-if [ "${EDITION}" = plutoplus-udp-fpga-firm ]; then
-	# The FPGA build carries only its own name, not this repository's log.
-	echo "${FW_NAME}" > "${TARGET_DIR}/www/releasenote.txt"
-else
-	(cd "${BOARD_DIR}" && git log --pretty=oneline --abbrev-commit -20) > "${TARGET_DIR}/www/releasenote.txt" || true
-fi
+# The FPGA build carries only its own name, not this repository's log.
+echo "${FW_NAME}" > "${TARGET_DIR}/www/releasenote.txt"
 
 chmod 755 "${TARGET_DIR}"/root/*.sh "${TARGET_DIR}/root/pluto_dvb" "${TARGET_DIR}/usr/bin/tsp"

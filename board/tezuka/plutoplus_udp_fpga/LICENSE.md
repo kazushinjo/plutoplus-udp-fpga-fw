@@ -1,4 +1,4 @@
-# ライセンス(plutoplus_udp)
+# ライセンス(plutoplus_udp_fpga)
 
 **日本語** | [English](#english)
 
@@ -6,9 +6,9 @@
 
 ## 全体(tezuka_fw と、このリポジトリで足したもの)
 
-- tezuka_fw(F5OEO and contributors): **GNU General Public License v3.0**(リポジトリ直下の [LICENSE](https://github.com/kazushinjo/plutoplus-udp-fpga_fw/blob/main/LICENSE))
+- tezuka_fw(F5OEO and contributors): **GNU General Public License v3.0**(リポジトリ直下の [LICENSE](https://github.com/kazushinjo/plutoplus-udp-fpga-fw/blob/main/LICENSE))
 - このリポジトリで足した設定・スクリプト・文書
-  (`configs/plutoplus_udp_defconfig`、`board/tezuka/plutoplus_udp/` の post-build.sh・lighttpd.conf・S89patchfirm・README.md など、
+  (`configs/plutoplus_udp_fpga_defconfig`、`board/tezuka/plutoplus_udp_fpga/` の post-build.sh・lighttpd.conf・S89patchfirm・README.md など、
   `.github/workflows/main.yml` の変更): tezuka_fw に合わせて **GPL-3.0**。Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)
 
 ## ファームに入る OSS パッケージ
@@ -18,14 +18,14 @@ PHP(PHP-3.01)、lighttpd(BSD-3-Clause)、FFmpeg(LGPL-2.1+、GPL 部品を有効�
 OpenSSL(Apache-2.0)、maia-sdr ほか、Buildroot が組み込む各パッケージは、それぞれのライセンスに従う。
 
 - 全パッケージのライセンス文と SBOM(CycloneDX)は、ビルドのたびに Buildroot の `legal-info` で集めている。
-  各リリースの `plutoplus_udp-licenses.zip`・`plutoplus_udp_fpga-licenses.zip`(`bom/licenses/`・`bom/sbom.json`)に入っている。
+  各リリースの `plutoplus_udp_fpga-licenses.zip`(`bom/licenses/`・`bom/sbom.json`)に入っている。
 - 起動中の Pluto+ の USB ドライブにも `LICENSE.html` がある(tezuka の仕組み)。
 - GPL・LGPL の部品のソースは、Buildroot の各パッケージの取得元(`legal-info` の manifest に一覧)と、
   このリポジトリ(defconfig・パッチ・overlay)から得られる。
 
 ## SD 起動用の BOOT.bin(tezuka 0.2.4)
 
-`board/tezuka/plutoplus_udp/legacy-boot/plutoplus-0.2.4-BOOT.bin` は F5OEO/tezuka_fw リリース 0.2.4(コミット 365ea2e)の
+`board/tezuka/plutoplus_udp_fpga/legacy-boot/plutoplus-0.2.4-BOOT.bin` は F5OEO/tezuka_fw リリース 0.2.4(コミット 365ea2e)の
 `plutoplus.zip` の `sdimg/BOOT.bin` をそのまま使っている(SD 用の BOOT.bin はこれに置き換わる)。
 
 | 中身 | ライセンス |
@@ -47,7 +47,7 @@ OpenSSL(Apache-2.0)、maia-sdr ほか、Buildroot が組み込む各パッケー
 
 ## datvplutofrm から持ってきた DATV の部品
 
-`board/tezuka/plutoplus_udp/overlay/` の次のものは、F5OEO/datvplutofrm(F5OEO、F5UII ほか)を
+`board/tezuka/plutoplus_udp_fpga/overlay/` の次のものは、F5OEO/datvplutofrm(F5OEO、F5UII ほか)を
 [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) の `main` ブランチで手直ししたものを、そのまま持ってきている。
 
 | 部品 | 作者 | ライセンス |
@@ -129,15 +129,15 @@ SOFTWARE.
 
 *This English text is a translation for convenience. The full BSD-2-Clause and MIT license texts are in the Japanese part above, and they are in English.*
 
-## Licenses (plutoplus_udp)
+## Licenses (plutoplus_udp_fpga)
 
 This firmware combines many pieces of software. The license of each part is as follows.
 
 ### Overall (tezuka_fw and what this repository adds)
 
-- tezuka_fw (F5OEO and contributors): **GNU General Public License v3.0** ([LICENSE](https://github.com/kazushinjo/plutoplus-udp-fpga_fw/blob/main/LICENSE) at the repository root)
+- tezuka_fw (F5OEO and contributors): **GNU General Public License v3.0** ([LICENSE](https://github.com/kazushinjo/plutoplus-udp-fpga-fw/blob/main/LICENSE) at the repository root)
 - Settings, scripts and documents added in this repository
-  (`configs/plutoplus_udp_defconfig`; post-build.sh, lighttpd.conf, S89patchfirm, README.md and others in `board/tezuka/plutoplus_udp/`;
+  (`configs/plutoplus_udp_fpga_defconfig`; post-build.sh, lighttpd.conf, S89patchfirm, README.md and others in `board/tezuka/plutoplus_udp_fpga/`;
   the changes to `.github/workflows/main.yml`): **GPL-3.0**, matching tezuka_fw. Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)
 
 ### OSS packages in the firmware
@@ -147,14 +147,14 @@ PHP (PHP-3.01), lighttpd (BSD-3-Clause), FFmpeg (LGPL-2.1+, or GPL-2.0+ when GPL
 OpenSSL (Apache-2.0), maia-sdr and the other packages Buildroot includes follow their own licenses.
 
 - The license texts and an SBOM (CycloneDX) for all packages are collected by Buildroot's `legal-info` on every build.
-  They are in each release's `plutoplus_udp-licenses.zip` / `plutoplus_udp_fpga-licenses.zip` (`bom/licenses/`, `bom/sbom.json`).
+  They are in each release's `plutoplus_udp_fpga-licenses.zip` (`bom/licenses/`, `bom/sbom.json`).
 - A running Pluto+ also has `LICENSE.html` on its USB drive (a tezuka feature).
 - Sources for GPL and LGPL components are available from each Buildroot package's origin (listed in the `legal-info` manifest)
   and from this repository (defconfig, patches, overlay).
 
 ### BOOT.bin for SD boot (tezuka 0.2.4)
 
-`board/tezuka/plutoplus_udp/legacy-boot/plutoplus-0.2.4-BOOT.bin` is `sdimg/BOOT.bin` from `plutoplus.zip` in F5OEO/tezuka_fw release 0.2.4 (commit 365ea2e), unchanged (the SD BOOT.bin is replaced by it).
+`board/tezuka/plutoplus_udp_fpga/legacy-boot/plutoplus-0.2.4-BOOT.bin` is `sdimg/BOOT.bin` from `plutoplus.zip` in F5OEO/tezuka_fw release 0.2.4 (commit 365ea2e), unchanged (the SD BOOT.bin is replaced by it).
 
 | Contents | License |
 |---|---|
@@ -175,7 +175,7 @@ OpenSSL (Apache-2.0), maia-sdr and the other packages Buildroot includes follow 
 
 ### DATV components taken from datvplutofrm
 
-The following items in `board/tezuka/plutoplus_udp/overlay/` are taken as is from F5OEO/datvplutofrm (F5OEO, F5UII and others),
+The following items in `board/tezuka/plutoplus_udp_fpga/overlay/` are taken as is from F5OEO/datvplutofrm (F5OEO, F5UII and others),
 as modified on the `main` branch  of [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty).
 
 | Component | Authors | License |

@@ -1,6 +1,6 @@
 #!/bin/sh
 # pluto_dvb stand-in for the plutoplus_dvb bitstream (DVB-S2 encoder in the
-# FPGA). Installed as /root/pluto_dvb by board/tezuka/plutoplus_udp/post-build.sh.
+# FPGA). Installed as /root/pluto_dvb by board/tezuka/plutoplus_udp_fpga/post-build.sh.
 #
 # Takes the same options as the software pluto_dvb used by udpts.sh and
 # rtmppluto.sh, hands the modulation settings to pluto_stream /

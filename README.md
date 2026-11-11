@@ -1,8 +1,8 @@
-# plutoplus-udp-fpga_fw
+# plutoplus-udp-fpga-fw
 
-[tezuka](https://github.com/F5OEO/tezuka_fw)(F5OEO 氏)をもとにした、**Zynq-7010 の Pluto+ 用の SD カード起動ファーム**です。
-UDP 送信アプリから UDP で送られる TS を DATV(DVB-S/S2)で送信できるようにしてあります。
-A **SD card boot firmware for the Zynq-7010 Pluto+**, based on [tezuka](https://github.com/F5OEO/tezuka_fw) by F5OEO, with DATV (DVB-S/S2) transmit of a TS sent over UDP from a UDP sender app.
+[tezuka](https://github.com/F5OEO/tezuka_fw)(F5OEO 氏)をもとにした、**Zynq-7010 の Pluto+ 用の SD カード起動ファーム(FPGA 版)**です。
+UDP 送信アプリから UDP で送られる TS を DATV(DVB-S/S2)で送信できるようにしてあります。**DVB-S2 の変調は FPGA の送信回路で行います**。
+A **SD card boot firmware for the Zynq-7010 Pluto+ (FPGA build)**, based on [tezuka](https://github.com/F5OEO/tezuka_fw) by F5OEO, with DATV (DVB-S/S2) transmit of a TS sent over UDP from a UDP sender app. **DVB-S2 modulation is done in the FPGA transmit chain.**
 
 > このリポジトリは F5OEO 氏の許可を得て公開しています。 / Published with the permission of F5OEO.
 
@@ -14,22 +14,59 @@ A **SD card boot firmware for the Zynq-7010 Pluto+**, based on [tezuka](https://
 > **This is a UDP-only firmware.** It is not the analog-tuner firmware used with Portsdown 4.
 > It is modified to receive an MPEG-TS over UDP (port 8282) from a UDP sender app on a PC or phone and transmit it as DVB-S/S2.
 
-| 版 / Variant | DVB-S2 の変調 / Modulation | Maia-SDR | 説明 / Details |
+| 版 / Variant | DVB-S2 の変調 / Modulation | Maia-SDR | 場所 / Where |
 |---|---|---|---|
-| `plutoplus_udp` | ARM のソフト(pluto_dvb) / ARM software | あり / Yes | [board/tezuka/plutoplus_udp/README.md](board/tezuka/plutoplus_udp/README.md) |
-| `plutoplus_udp_fpga`(FPGA 版 / FPGA build) | FPGA | **なし / Not supported** | [plutoplus-udp-fpga-firm](https://github.com/kazushinjo/plutoplus-udp-fpga-firm)、[FPGA作成.md](board/tezuka/plutoplus_udp/FPGA作成.md) |
+| `plutoplus_udp_fpga`(このリポジトリ / this repository) | FPGA | **なし / Not supported** | [board/tezuka/plutoplus_udp_fpga/README.md](board/tezuka/plutoplus_udp_fpga/README.md)、[FPGA作成.md](board/tezuka/plutoplus_udp_fpga/FPGA作成.md)、HDL: [plutoplus-udp-fpga-firm](https://github.com/kazushinjo/plutoplus-udp-fpga-firm) |
+| `plutoplus_udp`(ソフト版 / software build) | ARM のソフト(pluto_dvb) / ARM software | あり / Yes | 別リポジトリ / separate repository: kazushinjo/plutoplus-udp-fw |
 
-**ダウンロード / Download:** [Releases](https://github.com/kazushinjo/plutoplus-udp-fpga_fw/releases)(`plutoplus_udp-build<番号>`・`plutoplus_udp_fpga-build<番号>`)。
-FPGA 版は [plutoplus-udp-fpga-firm の Releases](https://github.com/kazushinjo/plutoplus-udp-fpga-firm/releases) にも置いています。 / The FPGA build is also on the Releases of plutoplus-udp-fpga-firm.
+**ダウンロード / Download:** [Releases](https://github.com/kazushinjo/plutoplus-udp-fpga-fw/releases)(`plutoplus_udp_fpga-build<番号>`)。
+FPGA 版は [plutoplus-udp-fpga-firm の Releases](https://github.com/kazushinjo/plutoplus-udp-fpga-firm/releases) にも置きます。 / The FPGA build is also published on the Releases of plutoplus-udp-fpga-firm.
 
 **注意 / Notes**
 
 - **Zynq-7010(`XC7Z010`)の Pluto+ 専用**。Zynq-7020 などの基板では動きません。 / **Zynq-7010 Pluto+ only**; it does not work on Zynq-7020 or other boards.
 - **SD カード起動専用**(内蔵フラッシュには書き込みません)。32GB 以下・MBR・FAT32 のカードに zip の `sdimg/` の中身をコピーします。 / **SD card boot only** (the internal flash is not written). Copy the contents of `sdimg/` to a 32 GB or smaller MBR + FAT32 card.
 - **SD 起動には古い U-Boot 2016.07(tezuka 0.2.4 の BOOT.bin)が必要**です。今の tezuka の U-Boot 2025.01 ではこの Pluto+ は SD 起動しません。そのため `BOOT.bin` は 0.2.4 のもの、`uImage` は無圧縮にしてあります。`BOOT.bin` を入れ替えないでください。 / **SD boot needs the old U-Boot 2016.07 (tezuka 0.2.4 BOOT.bin)**; the current U-Boot 2025.01 does not boot this Pluto+ from SD. `BOOT.bin` is therefore the 0.2.4 one and `uImage` is uncompressed. Do not replace `BOOT.bin`.
-- FPGA 版は **Maia-SDR に対応していません**(Zynq-7010 に両方は入らないため)。 / The FPGA build **does not support Maia-SDR** (the Zynq-7010 cannot hold both).
+- **Maia-SDR に対応していません**(Zynq-7010 に DVB-S2 送信回路と両方は入らないため)。 / **Maia-SDR is not supported** (the Zynq-7010 cannot hold it together with the DVB-S2 chain).
 - 送信の試験では必ずアッテネーターとダミーロードを使ってください。 / Always use an attenuator and a dummy load when testing transmission.
-- クレジットとライセンスは [下の節](#license) と [board/tezuka/plutoplus_udp/LICENSE.md](board/tezuka/plutoplus_udp/LICENSE.md) を参照。 / See [License](#license) and [board/tezuka/plutoplus_udp/LICENSE.md](board/tezuka/plutoplus_udp/LICENSE.md) for credits and licenses.
+- クレジットとライセンスは [下の節](#license) と [board/tezuka/plutoplus_udp_fpga/LICENSE.md](board/tezuka/plutoplus_udp_fpga/LICENSE.md) を参照。 / See [License](#license) and [board/tezuka/plutoplus_udp_fpga/LICENSE.md](board/tezuka/plutoplus_udp_fpga/LICENSE.md) for credits and licenses.
+
+## UDP 専用であること / UDP-only
+
+このファームの DATV 送信は **UDP 専用**です。UDP 送信アプリから UDP 8282 に送られた MPEG-TS を `tsp` → FPGA の DVB-S2 送信回路(`pluto_stream` が操作)で DVB-S/S2 送信することだけを目的にしています。
+F5OEO 氏の datvplutofrm v0.32-dirty にあった、ほかの送信モード・Pluto 内でのエンコード・受信機能は入れていません(下の表)。
+RTMP 7272(`rtmppluto.sh`、H.264/H.265 をそのまま TS にして送信)は datvplutofrm と同じものが残っていますが、主な使い方ではなく実機では確認していません。
+
+The DATV transmit path of this firmware is **UDP only**: an MPEG-TS sent to UDP port 8282 by a UDP sender app goes through `tsp` → the FPGA DVB-S2 transmit chain (driven by `pluto_stream`) and is transmitted as DVB-S/S2.
+The other transmit modes, on-board encoding and receive functions of F5OEO's datvplutofrm v0.32-dirty are not included (see the table below).
+RTMP on port 7272 (`rtmppluto.sh`, remuxes H.264/H.265 to TS and transmits) is kept as in datvplutofrm, but it is not the intended use and has not been tested on hardware.
+
+## v0.32-dirty と比べて無い機能 / Features missing compared with v0.32-dirty
+
+比較の対象は F5OEO/datvplutofrm `63f2465`(v0.32-dirty)。FPGA 版はこの表に加えて Maia-SDR・IQEngine・tezuka ダッシュボードも無い(7010 に入りきらないため)。 / Compared with F5OEO/datvplutofrm `63f2465` (v0.32-dirty). In addition, the FPGA build has no Maia-SDR, IQEngine or tezuka dashboard (they do not fit in the 7010 together with the DVB-S2 chain).
+
+| 分類 / Area | 無いもの / Missing | 内容 / Notes |
+|---|---|---|
+| ほかの送信モード / Other TX modes | `hacktv` | アナログ TV 送信 / analog TV transmit |
+| | `plutotx` + `csdr`(`fm.sh`・`ssb.sh`) | FM・SSB 送信 / FM and SSB transmit |
+| | `audio.sh`(RTMP 7373)・`pisstv` | FreeDV・SSTV・SSB の音声送信 / FreeDV, SSTV and SSB from an RTMP audio stream |
+| | `leandvbtx`・`paintrf`・`radar`・`rx2tx`・`scream-raw`・`qo100websdr` | 実験用ツール / experimental tools |
+| DATV の付属機能 / DATV extras | `rtmppluto_transcode.sh`(x264) | Pluto 内での再エンコード(x264 も無し) / on-board re-encoding (no x264) |
+| | `camOK.sh`(v4l・USB カメラ) | USB カメラを Pluto に直接つないで送信 / transmit from a USB camera on the Pluto (no V4L/UVC) |
+| | `autoudp.sh`(UDP 11000) | 設定なしの簡易 UDP 送信 / simple UDP transmit without settings |
+| | `watchconsoletx.sh` | 送信ゲインに連動した AD9361 GPO の PTT 出力。Web 画面の PTT ボタン(`requests.php`)だけ残っている / PTT on the AD9361 GPO following the TX gain; only the PTT button in `requests.php` remains |
+| 受信・解析 / Receive and analysis | `leandvb`・`ldpc_tool` | DVB-S/S2 受信 / DVB-S/S2 receive |
+| | `rcv_analyse.sh`・`rcv_analyse.php`・`decodevideo.sh` | 受信 TS の解析(`analysis.php` の受信解析は動かない) / received-TS analysis (the receive part of `analysis.php` does not work) |
+| | `www/rx/` | ブラウザの WebSDR 画面 / browser WebSDR page |
+| TSDuck | プラグイン 73 個 → 5 個(ip・file・sdt・analyze・pcrextract)、`tsresync`・`tsversion` | UDP 送信に要るものだけ / only what UDP transmit needs |
+| システム / System | gpsd・ntp | GPS・時刻合わせ / GPS and NTP |
+| | hostapd | Wi-Fi アクセスポイント / Wi-Fi access point |
+| | `S91nfs-mount` | 起動時の NFS マウント(カーネルの NFS は有効) / NFS mount at boot (kernel NFS is enabled) |
+| | opkg・nano・strace・alsa-utils(aplay)・ad936x_ref_cal・fftw | パッケージ / packages |
+| | `www/index.html` | F5OEO の説明ページ。`/` は tezuka のダッシュボード / F5OEO's info page; `/` is the tezuka dashboard |
+| | `/mnt/jffs2/patch.zip` の中身 / contents of `patch.zip` | 実機に入っていた追加分は不明で移していない / extras installed on the original device are unknown and not carried over |
+
+v0.32-dirty から持ってこなかったが不要なもの(`S94pluto-mods`・busybox httpd など)は [board/tezuka/plutoplus_udp_fpga/README.md](board/tezuka/plutoplus_udp_fpga/README.md#datvplutofrm-から持ってこなかったもの) を参照。 / Items not carried over because they are not needed (`S94pluto-mods`, busybox httpd, etc.) are listed in the board README.
 
 以下は元の tezuka の README です。 / The original tezuka README follows.
 
@@ -91,9 +128,9 @@ This firmware is developed entirely in my free time. Maintaining multiple boards
 | PCIe SDR 7010 | 7010 | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | Via PCIe <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | usb-c | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | [OpenSDRLab](https://opensourcesdrlab.com/products/opensourcesdrlab-pcie-version-plutosdr-ad9363-xc7z010?DIST=RkVFGVU%3D)|
 | OpenSDRLab 7010 Mini | 7010 | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | usb-c | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | [OpenSDRLab](https://opensourcesdrlab.com/products/7010-ad9363-sdr-mini?DIST=RkVFGVU%3D)|
 
-¹ `plutoplus_udp`(このリポジトリ): DATV の変調は FPGA の DVB 回路ではなくソフトで行う。UDP 送信アプリ(UDP 8282、`save.php`/`pluto.php`)の TS を `pluto_dvb` と TSDuck の `tsp` で送信する。SD カード起動専用(イメージが QSPI のファーム領域に入らない)。詳しくは [board/tezuka/plutoplus_udp/README.md](board/tezuka/plutoplus_udp/README.md)。
+¹ `plutoplus_udp`(このリポジトリ): DATV の変調は FPGA の DVB 回路ではなくソフトで行う。UDP 送信アプリ(UDP 8282、`save.php`/`pluto.php`)の TS を `pluto_dvb` と TSDuck の `tsp` で送信する。SD カード起動専用(イメージが QSPI のファーム領域に入らない)。詳しくは [board/tezuka/plutoplus_udp_fpga/README.md](board/tezuka/plutoplus_udp_fpga/README.md)。
 
-¹ `plutoplus_udp` (this repository): DATV modulation is done in software rather than the FPGA DVB chain. TS from the UDP sender app (UDP 8282, `save.php`/`pluto.php`) is transmitted with `pluto_dvb` and TSDuck's `tsp`. SD card boot only (the image does not fit in the QSPI firmware area). See [board/tezuka/plutoplus_udp/README.md](board/tezuka/plutoplus_udp/README.md).
+¹ `plutoplus_udp` (this repository): DATV modulation is done in software rather than the FPGA DVB chain. TS from the UDP sender app (UDP 8282, `save.php`/`pluto.php`) is transmitted with `pluto_dvb` and TSDuck's `tsp`. SD card boot only (the image does not fit in the QSPI firmware area). See [board/tezuka/plutoplus_udp_fpga/README.md](board/tezuka/plutoplus_udp_fpga/README.md).
 
 
 ---
@@ -224,27 +261,27 @@ All materials are in buildroot/output/images
 - Gwenhael Goavec-Merou for inspiration https://github.com/oscimp/PlutoSDR
 - LamaBleu for helping me with buildroot and introduce me Plutosdr
 - https://github.com/hz12opensource/libresdr for overclock and fpga inspiration
-- UDP 版の謝辞は [board/tezuka/plutoplus_udp/README.md](board/tezuka/plutoplus_udp/README.md) を参照 / See that file for the acknowledgements of the UDP edition
+- UDP 版の謝辞は [board/tezuka/plutoplus_udp_fpga/README.md](board/tezuka/plutoplus_udp_fpga/README.md) を参照 / See that file for the acknowledgements of the UDP edition
 - All the opensource community !
 
 ---
 
 ## License
 
-ライセンス(詳しくは [board/tezuka/plutoplus_udp/LICENSE.md](board/tezuka/plutoplus_udp/LICENSE.md))
+ライセンス(詳しくは [board/tezuka/plutoplus_udp_fpga/LICENSE.md](board/tezuka/plutoplus_udp_fpga/LICENSE.md))
 
 * **tezuka ファーム**(F5OEO ほか): [GNU General Public License v3.0](LICENSE)
-* **plutoplus_udp で足したもの**(`configs/plutoplus_udp*_defconfig`、`board/tezuka/plutoplus_udp/`、`board/tezuka/plutoplus_dvb/`、CI の変更): GPL-3.0、Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)
-* **ファームに入るパッケージ**(Linux、U-Boot、BusyBox、PHP、lighttpd、FFmpeg ほか): それぞれのライセンス。全パッケージのライセンス文と SBOM は Buildroot の `legal-info` で集め、各リリースの `plutoplus_udp-licenses.zip`・`plutoplus_udp_fpga-licenses.zip` に付けている
+* **plutoplus_udp で足したもの**(`configs/plutoplus_udp_fpga_defconfig`、`board/tezuka/plutoplus_udp_fpga/`、`board/tezuka/plutoplus_dvb/`、CI の変更): GPL-3.0、Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)
+* **ファームに入るパッケージ**(Linux、U-Boot、BusyBox、PHP、lighttpd、FFmpeg ほか): それぞれのライセンス。全パッケージのライセンス文と SBOM は Buildroot の `legal-info` で集め、各リリースの `plutoplus_udp_fpga-licenses.zip` に付けている
 * **同梱しているサードパーティのファイル**: TSDuck(BSD-2-Clause)、jQuery・Chart.js・chartjs-plugin-labels・Socket.IO・js-cookie(MIT)
 * **FPGA 版(plutoplus_udp_fpga)**: pluto_stream(GPL-2.0+)、ビットストリームは maia-hdl(MIT)・ADI HDL(各ライセンス)・dvb_fpga(CERN-OHL-W v2。ハードウェアを作るときはソースの場所を外装に書く)の組み合わせ
 * **F5OEO/datvplutofrm から持ってきた DATV の部品**(`udpts.sh`、`rtmppluto.sh`、PHP の Web 画面、`pluto_dvb` の実行ファイル): 元のリポジトリにライセンスの明記はないが、作者 F5OEO 氏から公開の許可をいただいている
 
-Licenses (details in [board/tezuka/plutoplus_udp/LICENSE.md](board/tezuka/plutoplus_udp/LICENSE.md))
+Licenses (details in [board/tezuka/plutoplus_udp_fpga/LICENSE.md](board/tezuka/plutoplus_udp_fpga/LICENSE.md))
 
 * **tezuka firmware** (F5OEO and others): [GNU General Public License v3.0](LICENSE)
-* **What plutoplus_udp adds** (`configs/plutoplus_udp*_defconfig`, `board/tezuka/plutoplus_udp/`, `board/tezuka/plutoplus_dvb/`, CI changes): GPL-3.0, Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)
-* **Packages in the firmware** (Linux, U-Boot, BusyBox, PHP, lighttpd, FFmpeg and others): their own licenses. License texts and the SBOM for all packages are collected by Buildroot's `legal-info` and attached to each release as `plutoplus_udp-licenses.zip` / `plutoplus_udp_fpga-licenses.zip`
+* **What plutoplus_udp adds** (`configs/plutoplus_udp_fpga_defconfig`, `board/tezuka/plutoplus_udp_fpga/`, `board/tezuka/plutoplus_dvb/`, CI changes): GPL-3.0, Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)
+* **Packages in the firmware** (Linux, U-Boot, BusyBox, PHP, lighttpd, FFmpeg and others): their own licenses. License texts and the SBOM for all packages are collected by Buildroot's `legal-info` and attached to each release as `plutoplus_udp_fpga-licenses.zip`
 * **Bundled third-party files**: TSDuck (BSD-2-Clause); jQuery, Chart.js, chartjs-plugin-labels, Socket.IO, js-cookie (MIT)
 * **FPGA version (plutoplus_udp_fpga)**: pluto_stream (GPL-2.0+); the bitstream combines maia-hdl (MIT), ADI HDL (its licenses) and dvb_fpga (CERN-OHL-W v2; hardware built with it must show the source location on its exterior)
 * **DATV components from F5OEO/datvplutofrm** (`udpts.sh`, `rtmppluto.sh`, the PHP web pages, the `pluto_dvb` executable): the original repository states no license; they are published with the permission of the author, F5OEO
