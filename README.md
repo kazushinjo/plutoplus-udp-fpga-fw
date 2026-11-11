@@ -1,6 +1,31 @@
-> **plutoplus_fw-shonan**: このブランチは `plutoplus_shonan` を足したもの。tezuka に Shonan_Lite / Portsdown 4 の DATV 送信の部品を加えた、Pluto+ の SD カード起動用ファームです。もう 1 つの `plutoplus_shonan_dvb` は、DVB-S2 の変調を FPGA で行う版です(7010 に収めるため Maia-SDR を外す。ブランチ `rrc-x2` で実機確認中)。詳しくは [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md) と [ライセンス](#license) の節を見てください。
->
-> **plutoplus_fw-shonan**: this branch adds `plutoplus_shonan`, a Pluto+ SD card boot firmware that adds the Shonan_Lite / Portsdown 4 DATV transmit components to tezuka. The other variant, `plutoplus_shonan_dvb`, performs DVB-S2 modulation in the FPGA (Maia-SDR is removed to fit the 7010; being verified on hardware on branch `rrc-x2`). See [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md) and the [License](#license) section.
+# plutoplus_fw-shonan
+
+[tezuka](https://github.com/F5OEO/tezuka_fw)(F5OEO 氏)をもとにした、**Zynq-7010 の Pluto+ 用の SD カード起動ファーム**です。
+Shonan_Lite と Portsdown 4 で DATV(DVB-S2)送信ができるようにしてあります。
+A **SD card boot firmware for the Zynq-7010 Pluto+**, based on [tezuka](https://github.com/F5OEO/tezuka_fw) by F5OEO, with DATV (DVB-S2) transmit support for Shonan_Lite and Portsdown 4.
+
+> このリポジトリは F5OEO 氏の許可を得て公開しています。 / Published with the permission of F5OEO.
+
+| 版 / Variant | DVB-S2 の変調 / Modulation | Maia-SDR | 説明 / Details |
+|---|---|---|---|
+| `plutoplus_shonan` | ARM のソフト(pluto_dvb) / ARM software | あり / Yes | [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md) |
+| `plutoplus_shonan_dvb`(FPGA 版 / FPGA build) | FPGA | **なし / Not supported** | [Plutoplus-FPGA-firm](https://github.com/kazushinjo/Plutoplus-FPGA-firm)、[FPGA作成.md](board/tezuka/shonan/FPGA作成.md) |
+
+**ダウンロード / Download:** [Releases](https://github.com/kazushinjo/plutoplus_fw-shonan/releases)(`plutoplus_shonan-build<番号>`・`plutoplus_shonan_dvb-build<番号>`)。
+FPGA 版は [Plutoplus-FPGA-firm の Releases](https://github.com/kazushinjo/Plutoplus-FPGA-firm/releases) にも置いています。 / The FPGA build is also on the Releases of Plutoplus-FPGA-firm.
+
+**注意 / Notes**
+
+- **Zynq-7010(`XC7Z010`)の Pluto+ 専用**。Zynq-7020 などの基板では動きません。 / **Zynq-7010 Pluto+ only**; it does not work on Zynq-7020 or other boards.
+- **SD カード起動専用**(内蔵フラッシュには書き込みません)。32GB 以下・MBR・FAT32 のカードに zip の `sdimg/` の中身をコピーします。 / **SD card boot only** (the internal flash is not written). Copy the contents of `sdimg/` to a 32 GB or smaller MBR + FAT32 card.
+- **SD 起動には古い U-Boot 2016.07(tezuka 0.2.4 の BOOT.bin)が必要**です。今の tezuka の U-Boot 2025.01 ではこの Pluto+ は SD 起動しません。そのため `BOOT.bin` は 0.2.4 のもの、`uImage` は無圧縮にしてあります。`BOOT.bin` を入れ替えないでください。 / **SD boot needs the old U-Boot 2016.07 (tezuka 0.2.4 BOOT.bin)**; the current U-Boot 2025.01 does not boot this Pluto+ from SD. `BOOT.bin` is therefore the 0.2.4 one and `uImage` is uncompressed. Do not replace `BOOT.bin`.
+- FPGA 版は **Maia-SDR に対応していません**(Zynq-7010 に両方は入らないため)。 / The FPGA build **does not support Maia-SDR** (the Zynq-7010 cannot hold both).
+- 送信の試験では必ずアッテネーターとダミーロードを使ってください。 / Always use an attenuator and a dummy load when testing transmission.
+- クレジットとライセンスは [下の節](#license) と [board/tezuka/shonan/LICENSE.md](board/tezuka/shonan/LICENSE.md) を参照。 / See [License](#license) and [board/tezuka/shonan/LICENSE.md](board/tezuka/shonan/LICENSE.md) for credits and licenses.
+
+以下は元の tezuka の README です。 / The original tezuka README follows.
+
+---
 
 ![tezuka banner](/doc/tezuka.png)
 
@@ -202,16 +227,16 @@ All materials are in buildroot/output/images
 
 * **tezuka ファーム**(F5OEO ほか): [GNU General Public License v3.0](LICENSE)
 * **plutoplus_shonan で足したもの**(`configs/plutoplus_shonan*_defconfig`、`board/tezuka/shonan/`、`board/tezuka/plutoplus_dvb/`、CI の変更): GPL-3.0、Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)
-* **ファームに入るパッケージ**(Linux、U-Boot、BusyBox、PHP、lighttpd、FFmpeg ほか): それぞれのライセンス。全パッケージのライセンス文と SBOM は Buildroot の `legal-info` で集め、プレリリースの `plutoplus_shonan-licenses.zip` に付けている
+* **ファームに入るパッケージ**(Linux、U-Boot、BusyBox、PHP、lighttpd、FFmpeg ほか): それぞれのライセンス。全パッケージのライセンス文と SBOM は Buildroot の `legal-info` で集め、各リリースの `plutoplus_shonan-licenses.zip`・`plutoplus_shonan_dvb-licenses.zip` に付けている
 * **同梱しているサードパーティのファイル**: TSDuck(BSD-2-Clause)、jQuery・Chart.js・chartjs-plugin-labels・Socket.IO・js-cookie(MIT)
 * **FPGA 版(plutoplus_shonan_dvb)**: pluto_stream(GPL-2.0+)、ビットストリームは maia-hdl(MIT)・ADI HDL(各ライセンス)・dvb_fpga(CERN-OHL-W v2。ハードウェアを作るときはソースの場所を外装に書く)の組み合わせ
-* **F5OEO/datvplutofrm から持ってきた DATV の部品**(`udpts.sh`、`rtmppluto.sh`、PHP の Web 画面、`pluto_dvb` の実行ファイル): 元のリポジトリにライセンスの明記がない。これを含むファームを公開・配布する前に、作者(F5OEO)の許可かライセンスの確認が必要
+* **F5OEO/datvplutofrm から持ってきた DATV の部品**(`udpts.sh`、`rtmppluto.sh`、PHP の Web 画面、`pluto_dvb` の実行ファイル): 元のリポジトリにライセンスの明記はないが、作者 F5OEO 氏から公開の許可をいただいている
 
 Licenses (details in [board/tezuka/shonan/LICENSE.md](board/tezuka/shonan/LICENSE.md))
 
 * **tezuka firmware** (F5OEO and others): [GNU General Public License v3.0](LICENSE)
 * **What plutoplus_shonan adds** (`configs/plutoplus_shonan*_defconfig`, `board/tezuka/shonan/`, `board/tezuka/plutoplus_dvb/`, CI changes): GPL-3.0, Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)
-* **Packages in the firmware** (Linux, U-Boot, BusyBox, PHP, lighttpd, FFmpeg and others): their own licenses. License texts and the SBOM for all packages are collected by Buildroot's `legal-info` and attached to the prerelease as `plutoplus_shonan-licenses.zip`
+* **Packages in the firmware** (Linux, U-Boot, BusyBox, PHP, lighttpd, FFmpeg and others): their own licenses. License texts and the SBOM for all packages are collected by Buildroot's `legal-info` and attached to each release as `plutoplus_shonan-licenses.zip` / `plutoplus_shonan_dvb-licenses.zip`
 * **Bundled third-party files**: TSDuck (BSD-2-Clause); jQuery, Chart.js, chartjs-plugin-labels, Socket.IO, js-cookie (MIT)
 * **FPGA version (plutoplus_shonan_dvb)**: pluto_stream (GPL-2.0+); the bitstream combines maia-hdl (MIT), ADI HDL (its licenses) and dvb_fpga (CERN-OHL-W v2; hardware built with it must show the source location on its exterior)
-* **DATV components from F5OEO/datvplutofrm** (`udpts.sh`, `rtmppluto.sh`, the PHP web pages, the `pluto_dvb` executable): the original repository states no license. Before publishing or distributing firmware containing them, obtain the author's (F5OEO) permission or confirm the license
+* **DATV components from F5OEO/datvplutofrm** (`udpts.sh`, `rtmppluto.sh`, the PHP web pages, the `pluto_dvb` executable): the original repository states no license; they are published with the permission of the author, F5OEO

@@ -6,7 +6,7 @@
 
 ## 全体(tezuka_fw と、このリポジトリで足したもの)
 
-- tezuka_fw(F5OEO and contributors): **GNU General Public License v3.0**(リポジトリ直下の [LICENSE](../../../LICENSE))
+- tezuka_fw(F5OEO and contributors): **GNU General Public License v3.0**(リポジトリ直下の [LICENSE](https://github.com/kazushinjo/plutoplus_fw-shonan/blob/shonan/LICENSE))
 - このリポジトリで足した設定・スクリプト・文書
   (`configs/plutoplus_shonan_defconfig`、`board/tezuka/shonan/` の post-build.sh・lighttpd.conf・S89patchfirm・README.md など、
   `.github/workflows/main.yml` の変更): tezuka_fw に合わせて **GPL-3.0**。Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)
@@ -18,7 +18,7 @@ PHP(PHP-3.01)、lighttpd(BSD-3-Clause)、FFmpeg(LGPL-2.1+、GPL 部品を有効�
 OpenSSL(Apache-2.0)、maia-sdr ほか、Buildroot が組み込む各パッケージは、それぞれのライセンスに従う。
 
 - 全パッケージのライセンス文と SBOM(CycloneDX)は、ビルドのたびに Buildroot の `legal-info` で集めている。
-  プレリリースの `plutoplus_shonan-licenses.zip`(`bom/licenses/`・`bom/sbom.json`)に入っている。
+  各リリースの `plutoplus_shonan-licenses.zip`・`plutoplus_shonan_dvb-licenses.zip`(`bom/licenses/`・`bom/sbom.json`)に入っている。
 - 起動中の Pluto+ の USB ドライブにも `LICENSE.html` がある(tezuka の仕組み)。
 - GPL・LGPL の部品のソースは、Buildroot の各パッケージの取得元(`legal-info` の manifest に一覧)と、
   このリポジトリ(defconfig・パッチ・overlay)から得られる。
@@ -52,13 +52,13 @@ kazushinjo/datvplutofrm の `v0.39-shonan` ブランチで手直ししたもの�
 
 | 部品 | 作者 | ライセンス |
 |---|---|---|
-| `root/udpts.sh`、`rtmppluto.sh`、`watchudp.sh`、`strategy.sh`、`report*.sh`、`readconfig_from_env.sh`、`writeconfig_to_env.sh`、`update_frm_reboot.sh`、`pluto_temp.sh`、`etc/init.d/S90datv`、`etc/php.ini` | F5OEO、F5UII ほか(手直し: Kazu Shinjo (JA6FUF/JH1XHX)) | 元リポジトリにライセンスの明記なし |
-| `www/` の PHP・画像・`lib/wf.js`・`lib/u16Websocket.js`・`lib/tooltip.js` | F5OEO、F5UII ほか(手直し: Kazu Shinjo (JA6FUF/JH1XHX)) | 元リポジトリにライセンスの明記なし |
-| `root/pluto_dvb`(ビルド済みの実行ファイル) | F5OEO | 元リポジトリにライセンスの明記なし。ソースは公開されているものを見つけられていない |
+| `root/udpts.sh`、`rtmppluto.sh`、`watchudp.sh`、`strategy.sh`、`report*.sh`、`readconfig_from_env.sh`、`writeconfig_to_env.sh`、`update_frm_reboot.sh`、`pluto_temp.sh`、`etc/init.d/S90datv`、`etc/php.ini` | F5OEO、F5UII ほか(手直し: Kazu Shinjo (JA6FUF/JH1XHX)) | 元リポジトリにライセンスの明記なし。F5OEO 氏の許可を得て公開 |
+| `www/` の PHP・画像・`lib/wf.js`・`lib/u16Websocket.js`・`lib/tooltip.js` | F5OEO、F5UII ほか(手直し: Kazu Shinjo (JA6FUF/JH1XHX)) | 元リポジトリにライセンスの明記なし。F5OEO 氏の許可を得て公開 |
+| `root/pluto_dvb`(ビルド済みの実行ファイル) | F5OEO | 元リポジトリにライセンスの明記なし。F5OEO 氏の許可を得て公開(ソースは公開されているものを見つけられていない) |
 
 元の F5OEO/datvplutofrm には LICENSE ファイルが無く、ライセンスが決められていない。
-このため、これらの部品を含むこのファームを**公開・配布する前に、作者(F5OEO)の許可を得るか、ライセンスを確認すること**。
-このリポジトリは非公開で、個人の利用を前提にしている。
+これらの部品を含むこのファームは、**作者 F5OEO 氏の許可を得て公開している**(2026-11)。
+これらの部品を別の用途で再配布するときは、作者に確認すること。
 
 ## 同梱しているサードパーティのライブラリ
 
@@ -135,7 +135,7 @@ This firmware combines many pieces of software. The license of each part is as f
 
 ### Overall (tezuka_fw and what this repository adds)
 
-- tezuka_fw (F5OEO and contributors): **GNU General Public License v3.0** ([LICENSE](../../../LICENSE) at the repository root)
+- tezuka_fw (F5OEO and contributors): **GNU General Public License v3.0** ([LICENSE](https://github.com/kazushinjo/plutoplus_fw-shonan/blob/shonan/LICENSE) at the repository root)
 - Settings, scripts and documents added in this repository
   (`configs/plutoplus_shonan_defconfig`; post-build.sh, lighttpd.conf, S89patchfirm, README.md and others in `board/tezuka/shonan/`;
   the changes to `.github/workflows/main.yml`): **GPL-3.0**, matching tezuka_fw. Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)
@@ -147,7 +147,7 @@ PHP (PHP-3.01), lighttpd (BSD-3-Clause), FFmpeg (LGPL-2.1+, or GPL-2.0+ when GPL
 OpenSSL (Apache-2.0), maia-sdr and the other packages Buildroot includes follow their own licenses.
 
 - The license texts and an SBOM (CycloneDX) for all packages are collected by Buildroot's `legal-info` on every build.
-  They are in the prerelease `plutoplus_shonan-licenses.zip` (`bom/licenses/`, `bom/sbom.json`).
+  They are in each release's `plutoplus_shonan-licenses.zip` / `plutoplus_shonan_dvb-licenses.zip` (`bom/licenses/`, `bom/sbom.json`).
 - A running Pluto+ also has `LICENSE.html` on its USB drive (a tezuka feature).
 - Sources for GPL and LGPL components are available from each Buildroot package's origin (listed in the `legal-info` manifest)
   and from this repository (defconfig, patches, overlay).
@@ -180,13 +180,13 @@ as modified on the `v0.39-shonan` branch of kazushinjo/datvplutofrm.
 
 | Component | Authors | License |
 |---|---|---|
-| `root/udpts.sh`, `rtmppluto.sh`, `watchudp.sh`, `strategy.sh`, `report*.sh`, `readconfig_from_env.sh`, `writeconfig_to_env.sh`, `update_frm_reboot.sh`, `pluto_temp.sh`, `etc/init.d/S90datv`, `etc/php.ini` | F5OEO, F5UII and others (modified by Kazu Shinjo (JA6FUF/JH1XHX)) | No license stated in the original repository |
-| PHP, images, `lib/wf.js`, `lib/u16Websocket.js`, `lib/tooltip.js` in `www/` | F5OEO, F5UII and others (modified by Kazu Shinjo (JA6FUF/JH1XHX)) | No license stated in the original repository |
-| `root/pluto_dvb` (prebuilt executable) | F5OEO | No license stated in the original repository. No published source could be found |
+| `root/udpts.sh`, `rtmppluto.sh`, `watchudp.sh`, `strategy.sh`, `report*.sh`, `readconfig_from_env.sh`, `writeconfig_to_env.sh`, `update_frm_reboot.sh`, `pluto_temp.sh`, `etc/init.d/S90datv`, `etc/php.ini` | F5OEO, F5UII and others (modified by Kazu Shinjo (JA6FUF/JH1XHX)) | No license stated in the original repository. Published with the permission of F5OEO |
+| PHP, images, `lib/wf.js`, `lib/u16Websocket.js`, `lib/tooltip.js` in `www/` | F5OEO, F5UII and others (modified by Kazu Shinjo (JA6FUF/JH1XHX)) | No license stated in the original repository. Published with the permission of F5OEO |
+| `root/pluto_dvb` (prebuilt executable) | F5OEO | No license stated in the original repository. Published with the permission of F5OEO (no published source could be found) |
 
 The original F5OEO/datvplutofrm has no LICENSE file, so no license has been set.
-For this reason, **before publishing or distributing this firmware containing these components, obtain permission from the author (F5OEO) or confirm the license**.
-This repository is private and intended for personal use.
+This firmware, including these components, is **published with the permission of the author, F5OEO** (2026-11).
+Ask the author before redistributing these components for other purposes.
 
 ### Bundled third-party libraries
 

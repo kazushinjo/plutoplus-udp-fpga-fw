@@ -54,7 +54,7 @@ gh run list --repo kazushinjo/plutoplus_fw-shonan --workflow main.yml --limit 3
 
 - できた zip はプレリリース `plutoplus_shonan-build<実行番号>` に付く(Artifacts は容量上限のため当てにしない)。
 - 所要時間: キャッシュの無い初回で約 2 時間 40 分(U-Boot 36 分・カーネル 46 分・rootfs 68 分)。
-  2 回目からはキャッシュが効く。非公開リポジトリなので Actions の無料枠(月 2000 分)を使う。
+  2 回目からはキャッシュが効く。非公開だったときは Actions の無料枠(月 2000 分)を使っていた。
 - Linux 機で手元ビルドする場合:
 
 ```
@@ -217,7 +217,7 @@ tezuka の正式版と間違えないよう、build6 から独自の名前にし
 | `overlay/etc/init.d/S89patchfirm`, `overlay/usr/sbin/device_persistent_keys` | SSH のホスト鍵(ecdsa・ed25519・rsa)を起動時に作って保存する。電源断の後も鍵が変わらない。`/mnt/jffs2/patch.zip` があれば展開 |
 | `post-build.sh` | maia-httpd を 127.0.0.1:8000 へ移す、USB ネットワークの既定を NCM にする、ログイン表示に `v…-shonan` 行、fwversion.txt・releasenote.txt 作成 |
 | defconfig | lighttpd(pcre)、PHP 8.5(cgi・cli・session・sockets)、bc、ffmpeg 6.1.5(datvplutofrm v0.39-shonan と同じ最小構成)。ホスト名は Langstone の既定に合わせて `pluto`。`postimage-qspi.sh` を外し SD カード用だけ作る |
-| `.github/workflows/main.yml` | 手動ビルドで zip をプレリリースに付ける、非公開リポジトリでは attest を飛ばし Artifacts の保存失敗で止まらない |
+| `.github/workflows/main.yml` | 手動ビルドで zip をプレリリースに付ける、非公開リポジトリのときは attest を飛ばし Artifacts の保存失敗で止まらない |
 
 ## Portsdown 4 から使う機能
 
@@ -241,7 +241,7 @@ Portsdown 4 の設定(`plutoip`)は Pluto+ の LAN の IP にする。
 
 ## リポジトリと CI の注意
 
-- リポジトリ: kazushinjo/plutoplus_fw-shonan(非公開)。既定ブランチ `shonan`、`main` は tezuka の元のまま。
+- リポジトリ: kazushinjo/plutoplus_fw-shonan(公開)。既定ブランチ `shonan`、`main` は tezuka の元のまま。
   手元の作業場所は `~/AppDev/tezuka_fw-shonan`(remote: `origin` = このリポジトリ、`upstream` = F5OEO/tezuka_fw)。
 - tezuka のタグ(`v0.3.x`)は push しない。タグを push すると全機種のリリースビルドが動く。
   そのため版の表示はタグでなくコミット番号になる(例: `v6822-shonan`)。
@@ -249,7 +249,7 @@ Portsdown 4 の設定(`plutoip`)は Pluto+ の LAN の IP にする。
   `main.yml` を変更するコミットを push したら登録された。
 - Artifacts の容量が上限(Artifact storage quota has been hit)のため、zip はプレリリースで受け取る。
 - tezuka の CLAUDE.md に合わせ、コミットメッセージは ASCII のみ。
-- FPGA 版の HDL は別の非公開リポジトリ kazushinjo/Plutoplus-FPGA-firm(Actions は無効)。詳しくは「FPGA 版」の節。
+- FPGA 版の HDL は別の公開リポジトリ [kazushinjo/Plutoplus-FPGA-firm](https://github.com/kazushinjo/Plutoplus-FPGA-firm)(Actions は無効)。詳しくは「FPGA 版」の節。
 - tezuka 本家の更新を取り込むとき: `git fetch upstream && git merge upstream/main`(shonan ブランチで)
 
 ## SD 起動しなかった件(2026-10-24)
@@ -393,7 +393,7 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 
       ```
       gh auth login
-      gh repo clone kazushinjo/Plutoplus-FPGA-firm -- -b main
+      git clone -b main https://github.com/kazushinjo/Plutoplus-FPGA-firm.git
       cd Plutoplus-FPGA-firm
       ```
 
@@ -568,17 +568,17 @@ FPGA 版は SD カードにしか入っていない。QSPI(内蔵フラッシュ
 - CNES: libgse
 - Buildroot、FFmpeg、PHP、lighttpd ほか、ファームに入っているオープンソースの各プロジェクト
 
-謝辞は、ライセンスや許諾の代わりにはならない。datvplutofrm から持ってきた部品の扱いは [LICENSE.md](LICENSE.md) を参照。
+このリポジトリは F5OEO 氏の許可を得て公開している。datvplutofrm から持ってきた部品の扱いは [LICENSE.md](LICENSE.md) を参照。
 
 ## ライセンス
 
 詳しくは [LICENSE.md](LICENSE.md)。
 
-- tezuka_fw とこのリポジトリで足した設定・スクリプト・文書: GPL-3.0(リポジトリ直下の [LICENSE](../../../LICENSE))
-- ファームに入る各 OSS パッケージ: それぞれのライセンス。ライセンス文と SBOM はプレリリースの `plutoplus_shonan-licenses.zip`
+- tezuka_fw とこのリポジトリで足した設定・スクリプト・文書: GPL-3.0(リポジトリ直下の [LICENSE](https://github.com/kazushinjo/plutoplus_fw-shonan/blob/shonan/LICENSE))
+- ファームに入る各 OSS パッケージ: それぞれのライセンス。ライセンス文と SBOM は各リリースの `plutoplus_shonan-licenses.zip`・`plutoplus_shonan_dvb-licenses.zip`
 - TSDuck: BSD-2-Clause、jQuery・Chart.js・Socket.IO など Web 画面のライブラリ: MIT
 - datvplutofrm から持ってきた DATV の部品(udpts.sh・PHP ページ・pluto_dvb など): 元の F5OEO/datvplutofrm に
-  ライセンスの明記が無い。**公開・配布する前に作者(F5OEO)の許可かライセンスの確認が必要**
+  ライセンスの明記が無いが、**作者 F5OEO 氏の許可を得て公開している**
 
 ---
 
@@ -617,7 +617,7 @@ gh run list --repo kazushinjo/plutoplus_fw-shonan --workflow main.yml --limit 3
 
 - The zip is attached to the prerelease `plutoplus_shonan-build<run-number>` (Artifacts are not relied on because of the storage quota).
 - Time: about 2 h 40 min for the first build with no cache (U-Boot 36 min, kernel 46 min, rootfs 68 min).
-  Later builds use the cache. The repository is private, so it uses the free Actions allowance (2000 minutes per month).
+  Later builds use the cache. While the repository was private, this used the free Actions allowance (2000 minutes per month).
 - To build locally on a Linux machine:
 
 ```
@@ -780,7 +780,7 @@ Since build6 these have their own names, so they are not mistaken for official t
 | `overlay/etc/init.d/S89patchfirm`, `overlay/usr/sbin/device_persistent_keys` | Creates and saves the SSH host keys (ecdsa, ed25519, rsa) at boot, so they survive power loss. Extracts `/mnt/jffs2/patch.zip` if present |
 | `post-build.sh` | Moves maia-httpd to 127.0.0.1:8000, makes NCM the USB network default, adds a `v...-shonan` line to the login banner, creates fwversion.txt and releasenote.txt |
 | defconfig | lighttpd (pcre), PHP 8.5 (cgi, cli, session, sockets), bc, ffmpeg 6.1.5 (same minimal configuration as datvplutofrm v0.39-shonan). Hostname is `pluto` to match the Langstone default. Removes `postimage-qspi.sh` and builds for SD card only |
-| `.github/workflows/main.yml` | Attaches the zip to a prerelease on manual builds; on private repositories, skips attest and does not stop when saving Artifacts fails |
+| `.github/workflows/main.yml` | Attaches the zip to a prerelease on manual builds; on a private repository, skips attest and does not stop when saving Artifacts fails |
 
 ### Features used from Portsdown 4
 
@@ -804,7 +804,7 @@ Set Portsdown 4's setting (`plutoip`) to the Pluto+ LAN IP.
 
 ### Repository and CI notes
 
-- Repository: kazushinjo/plutoplus_fw-shonan (private). The default branch is `shonan`; `main` stays as original tezuka.
+- Repository: kazushinjo/plutoplus_fw-shonan (public). The default branch is `shonan`; `main` stays as original tezuka.
   The local working copy is `~/AppDev/tezuka_fw-shonan` (remote: `origin` = this repository, `upstream` = F5OEO/tezuka_fw).
 - Do not push tezuka's tags (`v0.3.x`). Pushing a tag runs the release build for all boards.
   For that reason the version shows the commit rather than a tag (for example `v6822-shonan`).
@@ -812,7 +812,7 @@ Set Portsdown 4's setting (`plutoip`) to the Pluto+ LAN IP.
   They were registered after pushing a commit that changes `main.yml`.
 - Artifacts have hit the storage quota (Artifact storage quota has been hit), so zips are received through prereleases.
 - Following tezuka's CLAUDE.md, commit messages are ASCII only.
-- The HDL for the FPGA version is in the separate private repository kazushinjo/Plutoplus-FPGA-firm (Actions disabled). See the FPGA version section.
+- The HDL for the FPGA version is in the separate public repository [kazushinjo/Plutoplus-FPGA-firm](https://github.com/kazushinjo/Plutoplus-FPGA-firm) (Actions disabled). See the FPGA version section.
 - To merge upstream tezuka: `git fetch upstream && git merge upstream/main` (on the shonan branch)
 
 ### SD boot failure (2026-10-24)
@@ -950,7 +950,7 @@ The 7010 in the Pluto+ cannot hold both Maia-SDR and the DVB-S2 chain, so **Maia
 
       ```
       gh auth login
-      gh repo clone kazushinjo/Plutoplus-FPGA-firm -- -b main
+      git clone -b main https://github.com/kazushinjo/Plutoplus-FPGA-firm.git
       cd Plutoplus-FPGA-firm
       ```
 
@@ -1122,14 +1122,14 @@ This firmware is built on the work of the following people and projects.
 - CNES: libgse
 - Buildroot, FFmpeg, PHP, lighttpd and the other open source projects included in the firmware
 
-These acknowledgements do not replace licenses or permissions. For the components taken from datvplutofrm, see [LICENSE.md](LICENSE.md).
+This repository is published with the permission of F5OEO. For the components taken from datvplutofrm, see [LICENSE.md](LICENSE.md).
 
 ### License
 
 See [LICENSE.md](LICENSE.md) for details.
 
-- tezuka_fw and the settings, scripts and documents added in this repository: GPL-3.0 ([LICENSE](../../../LICENSE) at the repository root)
-- Each OSS package in the firmware: its own license. License texts and the SBOM are in the prerelease `plutoplus_shonan-licenses.zip`
+- tezuka_fw and the settings, scripts and documents added in this repository: GPL-3.0 ([LICENSE](https://github.com/kazushinjo/plutoplus_fw-shonan/blob/shonan/LICENSE) at the repository root)
+- Each OSS package in the firmware: its own license. License texts and the SBOM are in each release's `plutoplus_shonan-licenses.zip` / `plutoplus_shonan_dvb-licenses.zip`
 - TSDuck: BSD-2-Clause; web page libraries such as jQuery, Chart.js and Socket.IO: MIT
 - DATV components taken from datvplutofrm (udpts.sh, PHP pages, pluto_dvb and so on): the original F5OEO/datvplutofrm states no license.
-  **Before publishing or distributing, obtain permission from the author (F5OEO) or confirm the license**
+  **They are published with the permission of the author, F5OEO**

@@ -30,7 +30,7 @@ Vivado まわりの細かい説明は kazushinjo/Plutoplus-FPGA-firm の `hdl/pr
 [Pluto+]    ⑥ SD から起動して確認・送信試験
 ```
 
-| リポジトリ(どちらも非公開) | 中身 | 作業する場所 |
+| リポジトリ(どちらも公開) | 中身 | 作業する場所 |
 |---|---|---|
 | kazushinjo/Plutoplus-FPGA-firm(ブランチ `main`) | FPGA の設計(Maia-SDR を外し DVB-S2 送信回路を入れた構成) | Linux PC |
 | kazushinjo/plutoplus_fw-shonan(ブランチ `shonan`、このリポジトリ) | ファーム本体(Buildroot) | Mac → GitHub Actions |
@@ -93,8 +93,7 @@ sudo locale-gen en_US.UTF-8
 ## ② FPGA(HDL)のビルド(Linux PC)
 
 ```
-gh auth login     # GitHub.com → HTTPS → ブラウザでログイン(非公開リポジトリのため)
-gh repo clone kazushinjo/Plutoplus-FPGA-firm -- -b main
+git clone -b main https://github.com/kazushinjo/Plutoplus-FPGA-firm.git
 cd Plutoplus-FPGA-firm
 
 VIVADO_SETTINGS=/tools/Xilinx/2025.2/Vivado/settings64.sh \
@@ -183,7 +182,7 @@ gh run watch <run の番号> --repo kazushinjo/plutoplus_fw-shonan
 ```
 
 - できた zip はプレリリース `plutoplus_shonan_dvb-build<番号>` に付く(Artifacts は容量上限のため当てにしない)
-- キャッシュが効くので plutoplus_shonan の初回(2 時間 40 分)より短い見込み。非公開リポジトリなので Actions の無料枠(月 2000 分)を使う
+- キャッシュが効くので plutoplus_shonan の初回(2 時間 40 分)より短い見込み。公開リポジトリなので Actions は無料
 - 次は自動で入る
   - SD 起動の対策(tezuka 0.2.4 の BOOT.bin と無圧縮カーネル。README の「SD 起動しなかった件」)
   - 版の名前 `ShonanLite-Portsdown4-FPGA_v1.0-<コミット>`
@@ -321,7 +320,7 @@ For the design background and how it works, see the FPGA version section of [REA
 [Pluto+]    (6) Boot from SD, check, and run a transmit test
 ```
 
-| Repository (both private) | Contents | Where the work is done |
+| Repository (both public) | Contents | Where the work is done |
 |---|---|---|
 | kazushinjo/Plutoplus-FPGA-firm (branch `main`) | FPGA design (Maia-SDR removed, DVB-S2 chain added) | Linux PC |
 | kazushinjo/plutoplus_fw-shonan (branch `shonan`, this repository) | The firmware (Buildroot) | Mac → GitHub Actions |
@@ -384,8 +383,7 @@ sudo locale-gen en_US.UTF-8
 ### (2) Building the FPGA (HDL) on the Linux PC
 
 ```
-gh auth login     # GitHub.com → HTTPS → log in with a browser (the repository is private)
-gh repo clone kazushinjo/Plutoplus-FPGA-firm -- -b main
+git clone -b main https://github.com/kazushinjo/Plutoplus-FPGA-firm.git
 cd Plutoplus-FPGA-firm
 
 VIVADO_SETTINGS=/tools/Xilinx/2025.2/Vivado/settings64.sh \
@@ -474,7 +472,7 @@ gh run watch <run-number> --repo kazushinjo/plutoplus_fw-shonan
 ```
 
 - The zip is attached to the prerelease `plutoplus_shonan_dvb-build<number>` (Artifacts are not relied on because of the storage quota)
-- Caches apply, so it should be shorter than the first plutoplus_shonan build (2 h 40 min). The repository is private, so it uses the free Actions allowance (2000 minutes per month)
+- Caches apply, so it should be shorter than the first plutoplus_shonan build (2 h 40 min). The repository is public, so Actions are free
 - The following are included automatically
   - The SD boot workaround (tezuka 0.2.4 BOOT.bin and an uncompressed kernel; see the SD boot failure section of the README)
   - The version name `ShonanLite-Portsdown4-FPGA_v1.0-<commit>`
