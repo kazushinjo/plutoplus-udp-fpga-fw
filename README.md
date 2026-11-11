@@ -7,12 +7,12 @@ A **SD card boot firmware for the Zynq-7010 Pluto+**, based on [tezuka](https://
 > このリポジトリは F5OEO 氏の許可を得て公開しています。 / Published with the permission of F5OEO.
 
 > [!IMPORTANT]
-> **UDP 用に変更したファームです。** Shonan_Lite などから UDP(ポート 8282)で送られる MPEG-TS を受け取り、DVB-S/S2 で送信する用途に合わせて変更しています(Portsdown 4 の rtmp 7272 も使えます)。
-> **アナログチューナー用(アナログテレビ・FM-TV の送信)には使えません。** デジタル(DVB-S/S2)専用です。
+> **UDP 専用のファームです。** Langstone 4 で使っているアナログチューナー用のファームではありません。
+> Shonan_Lite などから UDP(ポート 8282)で送られる MPEG-TS を受け取り、DVB-S/S2 で送信する用途に変更しています。
 
 > [!IMPORTANT]
-> **This firmware is modified for UDP use.** It receives an MPEG-TS over UDP (port 8282) from Shonan_Lite and similar apps and transmits it as DVB-S/S2 (Portsdown 4 over rtmp 7272 also works).
-> **It cannot be used for analog tuners (analog TV / FM-TV transmission).** It is digital (DVB-S/S2) only.
+> **This is a UDP-only firmware.** It is not the analog-tuner firmware used with Langstone 4.
+> It is modified to receive an MPEG-TS over UDP (port 8282) from Shonan_Lite and similar apps and transmit it as DVB-S/S2.
 
 | 版 / Variant | DVB-S2 の変調 / Modulation | Maia-SDR | 説明 / Details |
 |---|---|---|---|
