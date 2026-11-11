@@ -37,6 +37,16 @@ if [ -e "${TARGET_DIR}/root/pluto_dvb.fpga" ]; then
 		-e 's|^\(\s*\)patch_html_page /root/info.html /root/img/version.js|&\n\1patch_html_page /root/index.html /root/img/version.js|' "${S45}"
 fi
 
+# PTT is not used: do not start tezuka's watchconsoletx.sh (it drives the
+# AD9361 GPO and the PTT LED from the TX DMA interrupt count every second).
+# api_controller.sh may still start it on rx/loopback, so the script itself
+# becomes a stub that exits at once.
+S95="${TARGET_DIR}/etc/init.d/S95bgcript"
+grep -q '^/root/watchconsoletx.sh ' "${S95}"
+sed -i '/^\/root\/watchconsoletx.sh /d' "${S95}"
+printf '#!/bin/sh\n# Disabled: PTT is not used in this firmware (see post-build.sh)\nexit 0\n' > "${TARGET_DIR}/root/watchconsoletx.sh"
+chmod 755 "${TARGET_DIR}/root/watchconsoletx.sh"
+
 # USB network defaults to CDC-NCM (macOS and Windows 10 2004 or later work
 # without a driver); usb_ethernet_mode in the u-boot env still overrides it.
 sed -i 's/usb_ethernet_mode 2> \/dev\/null || echo rndis/usb_ethernet_mode 2> \/dev\/null || echo ncm/' \
