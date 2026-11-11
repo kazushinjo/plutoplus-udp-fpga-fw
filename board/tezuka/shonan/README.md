@@ -278,6 +278,7 @@ SD-H を外すと内蔵フラッシュ(tezuka 0.2.4)は今までどおり起動�
 | plutoplus_shonan_dvb-build13 | 692f70e(rrc-x2) | 2026-11-09 | TS 入力のソケットの修正入り。映像が出るまで数分かかる |
 | plutoplus_shonan_dvb-build14 | 33b829d(rrc-x2) | 2026-11-09 | tsp のバッファ修正入り。500 / 1000 kS/s で映像を確認(約 3 秒)。起動直後の最初の送信は DVB-S2 にならない |
 | plutoplus_shonan_dvb-build15 | 351ae2b(rrc-x2) | 2026-11-09 | 起動直後の設定の送り直しと、状態ページの CSS の修正入り。実機確認中 |
+| plutoplus_shonan_dvb-build16 | 7da2d5e(main) | 2026-11-11 | build15 の版名を `ShonanLite-FPGA_v1.0-7da2` に変えたもの(ビットストリーム・BOOT.bin は同じ)。Plutoplus-FPGA-firm のリリースにも掲載 |
 
 ## 未確認
 
@@ -521,14 +522,14 @@ FPGA 版は SD カードにしか入っていない。QSPI(内蔵フラッシュ
 | 作業 | 状態 |
 |---|---|
 | FPGA(RRC ×2、Plutoplus-FPGA-firm の `main`) | Vivado でビルド済み。LUT 66.90%、DSP 54/80、WNS +0.152 ns、WHS +0.025 ns |
-| ファーム | `plutoplus_shonan_dvb-build15`(`351ae2b`)。2026-11-11 に `main` へ統合済み |
+| ファーム | `plutoplus_shonan_dvb-build16`(`7da2d5e`、`main`) |
 | 元のアプリのままの送受信(同じ Pluto、USB) | 500 / 1000 kS/s でロックと映像を確認(build14) |
 
 同じ Pluto で送受信するときは、受信 IQ が多いので USB か有線 LAN で接続する。
 
 ### 未確認(FPGA 版)
 
-- build15 での起動直後の最初の送信
+- build15・16 での起動直後の最初の送信
 - RRC ×2 版での 8PSK・16APSK・32APSK(RRC ×4 版ではヘッダーの解読まで確認)
 - 帯域外の不要輻射(RRC ×2 はスペクトラムアナライザーでの測定が必要)
 - 受信だけを開始し直したときの動作(`ADC clock below limit` で IQ が止まったことがある)
@@ -819,6 +820,7 @@ With SD-H removed, the internal flash (tezuka 0.2.4) booted as usual (cables and
 | plutoplus_shonan_dvb-build10 to build13 | see the Japanese table | 2026-11-09 | Intermediate builds |
 | plutoplus_shonan_dvb-build14 | 33b829d (rrc-x2) | 2026-11-09 | RRC x2. Lock and video confirmed at 500 and 1000 kS/s with the unmodified app. The first TX after boot does not enter DVB-S2 mode |
 | plutoplus_shonan_dvb-build15 | 351ae2b (rrc-x2) | 2026-11-09 | Resends the TX settings after boot, fixes the status page CSS. Being verified on hardware |
+| plutoplus_shonan_dvb-build16 | 7da2d5e (main) | 2026-11-11 | build15 with the version name changed to `ShonanLite-FPGA_v1.0-7da2` (same bitstream and BOOT.bin). Also published on the Plutoplus-FPGA-firm releases |
 
 ### Not yet confirmed
 
@@ -1059,12 +1061,12 @@ S45msd fills in the version, serial and so on at boot. The serial number and MAC
 | Task | Status |
 |---|---|
 | FPGA (RRC x2, `main` of Plutoplus-FPGA-firm) | Built in Vivado. LUT 66.90%, DSP 54/80, WNS +0.152 ns, WHS +0.025 ns |
-| Firmware | `plutoplus_shonan_dvb-build15` (`351ae2b`). Merged into `main` on 2026-11-11 |
+| Firmware | `plutoplus_shonan_dvb-build16` (`7da2d5e`, `main`) |
 | TX and RX on the same device with the unmodified app (USB) | Lock and video confirmed at 500 and 1000 kS/s (build14) |
 
 #### Not yet confirmed (FPGA version)
 
-- The first TX after boot with build15
+- The first TX after boot with build15/16
 - 8PSK, 16APSK and 32APSK with RRC x2 (their headers were decoded with RRC x4)
 - Out-of-band emissions with RRC x2
 - Restarting only the RX (the IQ once stopped with `ADC clock below limit`)
