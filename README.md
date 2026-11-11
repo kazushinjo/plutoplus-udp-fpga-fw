@@ -1,4 +1,4 @@
-# plutoplus-udp-fw
+# plutoplus-udp-fpga_fw
 
 [tezuka](https://github.com/F5OEO/tezuka_fw)(F5OEO 氏)をもとにした、**Zynq-7010 の Pluto+ 用の SD カード起動ファーム**です。
 Shonan_Lite から UDP で送られる TS を DATV(DVB-S/S2)で送信できるようにしてあります。
@@ -19,7 +19,7 @@ A **SD card boot firmware for the Zynq-7010 Pluto+**, based on [tezuka](https://
 | `plutoplus_shonan` | ARM のソフト(pluto_dvb) / ARM software | あり / Yes | [board/tezuka/plutoplus_udp/README.md](board/tezuka/plutoplus_udp/README.md) |
 | `plutoplus_udp_fpga`(FPGA 版 / FPGA build) | FPGA | **なし / Not supported** | [plutoplus-udp-fpga-firm](https://github.com/kazushinjo/plutoplus-udp-fpga-firm)、[FPGA作成.md](board/tezuka/plutoplus_udp/FPGA作成.md) |
 
-**ダウンロード / Download:** [Releases](https://github.com/kazushinjo/plutoplus-udp-fw/releases)(`plutoplus_shonan-build<番号>`・`plutoplus_udp_fpga-build<番号>`)。
+**ダウンロード / Download:** [Releases](https://github.com/kazushinjo/plutoplus-udp-fpga_fw/releases)(`plutoplus_shonan-build<番号>`・`plutoplus_udp_fpga-build<番号>`)。
 FPGA 版は [plutoplus-udp-fpga-firm の Releases](https://github.com/kazushinjo/plutoplus-udp-fpga-firm/releases) にも置いています。 / The FPGA build is also on the Releases of plutoplus-udp-fpga-firm.
 
 **注意 / Notes**

@@ -6,7 +6,7 @@
 
 ## 全体(tezuka_fw と、このリポジトリで足したもの)
 
-- tezuka_fw(F5OEO and contributors): **GNU General Public License v3.0**(リポジトリ直下の [LICENSE](https://github.com/kazushinjo/plutoplus-udp-fw/blob/main/LICENSE))
+- tezuka_fw(F5OEO and contributors): **GNU General Public License v3.0**(リポジトリ直下の [LICENSE](https://github.com/kazushinjo/plutoplus-udp-fpga_fw/blob/main/LICENSE))
 - このリポジトリで足した設定・スクリプト・文書
   (`configs/plutoplus_shonan_defconfig`、`board/tezuka/plutoplus_udp/` の post-build.sh・lighttpd.conf・S89patchfirm・README.md など、
   `.github/workflows/main.yml` の変更): tezuka_fw に合わせて **GPL-3.0**。Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)
@@ -135,7 +135,7 @@ This firmware combines many pieces of software. The license of each part is as f
 
 ### Overall (tezuka_fw and what this repository adds)
 
-- tezuka_fw (F5OEO and contributors): **GNU General Public License v3.0** ([LICENSE](https://github.com/kazushinjo/plutoplus-udp-fw/blob/main/LICENSE) at the repository root)
+- tezuka_fw (F5OEO and contributors): **GNU General Public License v3.0** ([LICENSE](https://github.com/kazushinjo/plutoplus-udp-fpga_fw/blob/main/LICENSE) at the repository root)
 - Settings, scripts and documents added in this repository
   (`configs/plutoplus_shonan_defconfig`; post-build.sh, lighttpd.conf, S89patchfirm, README.md and others in `board/tezuka/plutoplus_udp/`;
   the changes to `.github/workflows/main.yml`): **GPL-3.0**, matching tezuka_fw. Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)

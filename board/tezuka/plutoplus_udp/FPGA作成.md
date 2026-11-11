@@ -33,7 +33,7 @@ Vivado まわりの細かい説明は kazushinjo/plutoplus-udp-fpga-firm の `hd
 | リポジトリ(どちらも公開) | 中身 | 作業する場所 |
 |---|---|---|
 | kazushinjo/plutoplus-udp-fpga-firm(ブランチ `main`) | FPGA の設計(Maia-SDR を外し DVB-S2 送信回路を入れた構成) | Linux PC |
-| kazushinjo/plutoplus-udp-fw(ブランチ `main`、このリポジトリ) | ファーム本体(Buildroot) | Mac → GitHub Actions |
+| kazushinjo/plutoplus-udp-fpga_fw(ブランチ `main`、このリポジトリ) | ファーム本体(Buildroot) | Mac → GitHub Actions |
 
 FPGA のビルドには Vivado(x86_64 Linux 専用)が、ファームのビルドには Linux が要る(ファームは GitHub Actions で作る)。
 **Mac では ①②④ はできない。**
@@ -176,9 +176,9 @@ git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025
 ## ④ ファームのビルド(GitHub Actions)
 
 ```
-gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fw --ref main -f boards=plutoplus_udp_fpga
-gh run list  --repo kazushinjo/plutoplus-udp-fw --workflow main.yml --limit 3
-gh run watch <run の番号> --repo kazushinjo/plutoplus-udp-fw
+gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fpga_fw --ref main -f boards=plutoplus_udp_fpga
+gh run list  --repo kazushinjo/plutoplus-udp-fpga_fw --workflow main.yml --limit 3
+gh run watch <run の番号> --repo kazushinjo/plutoplus-udp-fpga_fw
 ```
 
 - できた zip はプレリリース `plutoplus_udp_fpga-build<番号>` に付く(Artifacts は容量上限のため当てにしない)
@@ -194,7 +194,7 @@ gh run watch <run の番号> --repo kazushinjo/plutoplus-udp-fw
 32GB 以下・MBR・FAT32 にする。
 
 ```
-gh release download plutoplus_udp_fpga-build<番号> --repo kazushinjo/plutoplus-udp-fw --dir ~/Downloads/plutoplus_dvb
+gh release download plutoplus_udp_fpga-build<番号> --repo kazushinjo/plutoplus-udp-fpga_fw --dir ~/Downloads/plutoplus_dvb
 cd ~/Downloads/plutoplus_dvb && unzip plutoplus_udp_fpga.zip
 
 diskutil list external physical                              # SD カードの番号を必ず確認(間違えると別のディスクを消す)
@@ -323,7 +323,7 @@ For the design background and how it works, see the FPGA version section of [REA
 | Repository (both public) | Contents | Where the work is done |
 |---|---|---|
 | kazushinjo/plutoplus-udp-fpga-firm (branch `main`) | FPGA design (Maia-SDR removed, DVB-S2 chain added) | Linux PC |
-| kazushinjo/plutoplus-udp-fw (branch `main`, this repository) | The firmware (Buildroot) | Mac → GitHub Actions |
+| kazushinjo/plutoplus-udp-fpga_fw (branch `main`, this repository) | The firmware (Buildroot) | Mac → GitHub Actions |
 
 The FPGA build needs Vivado (x86_64 Linux only), and the firmware build needs Linux (the firmware is built with GitHub Actions).
 **Steps 1, 2 and 4 cannot be done on a Mac.**
@@ -466,9 +466,9 @@ Commit messages must be English and ASCII only (a rule of this repository).
 ### (4) Building the firmware (GitHub Actions)
 
 ```
-gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fw --ref main -f boards=plutoplus_udp_fpga
-gh run list  --repo kazushinjo/plutoplus-udp-fw --workflow main.yml --limit 3
-gh run watch <run-number> --repo kazushinjo/plutoplus-udp-fw
+gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fpga_fw --ref main -f boards=plutoplus_udp_fpga
+gh run list  --repo kazushinjo/plutoplus-udp-fpga_fw --workflow main.yml --limit 3
+gh run watch <run-number> --repo kazushinjo/plutoplus-udp-fpga_fw
 ```
 
 - The zip is attached to the prerelease `plutoplus_udp_fpga-build<number>` (Artifacts are not relied on because of the storage quota)
@@ -484,7 +484,7 @@ gh run watch <run-number> --repo kazushinjo/plutoplus-udp-fw
 Use 32 GB or smaller, MBR, FAT32.
 
 ```
-gh release download plutoplus_udp_fpga-build<number> --repo kazushinjo/plutoplus-udp-fw --dir ~/Downloads/plutoplus_dvb
+gh release download plutoplus_udp_fpga-build<number> --repo kazushinjo/plutoplus-udp-fpga_fw --dir ~/Downloads/plutoplus_dvb
 cd ~/Downloads/plutoplus_dvb && unzip plutoplus_udp_fpga.zip
 
 diskutil list external physical                              # always confirm the SD card number (a mistake erases another disk)

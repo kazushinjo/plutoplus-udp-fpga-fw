@@ -1,5 +1,5 @@
 name: CI
-# plutoplus-udp-fw: dispatch with boards=plutoplus_shonan to build the
+# plutoplus-udp-fpga_fw: dispatch with boards=plutoplus_shonan to build the
 # Pluto+ Shonan SD card image (published as a prerelease).
 
 on:

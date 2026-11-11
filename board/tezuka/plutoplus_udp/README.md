@@ -46,8 +46,8 @@ ARM 側の実行ファイルは共通なので `pluto_dvb` と `tsp` はビル�
 Mac ではビルドできない(Buildroot は x86_64 Linux が必要)。GitHub Actions で作る。
 
 ```
-gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fw --ref main -f boards=plutoplus_shonan
-gh run list --repo kazushinjo/plutoplus-udp-fw --workflow main.yml --limit 3
+gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fpga_fw --ref main -f boards=plutoplus_shonan
+gh run list --repo kazushinjo/plutoplus-udp-fpga_fw --workflow main.yml --limit 3
 ```
 
 - できた zip はプレリリース `plutoplus_shonan-build<実行番号>` に付く(Artifacts は容量上限のため当てにしない)。
@@ -69,7 +69,7 @@ gh run list --repo kazushinjo/plutoplus-udp-fw --workflow main.yml --limit 3
 1. プレリリースから zip を取ってきて展開する
 
    ```
-   gh release download plutoplus_shonan-build2 --repo kazushinjo/plutoplus-udp-fw --dir ~/Downloads/plutoplus
+   gh release download plutoplus_shonan-build2 --repo kazushinjo/plutoplus-udp-fpga_fw --dir ~/Downloads/plutoplus
    cd ~/Downloads/plutoplus && unzip plutoplus_shonan.zip
    ```
 
@@ -223,7 +223,7 @@ tezuka の正式版と間違えないよう、build6 から独自の名前にし
 
 ## リポジトリと CI の注意
 
-- リポジトリ: kazushinjo/plutoplus-udp-fw(公開)。ブランチは `main` だけ(2026-11-11 に `shonan` を `main` にした。元の tezuka は [F5OEO/tezuka_fw](https://github.com/F5OEO/tezuka_fw))。
+- リポジトリ: kazushinjo/plutoplus-udp-fpga_fw(公開)。ブランチは `main` だけ(2026-11-11 に `shonan` を `main` にした。元の tezuka は [F5OEO/tezuka_fw](https://github.com/F5OEO/tezuka_fw))。
   手元の作業場所は `~/AppDev/tezuka_fw-shonan`(remote: `origin` = このリポジトリ、`upstream` = F5OEO/tezuka_fw)。
 - tezuka のタグ(`v0.3.x`)は push しない。タグを push すると全機種のリリースビルドが動く。
   そのため版の表示はタグでなくコミット番号になる(例: `v6822-shonan`)。
@@ -390,7 +390,7 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
    5. `~/plutoplus_dvb_out/` の `plutoplus_dvb.xsa`・`system_top_utilization_placed.rpt`・`system_top_timing_summary_routed.rpt` を Mac へ持ってくる
       (資源が収まっているか、タイミング(WNS・WHS)が負になっていないかを確認)
 2. `plutoplus_dvb.xsa` を `board/tezuka/plutoplus_dvb/bitstream/` に置いてコミット
-3. ファーム: `gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fw --ref main -f boards=plutoplus_udp_fpga`
+3. ファーム: `gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fpga_fw --ref main -f boards=plutoplus_udp_fpga`
    → プレリリース `plutoplus_udp_fpga-build<番号>`
 4. SD カードの作り方は plutoplus_shonan と同じ(zip の `sdimg/` の中身をコピー)
 
@@ -422,9 +422,9 @@ Linux から持ってきたファイルが `~/Downloads/plutoplus_dvb_out/` に�
 3. ファームをビルドする(GitHub Actions)
 
    ```
-   gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fw --ref main -f boards=plutoplus_udp_fpga
-   gh run list --repo kazushinjo/plutoplus-udp-fw --workflow main.yml --limit 3
-   gh run watch <run の番号> --repo kazushinjo/plutoplus-udp-fw
+   gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fpga_fw --ref main -f boards=plutoplus_udp_fpga
+   gh run list --repo kazushinjo/plutoplus-udp-fpga_fw --workflow main.yml --limit 3
+   gh run watch <run の番号> --repo kazushinjo/plutoplus-udp-fpga_fw
    ```
 
    キャッシュが効くので plutoplus_shonan の初回(2 時間 40 分)より短い見込み。pluto_stream などが増えるので rootfs は少し長くなる。
@@ -432,8 +432,8 @@ Linux から持ってきたファイルが `~/Downloads/plutoplus_dvb_out/` に�
 4. プレリリースから取ってくる
 
    ```
-   gh release list --repo kazushinjo/plutoplus-udp-fw --limit 5
-   gh release download plutoplus_udp_fpga-build<番号> --repo kazushinjo/plutoplus-udp-fw --dir ~/Downloads/plutoplus_dvb
+   gh release list --repo kazushinjo/plutoplus-udp-fpga_fw --limit 5
+   gh release download plutoplus_udp_fpga-build<番号> --repo kazushinjo/plutoplus-udp-fpga_fw --dir ~/Downloads/plutoplus_dvb
    cd ~/Downloads/plutoplus_dvb && unzip plutoplus_udp_fpga.zip
    ```
 
@@ -556,7 +556,7 @@ FPGA 版は SD カードにしか入っていない。QSPI(内蔵フラッシュ
 
 詳しくは [LICENSE.md](LICENSE.md)。
 
-- tezuka_fw とこのリポジトリで足した設定・スクリプト・文書: GPL-3.0(リポジトリ直下の [LICENSE](https://github.com/kazushinjo/plutoplus-udp-fw/blob/main/LICENSE))
+- tezuka_fw とこのリポジトリで足した設定・スクリプト・文書: GPL-3.0(リポジトリ直下の [LICENSE](https://github.com/kazushinjo/plutoplus-udp-fpga_fw/blob/main/LICENSE))
 - ファームに入る各 OSS パッケージ: それぞれのライセンス。ライセンス文と SBOM は各リリースの `plutoplus_shonan-licenses.zip`・`plutoplus_udp_fpga-licenses.zip`
 - TSDuck: BSD-2-Clause、jQuery・Chart.js・Socket.IO など Web 画面のライブラリ: MIT
 - datvplutofrm から持ってきた DATV の部品(udpts.sh・PHP ページ・pluto_dvb など): 元の F5OEO/datvplutofrm に
@@ -592,8 +592,8 @@ but ARM executables are common, so the prebuilt `pluto_dvb` and `tsp` are used a
 It cannot be built on a Mac (Buildroot needs x86_64 Linux). Build it with GitHub Actions.
 
 ```
-gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fw --ref main -f boards=plutoplus_shonan
-gh run list --repo kazushinjo/plutoplus-udp-fw --workflow main.yml --limit 3
+gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fpga_fw --ref main -f boards=plutoplus_shonan
+gh run list --repo kazushinjo/plutoplus-udp-fpga_fw --workflow main.yml --limit 3
 ```
 
 - The zip is attached to the prerelease `plutoplus_shonan-build<run-number>` (Artifacts are not relied on because of the storage quota).
@@ -615,7 +615,7 @@ SD card used: 32 GB (shown as 31.0 GB). Use 32 GB or smaller, FAT32.
 1. Get the zip from the prerelease and extract it
 
    ```
-   gh release download plutoplus_shonan-build2 --repo kazushinjo/plutoplus-udp-fw --dir ~/Downloads/plutoplus
+   gh release download plutoplus_shonan-build2 --repo kazushinjo/plutoplus-udp-fpga_fw --dir ~/Downloads/plutoplus
    cd ~/Downloads/plutoplus && unzip plutoplus_shonan.zip
    ```
 
@@ -769,7 +769,7 @@ Since build6 these have their own names, so they are not mistaken for official t
 
 ### Repository and CI notes
 
-- Repository: kazushinjo/plutoplus-udp-fw (public). Only the `main` branch (`shonan` became `main` on 2026-11-11; the original tezuka is [F5OEO/tezuka_fw](https://github.com/F5OEO/tezuka_fw)).
+- Repository: kazushinjo/plutoplus-udp-fpga_fw (public). Only the `main` branch (`shonan` became `main` on 2026-11-11; the original tezuka is [F5OEO/tezuka_fw](https://github.com/F5OEO/tezuka_fw)).
   The local working copy is `~/AppDev/tezuka_fw-shonan` (remote: `origin` = this repository, `upstream` = F5OEO/tezuka_fw).
 - Do not push tezuka's tags (`v0.3.x`). Pushing a tag runs the release build for all boards.
   For that reason the version shows the commit rather than a tag (for example `v6822-shonan`).
@@ -930,7 +930,7 @@ The 7010 in the Pluto+ cannot hold both Maia-SDR and the DVB-S2 chain, so **Maia
    5. Bring `plutoplus_dvb.xsa`, `system_top_utilization_placed.rpt` and `system_top_timing_summary_routed.rpt` from `~/plutoplus_dvb_out/` to the Mac
       (confirm that resources fit and that timing (WNS, WHS) is not negative)
 2. Put `plutoplus_dvb.xsa` in `board/tezuka/plutoplus_dvb/bitstream/` and commit
-3. Firmware: `gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fw --ref main -f boards=plutoplus_udp_fpga`
+3. Firmware: `gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fpga_fw --ref main -f boards=plutoplus_udp_fpga`
    → prerelease `plutoplus_udp_fpga-build<number>`
 4. The SD card is made the same way as plutoplus_shonan (copy the contents of `sdimg/` from the zip)
 
@@ -962,9 +962,9 @@ Assumes the files brought from Linux are in `~/Downloads/plutoplus_dvb_out/`.
 3. Build the firmware (GitHub Actions)
 
    ```
-   gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fw --ref main -f boards=plutoplus_udp_fpga
-   gh run list --repo kazushinjo/plutoplus-udp-fw --workflow main.yml --limit 3
-   gh run watch <run-number> --repo kazushinjo/plutoplus-udp-fw
+   gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fpga_fw --ref main -f boards=plutoplus_udp_fpga
+   gh run list --repo kazushinjo/plutoplus-udp-fpga_fw --workflow main.yml --limit 3
+   gh run watch <run-number> --repo kazushinjo/plutoplus-udp-fpga_fw
    ```
 
    Caches apply, so it should be shorter than the first plutoplus_shonan build (2 h 40 min). pluto_stream and others are added, so rootfs takes a little longer.
@@ -972,8 +972,8 @@ Assumes the files brought from Linux are in `~/Downloads/plutoplus_dvb_out/`.
 4. Get it from the prerelease
 
    ```
-   gh release list --repo kazushinjo/plutoplus-udp-fw --limit 5
-   gh release download plutoplus_udp_fpga-build<number> --repo kazushinjo/plutoplus-udp-fw --dir ~/Downloads/plutoplus_dvb
+   gh release list --repo kazushinjo/plutoplus-udp-fpga_fw --limit 5
+   gh release download plutoplus_udp_fpga-build<number> --repo kazushinjo/plutoplus-udp-fpga_fw --dir ~/Downloads/plutoplus_dvb
    cd ~/Downloads/plutoplus_dvb && unzip plutoplus_udp_fpga.zip
    ```
 
@@ -1093,7 +1093,7 @@ This repository is published with the permission of F5OEO. For the components ta
 
 See [LICENSE.md](LICENSE.md) for details.
 
-- tezuka_fw and the settings, scripts and documents added in this repository: GPL-3.0 ([LICENSE](https://github.com/kazushinjo/plutoplus-udp-fw/blob/main/LICENSE) at the repository root)
+- tezuka_fw and the settings, scripts and documents added in this repository: GPL-3.0 ([LICENSE](https://github.com/kazushinjo/plutoplus-udp-fpga_fw/blob/main/LICENSE) at the repository root)
 - Each OSS package in the firmware: its own license. License texts and the SBOM are in each release's `plutoplus_shonan-licenses.zip` / `plutoplus_udp_fpga-licenses.zip`
 - TSDuck: BSD-2-Clause; web page libraries such as jQuery, Chart.js and Socket.IO: MIT
 - DATV components taken from datvplutofrm (udpts.sh, PHP pages, pluto_dvb and so on): the original F5OEO/datvplutofrm states no license.
