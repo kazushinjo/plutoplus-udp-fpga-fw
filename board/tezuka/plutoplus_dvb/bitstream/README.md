@@ -2,7 +2,7 @@
 
 **日本語** | [English](#english)
 
-ここに置く `plutoplus_dvb.xsa` は、kazushinjo/Plutoplus-FPGA-firm のブランチ `main` からビルドしたもの。
+ここに置く `plutoplus_dvb.xsa` は、kazushinjo/plutoplus-udp-fpga-firm のブランチ `main` からビルドしたもの。
 中身は F5OEO/maia-sdr の `refactor` にプロジェクト `plutoplus_dvb` を足したもので、
 Pluto+(xc7z010)に dvb_fpga の DVB-S2 エンコーダ・RRC ×4・TX FIR ×8 を入れ、Maia-SDR を外し、1R1T にしてある。
 
@@ -19,7 +19,7 @@ Vivado 2025.2 でのビルド手順は、そのリポジトリの `hdl/projects/
 
 ## The plutoplus_dvb bitstream
 
-The `plutoplus_dvb.xsa` placed here is built from the branch `main` of kazushinjo/Plutoplus-FPGA-firm.
+The `plutoplus_dvb.xsa` placed here is built from the branch `main` of kazushinjo/plutoplus-udp-fpga-firm.
 It is the `refactor` branch of F5OEO/maia-sdr with the project `plutoplus_dvb` added:
 the Pluto+ (xc7z010) with the dvb_fpga DVB-S2 encoder, RRC x4 and TX FIR x8, Maia-SDR removed, and 1R1T.
 

@@ -17,10 +17,10 @@ A **SD card boot firmware for the Zynq-7010 Pluto+**, based on [tezuka](https://
 | 版 / Variant | DVB-S2 の変調 / Modulation | Maia-SDR | 説明 / Details |
 |---|---|---|---|
 | `plutoplus_shonan` | ARM のソフト(pluto_dvb) / ARM software | あり / Yes | [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md) |
-| `plutoplus_shonan_dvb`(FPGA 版 / FPGA build) | FPGA | **なし / Not supported** | [Plutoplus-FPGA-firm](https://github.com/kazushinjo/Plutoplus-FPGA-firm)、[FPGA作成.md](board/tezuka/shonan/FPGA作成.md) |
+| `plutoplus_shonan_dvb`(FPGA 版 / FPGA build) | FPGA | **なし / Not supported** | [plutoplus-udp-fpga-firm](https://github.com/kazushinjo/plutoplus-udp-fpga-firm)、[FPGA作成.md](board/tezuka/shonan/FPGA作成.md) |
 
 **ダウンロード / Download:** [Releases](https://github.com/kazushinjo/plutoplus_fw-shonan/releases)(`plutoplus_shonan-build<番号>`・`plutoplus_shonan_dvb-build<番号>`)。
-FPGA 版は [Plutoplus-FPGA-firm の Releases](https://github.com/kazushinjo/Plutoplus-FPGA-firm/releases) にも置いています。 / The FPGA build is also on the Releases of Plutoplus-FPGA-firm.
+FPGA 版は [plutoplus-udp-fpga-firm の Releases](https://github.com/kazushinjo/plutoplus-udp-fpga-firm/releases) にも置いています。 / The FPGA build is also on the Releases of plutoplus-udp-fpga-firm.
 
 **注意 / Notes**
 

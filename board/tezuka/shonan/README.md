@@ -231,7 +231,7 @@ tezuka の正式版と間違えないよう、build6 から独自の名前にし
   `main.yml` を変更するコミットを push したら登録された。
 - Artifacts の容量が上限(Artifact storage quota has been hit)のため、zip はプレリリースで受け取る。
 - tezuka の CLAUDE.md に合わせ、コミットメッセージは ASCII のみ。
-- FPGA 版の HDL は別の公開リポジトリ [kazushinjo/Plutoplus-FPGA-firm](https://github.com/kazushinjo/Plutoplus-FPGA-firm)(Actions は無効)。詳しくは「FPGA 版」の節。
+- FPGA 版の HDL は別の公開リポジトリ [kazushinjo/plutoplus-udp-fpga-firm](https://github.com/kazushinjo/plutoplus-udp-fpga-firm)(Actions は無効)。詳しくは「FPGA 版」の節。
 - tezuka 本家の更新を取り込むとき: `git fetch upstream && git merge upstream/main`(shonan ブランチで)
 
 ## SD 起動しなかった件(2026-10-24)
@@ -278,7 +278,7 @@ SD-H を外すと内蔵フラッシュ(tezuka 0.2.4)は今までどおり起動�
 | plutoplus_shonan_dvb-build13 | 692f70e(rrc-x2) | 2026-11-09 | TS 入力のソケットの修正入り。映像が出るまで数分かかる |
 | plutoplus_shonan_dvb-build14 | 33b829d(rrc-x2) | 2026-11-09 | tsp のバッファ修正入り。500 / 1000 kS/s で映像を確認(約 3 秒)。起動直後の最初の送信は DVB-S2 にならない |
 | plutoplus_shonan_dvb-build15 | 351ae2b(rrc-x2) | 2026-11-09 | 起動直後の設定の送り直しと、状態ページの CSS の修正入り。実機確認中 |
-| plutoplus_shonan_dvb-build16 | 7da2d5e(main) | 2026-11-11 | build15 の版名を `ShonanLite-FPGA_v1.0-7da2` に変えたもの(ビットストリーム・BOOT.bin は同じ)。Plutoplus-FPGA-firm のリリースにも掲載 |
+| plutoplus_shonan_dvb-build16 | 7da2d5e(main) | 2026-11-11 | build15 の版名を `ShonanLite-FPGA_v1.0-7da2` に変えたもの(ビットストリーム・BOOT.bin は同じ)。plutoplus-udp-fpga-firm のリリースにも掲載 |
 
 ## 未確認
 
@@ -315,10 +315,10 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 
 ### FPGA の設計(HDL)
 
-- リポジトリ: **kazushinjo/Plutoplus-FPGA-firm**(公開)、ブランチ `main`(RRC ×2。2026-11-11 に `rrc-x2` を統合)。機能の一覧は `hdl/projects/plutoplus_dvb/fpga.md`
+- リポジトリ: **kazushinjo/plutoplus-udp-fpga-firm**(公開)、ブランチ `main`(RRC ×2。2026-11-11 に `rrc-x2` を統合)。機能の一覧は `hdl/projects/plutoplus_dvb/fpga.md`
   - 元: F5OEO/maia-sdr の `refactor` ブランチ `5f28808`(2026-10-20)。tezuka 用の FPGA プロジェクト(元は `maia-hdl/projects/tezuka`)が入っている
   - 変更: `6f37fcd`(plutoplus_dvb の追加)、`95c0f68`(手順書 `hdl/projects/plutoplus_dvb/PLUTOPLUS_DVB.md`)、`da82dc5`(plutoplus_dvb に使うファイルだけに整理。整理前はブランチ `backup/before-cleanup-20261028`)、`3e2bed7`・`bf8b7c0`(名前から maia・tezuka を外す: `hdl/`・`projects/plutoplus_dvb`・`dma.tcl`、できるファイルは `plutoplus_dvb.xsa`)
-  - 手元の作業場所: `~/AppDev/Plutoplus-FPGA-firm`(remote: `origin` = このリポジトリ、`upstream` = F5OEO/maia-sdr)
+  - 手元の作業場所: `~/AppDev/plutoplus-udp-fpga-firm`(remote: `origin` = このリポジトリ、`upstream` = F5OEO/maia-sdr)
   - 元の maia-sdr の GitHub Actions(maia-hdl・maia-httpd など)が push で動いたので、全部取り消し、このリポジトリの Actions は無効にした
 - プロジェクト `plutoplus_dvb`(`hdl/projects/plutoplus_dvb/system_bd.tcl`): `mode1r1t`・`txfir`・`dvb`
 
@@ -360,7 +360,7 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 
 ### 作り方
 
-1. FPGA: Linux PC(Vivado 2025.2)で kazushinjo/Plutoplus-FPGA-firm をビルドし `plutoplus_dvb.xsa` を作る
+1. FPGA: Linux PC(Vivado 2025.2)で kazushinjo/plutoplus-udp-fpga-firm をビルドし `plutoplus_dvb.xsa` を作る
    (詳しい手順はそのリポジトリの `hdl/projects/plutoplus_dvb/PLUTOPLUS_DVB.md`)
    1. Ubuntu 22.04 / 24.04(x86_64、空き 100GB 前後、メモリ 16GB 以上)に必要なものを入れる
 
@@ -375,8 +375,8 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 
       ```
       gh auth login
-      git clone -b main https://github.com/kazushinjo/Plutoplus-FPGA-firm.git
-      cd Plutoplus-FPGA-firm
+      git clone -b main https://github.com/kazushinjo/plutoplus-udp-fpga-firm.git
+      cd plutoplus-udp-fpga-firm
       ```
 
    4. ビルド(1〜2 時間の見込み)
@@ -521,7 +521,7 @@ FPGA 版は SD カードにしか入っていない。QSPI(内蔵フラッシュ
 
 | 作業 | 状態 |
 |---|---|
-| FPGA(RRC ×2、Plutoplus-FPGA-firm の `main`) | Vivado でビルド済み。LUT 66.90%、DSP 54/80、WNS +0.152 ns、WHS +0.025 ns |
+| FPGA(RRC ×2、plutoplus-udp-fpga-firm の `main`) | Vivado でビルド済み。LUT 66.90%、DSP 54/80、WNS +0.152 ns、WHS +0.025 ns |
 | ファーム | `plutoplus_shonan_dvb-build16`(`7da2d5e`、`main`) |
 | 元のアプリのままの送受信(同じ Pluto、USB) | 500 / 1000 kS/s でロックと映像を確認(build14) |
 
@@ -776,7 +776,7 @@ Since build6 these have their own names, so they are not mistaken for official t
   They were registered after pushing a commit that changes `main.yml`.
 - Artifacts have hit the storage quota (Artifact storage quota has been hit), so zips are received through prereleases.
 - Following tezuka's CLAUDE.md, commit messages are ASCII only.
-- The HDL for the FPGA version is in the separate public repository [kazushinjo/Plutoplus-FPGA-firm](https://github.com/kazushinjo/Plutoplus-FPGA-firm) (Actions disabled). See the FPGA version section.
+- The HDL for the FPGA version is in the separate public repository [kazushinjo/plutoplus-udp-fpga-firm](https://github.com/kazushinjo/plutoplus-udp-fpga-firm) (Actions disabled). See the FPGA version section.
 - To merge upstream tezuka: `git fetch upstream && git merge upstream/main` (on the shonan branch)
 
 ### SD boot failure (2026-10-24)
@@ -820,7 +820,7 @@ With SD-H removed, the internal flash (tezuka 0.2.4) booted as usual (cables and
 | plutoplus_shonan_dvb-build10 to build13 | see the Japanese table | 2026-11-09 | Intermediate builds |
 | plutoplus_shonan_dvb-build14 | 33b829d (rrc-x2) | 2026-11-09 | RRC x2. Lock and video confirmed at 500 and 1000 kS/s with the unmodified app. The first TX after boot does not enter DVB-S2 mode |
 | plutoplus_shonan_dvb-build15 | 351ae2b (rrc-x2) | 2026-11-09 | Resends the TX settings after boot, fixes the status page CSS. Being verified on hardware |
-| plutoplus_shonan_dvb-build16 | 7da2d5e (main) | 2026-11-11 | build15 with the version name changed to `ShonanLite-FPGA_v1.0-7da2` (same bitstream and BOOT.bin). Also published on the Plutoplus-FPGA-firm releases |
+| plutoplus_shonan_dvb-build16 | 7da2d5e (main) | 2026-11-11 | build15 with the version name changed to `ShonanLite-FPGA_v1.0-7da2` (same bitstream and BOOT.bin). Also published on the plutoplus-udp-fpga-firm releases |
 
 ### Not yet confirmed
 
@@ -857,10 +857,10 @@ The 7010 in the Pluto+ cannot hold both Maia-SDR and the DVB-S2 chain, so **Maia
 
 #### FPGA design (HDL)
 
-- Repository: **kazushinjo/Plutoplus-FPGA-firm** (public), branch `main` (RRC x2; `rrc-x2` merged on 2026-11-11). Function list: `hdl/projects/plutoplus_dvb/fpga.md`
+- Repository: **kazushinjo/plutoplus-udp-fpga-firm** (public), branch `main` (RRC x2; `rrc-x2` merged on 2026-11-11). Function list: `hdl/projects/plutoplus_dvb/fpga.md`
   - Origin: the `refactor` branch `5f28808` of F5OEO/maia-sdr (2026-10-20), which contains the tezuka FPGA project (originally `maia-hdl/projects/tezuka`)
   - Changes: `6f37fcd` (adding plutoplus_dvb), `95c0f68` (the guide `hdl/projects/plutoplus_dvb/PLUTOPLUS_DVB.md`), `da82dc5` (cleaned up to only the files used for plutoplus_dvb; the earlier state is on the branch `backup/before-cleanup-20261028`), `3e2bed7` and `bf8b7c0` (removing maia and tezuka from the names: `hdl/`, `projects/plutoplus_dvb`, `dma.tcl`, output `plutoplus_dvb.xsa`)
-  - Local working copy: `~/AppDev/Plutoplus-FPGA-firm` (remote: `origin` = this repository, `upstream` = F5OEO/maia-sdr)
+  - Local working copy: `~/AppDev/plutoplus-udp-fpga-firm` (remote: `origin` = this repository, `upstream` = F5OEO/maia-sdr)
   - The original maia-sdr GitHub Actions (maia-hdl, maia-httpd and so on) ran on push, so they were all cancelled and Actions were disabled for this repository
 - Project `plutoplus_dvb` (`hdl/projects/plutoplus_dvb/system_bd.tcl`): `mode1r1t`, `txfir`, `dvb`
 
@@ -899,7 +899,7 @@ The 7010 in the Pluto+ cannot hold both Maia-SDR and the DVB-S2 chain, so **Maia
 
 #### How to build it
 
-1. FPGA: build kazushinjo/Plutoplus-FPGA-firm on a Linux PC (Vivado 2025.2) to make `plutoplus_dvb.xsa`
+1. FPGA: build kazushinjo/plutoplus-udp-fpga-firm on a Linux PC (Vivado 2025.2) to make `plutoplus_dvb.xsa`
    (detailed steps are in `hdl/projects/plutoplus_dvb/PLUTOPLUS_DVB.md` of that repository)
    1. Install what is needed on Ubuntu 22.04 / 24.04 (x86_64, around 100 GB free, 16 GB of memory or more)
 
@@ -914,8 +914,8 @@ The 7010 in the Pluto+ cannot hold both Maia-SDR and the DVB-S2 chain, so **Maia
 
       ```
       gh auth login
-      git clone -b main https://github.com/kazushinjo/Plutoplus-FPGA-firm.git
-      cd Plutoplus-FPGA-firm
+      git clone -b main https://github.com/kazushinjo/plutoplus-udp-fpga-firm.git
+      cd plutoplus-udp-fpga-firm
       ```
 
    4. Build (expected 1 to 2 hours)
@@ -1060,7 +1060,7 @@ S45msd fills in the version, serial and so on at boot. The serial number and MAC
 
 | Task | Status |
 |---|---|
-| FPGA (RRC x2, `main` of Plutoplus-FPGA-firm) | Built in Vivado. LUT 66.90%, DSP 54/80, WNS +0.152 ns, WHS +0.025 ns |
+| FPGA (RRC x2, `main` of plutoplus-udp-fpga-firm) | Built in Vivado. LUT 66.90%, DSP 54/80, WNS +0.152 ns, WHS +0.025 ns |
 | Firmware | `plutoplus_shonan_dvb-build16` (`7da2d5e`, `main`) |
 | TX and RX on the same device with the unmodified app (USB) | Lock and video confirmed at 500 and 1000 kS/s (build14) |
 
