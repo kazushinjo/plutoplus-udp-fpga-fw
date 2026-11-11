@@ -47,6 +47,13 @@ sed -i '/^\/root\/watchconsoletx.sh /d' "${S95}"
 printf '#!/bin/sh\n# Disabled: PTT is not used in this firmware (see post-build.sh)\nexit 0\n' > "${TARGET_DIR}/root/watchconsoletx.sh"
 chmod 755 "${TARGET_DIR}/root/watchconsoletx.sh"
 
+# No tezuka dashboard in this build: do not start api_controller.sh. It only
+# feeds the dashboard (MQTT state/#, cmd/#); the status page here reads
+# pluto_stream's dt/pluto/... topics. Its 2 s poll runs dozens of commands,
+# among them several fw_printenv (QSPI reads), and was a large share of the CPU.
+grep -q '^/root/api_controller.sh ' "${S95}"
+sed -i '/^\/root\/api_controller.sh /d' "${S95}"
+
 # USB network defaults to CDC-NCM (macOS and Windows 10 2004 or later work
 # without a driver); usb_ethernet_mode in the u-boot env still overrides it.
 sed -i 's/usb_ethernet_mode 2> \/dev\/null || echo rndis/usb_ethernet_mode 2> \/dev\/null || echo ncm/' \
