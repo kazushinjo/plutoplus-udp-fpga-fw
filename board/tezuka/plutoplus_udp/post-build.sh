@@ -1,6 +1,6 @@
 #!/bin/sh
-# Runs after board/tezuka/common/post-build.sh for the Shonan_Lite DATV builds
-# (configs/plutoplus_shonan_defconfig and plutoplus_udp_fpga_defconfig).
+# Runs after board/tezuka/common/post-build.sh for the the UDP sender app DATV builds
+# (configs/plutoplus_udp_defconfig and plutoplus_udp_fpga_defconfig).
 set -e
 
 BOARD_DIR="$(dirname "$0")"
@@ -49,16 +49,16 @@ fi
 sed -i 's/usb_ethernet_mode 2> \/dev\/null || echo rndis/usb_ethernet_mode 2> \/dev\/null || echo ncm/' \
 	"${TARGET_DIR}/etc/init.d/S23udc" "${TARGET_DIR}/etc/init.d/S40network"
 
-# Firmware name: make clear this is the Shonan_Lite / Portsdown 4 build,
+# Firmware name: make clear this is the the UDP sender app / Portsdown 4 build,
 # not a tezuka release. /opt/VERSIONS "device-fw" feeds the USB drive
 # info.html (S45msd), the iiod fw_version context attribute (S23udc) and
 # the Tezuka Dashboard; the tezuka version stays as "base".
 # board/tezuka/plutoplus_udp/VERSION holds our own version number.
-SHONAN_VER=$(cat "${BOARD_DIR}/VERSION")
-SHONAN_COMMIT=$(cd "${BOARD_DIR}" && (git rev-parse --short=4 HEAD 2>/dev/null || echo unknown))
-EDITION=ShonanLite-Portsdown4
+FW_VER=$(cat "${BOARD_DIR}/VERSION")
+FW_COMMIT=$(cd "${BOARD_DIR}" && (git rev-parse --short=4 HEAD 2>/dev/null || echo unknown))
+EDITION=plutoplus-udp-firm
 [ -e "${TARGET_DIR}/root/pluto_dvb.sw" ] && EDITION=plutoplus-udp-fpga-firm
-FW_NAME="${EDITION}_v${SHONAN_VER}-${SHONAN_COMMIT}"
+FW_NAME="${EDITION}_v${FW_VER}-${FW_COMMIT}"
 # The tezuka release this branch is based on; git describe cannot tell (the
 # tezuka tags are not pushed here), so it is kept in TEZUKA_BASE and must be
 # updated when upstream tezuka is merged.
@@ -73,9 +73,9 @@ sed -i "s/^Version #BUILD#/Version ${FW_NAME} (base ${BASE})/" "${TARGET_DIR}/et
 	if [ "${EDITION}" = plutoplus-udp-fpga-firm ]; then
 		echo "plutoplus-udp-fpga-firm: UDP-only DVB-S2 FPGA firmware for Pluto+"
 	else
-		echo "Shonan_Lite / Portsdown 4 edition for Pluto+"
+		echo "plutoplus-udp-firm: UDP DATV firmware for Pluto+"
 	fi
-	echo "v${SHONAN_VER}-${EDITION}-${SHONAN_COMMIT}"
+	echo "v${FW_VER}-${EDITION}-${FW_COMMIT}"
 } >> "${TARGET_DIR}/etc/motd.plain"
 
 # Shown in the DVB service provider name by udpts.sh / rtmppluto.sh

@@ -164,7 +164,7 @@ unzip -p plutoplus_dvb.xsa '*.hwh' | grep -c maia_sdr                # 0(Maia-SD
 grep -E "^\| (Slice LUTs|Block RAM Tile|DSPs) " system_top_utilization_placed.rpt
 grep "timing constraints are" system_top_timing_summary_routed.rpt   # All ... are met.
 
-cd ~/AppDev/tezuka_fw-shonan
+cd ~/AppDev/plutoplus-udp-fpga_fw
 B=board/tezuka/plutoplus_dvb/bitstream
 cp ~/Downloads/plutoplus_dvb_out/plutoplus_dvb.xsa $B/
 mkdir -p $B/reports && cp ~/Downloads/plutoplus_dvb_out/*.rpt $B/reports/
@@ -182,7 +182,7 @@ gh run watch <run の番号> --repo kazushinjo/plutoplus-udp-fpga_fw
 ```
 
 - できた zip はプレリリース `plutoplus_udp_fpga-build<番号>` に付く(Artifacts は容量上限のため当てにしない)
-- キャッシュが効くので plutoplus_shonan の初回(2 時間 40 分)より短い見込み。公開リポジトリなので Actions は無料
+- キャッシュが効くので plutoplus_udp の初回(2 時間 40 分)より短い見込み。公開リポジトリなので Actions は無料
 - 次は自動で入る
   - SD 起動の対策(tezuka 0.2.4 の BOOT.bin と無圧縮カーネル。README の「SD 起動しなかった件」)
   - 版の名前 `plutoplus-udp-fpga-firm_v1.0-<コミット>`
@@ -190,7 +190,7 @@ gh run watch <run の番号> --repo kazushinjo/plutoplus-udp-fpga_fw
 
 ## ⑤ SD カードを作る(Mac)
 
-**plutoplus_shonan(通常版)の SD カードは残しておき、別の SD カードを使う**(戻すのが差し替えだけで済む)。
+**plutoplus_udp(通常版)の SD カードは残しておき、別の SD カードを使う**(戻すのが差し替えだけで済む)。
 32GB 以下・MBR・FAT32 にする。
 
 ```
@@ -235,7 +235,7 @@ ls -l /root/pluto_dvb /root/pluto_dvb.sw     # pluto_dvb はスクリプト、pl
    mosquitto_sub -h 127.0.0.1 -t 'cmd/pluto/#' -t 'dt/pluto/#' -v
    ```
 
-2. Shonan_Lite(V2 など)からいつもどおり送信する(UDP 8282)。または `http://<IP>/pluto.php` で設定を保存し、Mac から試験映像を送る:
+2. UDP 送信アプリ(V2 など)からいつもどおり送信する(UDP 8282)。または `http://<IP>/pluto.php` で設定を保存し、Mac から試験映像を送る:
 
    ```
    ffmpeg -re -f lavfi -i testsrc=size=640x360:rate=25 -f lavfi -i sine=frequency=1000 \
@@ -251,14 +251,14 @@ ls -l /root/pluto_dvb /root/pluto_dvb.sw     # pluto_dvb はスクリプト、pl
    iio_attr -c -o ad9361-phy voltage0 hardwaregain # 送信ゲイン(dB)
    ```
 
-5. 受信側(MiniTiouner、Shonan_Lite の受信など)でロック・MER・映像・音声を見る。
+5. 受信側(MiniTiouner、UDP 送信アプリの受信など)でロック・MER・映像・音声を見る。
    **8PSK・16APSK・32APSK も選び、実際にその方式で出ているか確かめる**(1518007 の修正前は常に QPSK になっていた)。
    スペクトラムアナライザーがあれば帯域と肩も見る
 6. 送るのをやめると `tx/stream/run 0`・`tx/mute 1` が出る
 
 ### 受信まわり
 
-Shonan_Lite の RSSI 測定・受信、Langstone が今までどおり動くか(FPGA 版は 1R1T・Maia-SDR なし)。
+UDP 送信アプリの RSSI 測定・受信、Langstone が今までどおり動くか(FPGA 版は 1R1T・Maia-SDR なし)。
 
 ### うまくいかないとき
 
@@ -272,11 +272,11 @@ killall pluto_stream; pluto_stream 2>&1 | tee /tmp/pluto_stream.log &
 
 FPGA 版は SD カードにしか入っていない(内蔵フラッシュには触れていない)。
 
-- **SD カードを差し替える**: plutoplus_shonan の SD カードに戻して電源を入れ直す
+- **SD カードを差し替える**: plutoplus_udp の SD カードに戻して電源を入れ直す
 - **SD カードを抜かずに戻す**(ネットワークが使えるとき)
 
   ```
-  cd ~/Downloads/plutoplus/sdimg      # plutoplus_shonan を展開した場所
+  cd ~/Downloads/plutoplus/sdimg      # plutoplus_udp を展開した場所
   scp -r * root@<IP>:/boot/
   ssh root@<IP> "sync; reboot"
   ```
@@ -454,7 +454,7 @@ unzip -p plutoplus_dvb.xsa '*.hwh' | grep -c maia_sdr                # 0 (Maia-S
 grep -E "^\| (Slice LUTs|Block RAM Tile|DSPs) " system_top_utilization_placed.rpt
 grep "timing constraints are" system_top_timing_summary_routed.rpt   # All ... are met.
 
-cd ~/AppDev/tezuka_fw-shonan
+cd ~/AppDev/plutoplus-udp-fpga_fw
 B=board/tezuka/plutoplus_dvb/bitstream
 cp ~/Downloads/plutoplus_dvb_out/plutoplus_dvb.xsa $B/
 mkdir -p $B/reports && cp ~/Downloads/plutoplus_dvb_out/*.rpt $B/reports/
@@ -472,7 +472,7 @@ gh run watch <run-number> --repo kazushinjo/plutoplus-udp-fpga_fw
 ```
 
 - The zip is attached to the prerelease `plutoplus_udp_fpga-build<number>` (Artifacts are not relied on because of the storage quota)
-- Caches apply, so it should be shorter than the first plutoplus_shonan build (2 h 40 min). The repository is public, so Actions are free
+- Caches apply, so it should be shorter than the first plutoplus_udp build (2 h 40 min). The repository is public, so Actions are free
 - The following are included automatically
   - The SD boot workaround (tezuka 0.2.4 BOOT.bin and an uncompressed kernel; see the SD boot failure section of the README)
   - The version name `plutoplus-udp-fpga-firm_v1.0-<commit>`
@@ -480,7 +480,7 @@ gh run watch <run-number> --repo kazushinjo/plutoplus-udp-fpga_fw
 
 ### (5) Writing the SD card (Mac)
 
-**Keep the plutoplus_shonan (normal version) SD card and use a separate SD card** (so going back only takes swapping cards).
+**Keep the plutoplus_udp (normal version) SD card and use a separate SD card** (so going back only takes swapping cards).
 Use 32 GB or smaller, MBR, FAT32.
 
 ```
@@ -525,7 +525,7 @@ ls -l /root/pluto_dvb /root/pluto_dvb.sw     # pluto_dvb is the script, pluto_dv
    mosquitto_sub -h 127.0.0.1 -t 'cmd/pluto/#' -t 'dt/pluto/#' -v
    ```
 
-2. Transmit from Shonan_Lite (V2 and so on) as usual (UDP 8282). Or save the settings at `http://<IP>/pluto.php` and send a test video from the Mac:
+2. Transmit from the UDP sender app (V2 and so on) as usual (UDP 8282). Or save the settings at `http://<IP>/pluto.php` and send a test video from the Mac:
 
    ```
    ffmpeg -re -f lavfi -i testsrc=size=640x360:rate=25 -f lavfi -i sine=frequency=1000 \
@@ -541,14 +541,14 @@ ls -l /root/pluto_dvb /root/pluto_dvb.sw     # pluto_dvb is the script, pluto_dv
    iio_attr -c -o ad9361-phy voltage0 hardwaregain # TX gain (dB)
    ```
 
-5. On the receiver (MiniTiouner, Shonan_Lite receive and so on), check lock, MER, video and audio.
+5. On the receiver (MiniTiouner, the UDP sender app receive and so on), check lock, MER, video and audio.
    **Also select 8PSK, 16APSK and 32APSK and confirm that the signal really uses that modulation** (before fix 1518007 it was always QPSK).
    If you have a spectrum analyzer, also check the bandwidth and shoulders
 6. When you stop sending, `tx/stream/run 0` and `tx/mute 1` appear
 
 #### Receive functions
 
-Check whether Shonan_Lite RSSI measurement and receive, and Langstone, work as before (the FPGA version is 1R1T with no Maia-SDR).
+Check whether the UDP sender app RSSI measurement and receive, and Langstone, work as before (the FPGA version is 1R1T with no Maia-SDR).
 
 #### If it does not work
 
@@ -562,11 +562,11 @@ killall pluto_stream; pluto_stream 2>&1 | tee /tmp/pluto_stream.log &
 
 The FPGA version exists only on the SD card (the internal flash is not touched).
 
-- **Swap the SD card**: put the plutoplus_shonan SD card back and power cycle
+- **Swap the SD card**: put the plutoplus_udp SD card back and power cycle
 - **Go back without removing the SD card** (when the network is available)
 
   ```
-  cd ~/Downloads/plutoplus/sdimg      # where plutoplus_shonan was extracted
+  cd ~/Downloads/plutoplus/sdimg      # where plutoplus_udp was extracted
   scp -r * root@<IP>:/boot/
   ssh root@<IP> "sync; reboot"
   ```

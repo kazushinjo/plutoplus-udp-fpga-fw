@@ -1,7 +1,7 @@
 #!/bin/sh
 # Pluto+ SD boot with the U-Boot 2016.07 of tezuka 0.2.4.
 #
-# Runs after postimage-sd.sh (configs/plutoplus_shonan*_defconfig). The
+# Runs after postimage-sd.sh (configs/plutoplus_udp*_defconfig). The
 # U-Boot 2025.01 BOOT.bin that postimage-sd.sh makes does not start from the
 # SD card on our Pluto+ (green LED only, no FPGA DONE, no USB), while the
 # tezuka 0.2.4 BOOT.bin (FSBL + 0.2.4 bitstream + U-Boot 2016.07) does. That
@@ -11,10 +11,10 @@
 set -e
 
 BIN_DIR="$1"
-SHONAN_DIR="$(dirname "$0")"
+UDP_BOARD_DIR="$(dirname "$0")"
 SDIMGDIR="${BIN_DIR}/sdimg"
 
-cp -f "${SHONAN_DIR}/legacy-boot/plutoplus-0.2.4-BOOT.bin" "${SDIMGDIR}/BOOT.bin"
+cp -f "${UDP_BOARD_DIR}/legacy-boot/plutoplus-0.2.4-BOOT.bin" "${SDIMGDIR}/BOOT.bin"
 
 # The overclock BOOT_* variants carry the new U-Boot: no use here.
 rm -rf "${SDIMGDIR}/overclock"

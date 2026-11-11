@@ -1,9 +1,9 @@
-# Pluto+ Shonan_Lite 版(plutoplus_shonan)
+# Pluto+ UDP 送信アプリ版(plutoplus_udp)
 
 **日本語** | [English](#english)
 
 tezuka の Pluto+ 用ファーム(`configs/plutoplus_maiasdr_defconfig`)に、
-Shonan_Lite が使う DATV 送信の部品(UDP 専用)([kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) の `v0.39-udp` ブランチ、旧 `main`・`v0.39-shonan`)を足したもの。
+UDP 送信アプリが使う DATV 送信の部品(UDP 専用)([kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) の `v0.39-udp` ブランチ、旧 `main`)を足したもの。
 tezuka の機能(maia-sdr、IQEngine、ダッシュボード、MQTT など)はすべて残している。
 
 イメージが QSPI のファーム領域(0x1E00000 = 31,457,280 バイト)に入らないため、**SD カード起動専用**。
@@ -35,7 +35,7 @@ tezuka の機能(maia-sdr、IQEngine、ダッシュボード、MQTT など)は�
 | tezuka_fw(F5OEO) | github.com/F5OEO/tezuka_fw `a304a1f`(v0.3.24、2026-10-17) |
 | Buildroot | 2026.05.2(`buildroot.version`) |
 | Linux | ADI linux `bf1d49f`(adi-6.12.y)、glibc 2.40、Bootlin ツールチェーン |
-| DATV 送信の部品 | [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) `v0.39-udp`(旧 `main`・`v0.39-shonan`、build10 = 2649143 と同じ内容) |
+| DATV 送信の部品 | [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) `v0.39-udp`(旧 `main`、build10 = 2649143 と同じ内容) |
 
 Pluto+ は無印 Pluto と同じ Zynq-7010(Cortex-A9 2 コア)・RAM 512MB。FPGA とデバイスツリーは機種専用だが、
 ARM 側の実行ファイルは共通なので `pluto_dvb` と `tsp` はビルド済みのものをそのまま使っている
@@ -46,21 +46,21 @@ ARM 側の実行ファイルは共通なので `pluto_dvb` と `tsp` はビル�
 Mac ではビルドできない(Buildroot は x86_64 Linux が必要)。GitHub Actions で作る。
 
 ```
-gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fpga_fw --ref main -f boards=plutoplus_shonan
+gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fpga_fw --ref main -f boards=plutoplus_udp
 gh run list --repo kazushinjo/plutoplus-udp-fpga_fw --workflow main.yml --limit 3
 ```
 
-- できた zip はプレリリース `plutoplus_shonan-build<実行番号>` に付く(Artifacts は容量上限のため当てにしない)。
+- できた zip はプレリリース `plutoplus_udp-build<実行番号>` に付く(Artifacts は容量上限のため当てにしない)。
 - 所要時間: キャッシュの無い初回で約 2 時間 40 分(U-Boot 36 分・カーネル 46 分・rootfs 68 分)。
   2 回目からはキャッシュが効く。非公開だったときは Actions の無料枠(月 2000 分)を使っていた。
 - Linux 機で手元ビルドする場合:
 
 ```
 ./getbuildroot.sh
-./build.sh plutoplus_shonan
+./build.sh plutoplus_udp
 ```
 
-できたものは `build/plutoplus_shonan.zip`。
+できたものは `build/plutoplus_udp.zip`。
 
 ## SD カードの作り方(Mac)
 
@@ -69,8 +69,8 @@ gh run list --repo kazushinjo/plutoplus-udp-fpga_fw --workflow main.yml --limit 
 1. プレリリースから zip を取ってきて展開する
 
    ```
-   gh release download plutoplus_shonan-build2 --repo kazushinjo/plutoplus-udp-fpga_fw --dir ~/Downloads/plutoplus
-   cd ~/Downloads/plutoplus && unzip plutoplus_shonan.zip
+   gh release download plutoplus_udp-build2 --repo kazushinjo/plutoplus-udp-fpga_fw --dir ~/Downloads/plutoplus
+   cd ~/Downloads/plutoplus && unzip plutoplus_udp.zip
    ```
 
 2. SD カードを挿し、ディスク番号を確かめる(**間違えると別のディスクを消すので必ず確認**)
@@ -140,9 +140,9 @@ gh run list --repo kazushinjo/plutoplus-udp-fpga_fw --workflow main.yml --limit 
 | ネットワーク | LAN(DHCP)または USB(Pluto 側 192.168.2.1、PC 側 192.168.2.10) | ping が返る。LAN の IP はルーターで確認。mDNS では `pluto.local` |
 | DATV の Web 画面 | `http://<IP>/pluto.php` | Controller 画面が出る |
 | tezuka のダッシュボード | `http://<IP>/` | maia-sdr / Tezuka Dashboard が出る(lighttpd 経由) |
-| SSH | `ssh root@<IP>`(パスワード analog) | ログイン表示に `Version ShonanLite-Portsdown4_v1.0-…`・`Shonan_Lite / Portsdown 4 edition for Pluto+`・`v1.0-ShonanLite-Portsdown4-…` の行(build5 までは `v6822-shonan` など) |
+| SSH | `ssh root@<IP>`(パスワード analog) | ログイン表示に `Version plutoplus-udp-firm_v1.0-…`・`plutoplus-udp-firm: UDP DATV firmware for Pluto+`・`v1.0-plutoplus-udp-firm-…` の行(build5 までは `v6822` など) |
 | iio | `iio_info -u ip:<IP>` | ad9361-phy などが見える |
-| 版 | `cat /opt/VERSIONS` | `device-fw ShonanLite-Portsdown4_v1.0-<コミット>`、`base tezuka-<コミット>`、`buildroot 2026.05.2`(build5 までは `device-fw tezuka-…`) |
+| 版 | `cat /opt/VERSIONS` | `device-fw plutoplus-udp-firm_v1.0-<コミット>`、`base tezuka-<コミット>`、`buildroot 2026.05.2`(build5 までは `device-fw tezuka-…`) |
 
 LAN の固定 IP は tezuka の仕組み(USB ドライブの `config.txt` の `[USB_ETHERNET] ipaddr_eth` / `fw_setenv ipaddr_eth`)で設定する。
 
@@ -156,7 +156,7 @@ LAN の固定 IP は tezuka の仕組み(USB ドライブの `config.txt` の `[
   今までの Pluto と同じにするため `fw_setenv attr_val ad9364`(`attr_name=compatible`)にして再起動した。
   起動ログが `ad9361_probe : enter (ad9364)` になる。`mode=1r1t`(受信 1・送信 1)
 - **起動直後の UDP 8282**: `settings.txt` が無い間は udpts.sh が空の設定で待つ(datvplutofrm v0.39 と同じ)。
-  Shonan_Lite から設定を保存(save.php)すると待ち受けを始める
+  UDP 送信アプリから設定を保存(save.php)すると待ち受けを始める
 - **SSH のホスト鍵**: build2 では ed25519・rsa の鍵が内蔵フラッシュに保存されず、再起動のたびに変わっていた
   (下の「SD 起動しなかった件」の後の修正を参照)。この Pluto+ では 2026-10-24 に手で 3 種類とも保存済み
 
@@ -164,10 +164,10 @@ LAN の固定 IP は tezuka の仕組み(USB ドライブの `config.txt` の `[
 
 | ポート / URL | 使うもの | 中身 |
 |---|---|---|
-| UDP 8282 | Shonan_Lite 全版 | TS を受けて tsp → pluto_dvb で送信(設定は `/www/settings.txt`) |
-| `http://<IP>/save.php`・`/pluto.php` | Shonan_Lite | 送信設定の保存・再起動(lighttpd + php-cgi) |
-| iiod(TCP 30431) | Shonan_Lite の受信・RSSI、Langstone | libiio |
-| SSH 22 | Shonan_Lite | root / analog |
+| UDP 8282 | UDP 送信アプリ全版 | TS を受けて tsp → pluto_dvb で送信(設定は `/www/settings.txt`) |
+| `http://<IP>/save.php`・`/pluto.php` | UDP 送信アプリ | 送信設定の保存・再起動(lighttpd + php-cgi) |
+| iiod(TCP 30431) | UDP 送信アプリの受信・RSSI、Langstone | libiio |
+| SSH 22 | the UDP sender app | root / analog |
 | `http://<IP>/`(80) | ブラウザ | tezuka ダッシュボード(maia-httpd 127.0.0.1:8000 へ中継、WebSocket も) |
 | 443 | ブラウザ | maia-httpd の HTTPS(tezuka のまま) |
 | MQTT 1883 / WebSocket 9001 | tezuka ダッシュボード | mosquitto(tezuka のまま) |
@@ -190,11 +190,11 @@ tezuka の正式版と間違えないよう、build6 から独自の名前にし
 
 | 版 | 名前の例 |
 |---|---|
-| plutoplus_shonan | `ShonanLite-Portsdown4_v1.0-e019` |
+| plutoplus_udp | `plutoplus-udp-firm_v1.0-e019` |
 | plutoplus_udp_fpga(FPGA 版) | `plutoplus-udp-fpga-firm_v1.0-e019` |
 
 - `v1.0` は `board/tezuka/plutoplus_udp/VERSION` の数字。版を上げるときはこのファイルを書き換える。最後はこのリポジトリのコミット番号(4 桁)
-- 出る場所: `/opt/VERSIONS` の `device-fw`、USB ドライブの `info.html` の Build、iiod の `fw_version`(Shonan_Lite の「Pluto 情報」・tezuka ダッシュボード)、
+- 出る場所: `/opt/VERSIONS` の `device-fw`、USB ドライブの `info.html` の Build、iiod の `fw_version`(UDP 送信アプリの「Pluto 情報」・tezuka ダッシュボード)、
   SSH のログイン表示、U-Boot の起動表示(シリアル)
 - 元にした tezuka の版は `board/tezuka/plutoplus_udp/TEZUKA_BASE`(今は `tezuka-v0.3.24-a304a1f`)に書いておき、`/opt/VERSIONS` の `base` とログイン表示の `(base …)` に出す。
   本家 tezuka を取り込んだら、このファイルも書き換える
@@ -211,8 +211,8 @@ tezuka の正式版と間違えないよう、build6 から独自の名前にし
 | `overlay/etc/php.ini` | datvplutofrm と同じ(`cgi.force_redirect = 0`、`post_max_size = 30M`) |
 | `overlay/etc/init.d/S90datv` | 起動時に udpts.sh・rtmppluto.sh・watchudp.sh を起動 |
 | `overlay/etc/init.d/S89patchfirm`, `overlay/usr/sbin/device_persistent_keys` | SSH のホスト鍵(ecdsa・ed25519・rsa)を起動時に作って保存する。電源断の後も鍵が変わらない。`/mnt/jffs2/patch.zip` があれば展開 |
-| `post-build.sh` | maia-httpd を 127.0.0.1:8000 へ移す、USB ネットワークの既定を NCM にする、ログイン表示に `v…-shonan` 行、fwversion.txt・releasenote.txt 作成 |
-| defconfig | lighttpd(pcre)、PHP 8.5(cgi・cli・session・sockets)、bc、ffmpeg 6.1.5(datvplutofrm v0.39-shonan と同じ最小構成)。ホスト名は Langstone の既定に合わせて `pluto`。`postimage-qspi.sh` を外し SD カード用だけ作る |
+| `post-build.sh` | maia-httpd を 127.0.0.1:8000 へ移す、USB ネットワークの既定を NCM にする、ログイン表示に `v…` 行、fwversion.txt・releasenote.txt 作成 |
+| defconfig | lighttpd(pcre)、PHP 8.5(cgi・cli・session・sockets)、bc、ffmpeg 6.1.5(v0.39-dirty の UDP 版と同じ最小構成)。ホスト名は Langstone の既定に合わせて `pluto`。`postimage-qspi.sh` を外し SD カード用だけ作る |
 | `.github/workflows/main.yml` | 手動ビルドで zip をプレリリースに付ける、非公開リポジトリのときは attest を飛ばし Artifacts の保存失敗で止まらない |
 
 ## datvplutofrm から持ってこなかったもの
@@ -223,16 +223,16 @@ tezuka の正式版と間違えないよう、build6 から独自の名前にし
 
 ## リポジトリと CI の注意
 
-- リポジトリ: kazushinjo/plutoplus-udp-fpga_fw(公開)。ブランチは `main` だけ(2026-11-11 に `shonan` を `main` にした。元の tezuka は [F5OEO/tezuka_fw](https://github.com/F5OEO/tezuka_fw))。
-  手元の作業場所は `~/AppDev/tezuka_fw-shonan`(remote: `origin` = このリポジトリ、`upstream` = F5OEO/tezuka_fw)。
+- リポジトリ: kazushinjo/plutoplus-udp-fpga_fw(公開)。ブランチは `main` だけ(2026-11-11 に `main` を `main` にした。元の tezuka は [F5OEO/tezuka_fw](https://github.com/F5OEO/tezuka_fw))。
+  手元の作業場所は `~/AppDev/plutoplus-udp-fpga_fw`(remote: `origin` = このリポジトリ、`upstream` = F5OEO/tezuka_fw)。
 - tezuka のタグ(`v0.3.x`)は push しない。タグを push すると全機種のリリースビルドが動く。
-  そのため版の表示はタグでなくコミット番号になる(例: `v6822-shonan`)。
+  そのため版の表示はタグでなくコミット番号になる(例: `v6822`)。
 - GitHub は、履歴ごとまとめて push した最初の分からはワークフローを登録しなかった。
   `main.yml` を変更するコミットを push したら登録された。
 - Artifacts の容量が上限(Artifact storage quota has been hit)のため、zip はプレリリースで受け取る。
 - tezuka の CLAUDE.md に合わせ、コミットメッセージは ASCII のみ。
 - FPGA 版の HDL は別の公開リポジトリ [kazushinjo/plutoplus-udp-fpga-firm](https://github.com/kazushinjo/plutoplus-udp-fpga-firm)(Actions は無効)。詳しくは「FPGA 版」の節。
-- tezuka 本家の更新を取り込むとき: `git fetch upstream && git merge upstream/main`(shonan ブランチで)
+- tezuka 本家の更新を取り込むとき: `git fetch upstream && git merge upstream/main`(main ブランチで)
 
 ## SD 起動しなかった件(2026-10-24)
 
@@ -251,7 +251,7 @@ SD-H を外すと内蔵フラッシュ(tezuka 0.2.4)は今までどおり起動�
 | FSBL を 0.2.4 時代(3355a86)に戻してビルド(ブランチ test-oldfsbl、build4) | 書き込み前に中身を比較して不要と判断 | 新旧 fsbl.elf の**書き込まれる中身は同じ**(違いは ELF の付属情報だけ)。FSBL は原因でない |
 | U-Boot の版 | 0.2.4 は **U-Boot 2016.07**、今の tezuka は **U-Boot 2025.01** | 新しい U-Boot がこの基板の SD 起動で動かない(シリアルが無いので詳しい原因は未確認) |
 | カーネルの形式 | 0.2.4 は無圧縮(zImage)、今は **LZMA 圧縮**の uImage | 0.2.4 の U-Boot は LZMA を開けない(3 行目で Linux まで行かなかった理由) |
-| **0.2.4 の BOOT.bin + build2 のカーネルを無圧縮の uImage に作り直したもの + build2 の残り** | **起動した** | 版 `tezuka-6822`・`v6822-shonan`、全プロセスと全ポート、pluto.php・ダッシュボードを確認 |
+| **0.2.4 の BOOT.bin + build2 のカーネルを無圧縮の uImage に作り直したもの + build2 の残り** | **起動した** | 版 `tezuka-6822`・`v6822`、全プロセスと全ポート、pluto.php・ダッシュボードを確認 |
 
 ### 対処(ビルドに反映)
 
@@ -267,23 +267,23 @@ SD-H を外すと内蔵フラッシュ(tezuka 0.2.4)は今までどおり起動�
 
 | 版 | コミット | 日付 | 結果 |
 |---|---|---|---|
-| plutoplus_shonan-build2 | 6822(shonan) | 2026-10-24 | ビルド成功(2h39m、zip 33.5MB、uramdisk 26MB)。**そのままでは SD 起動しない**(U-Boot 2025.01)。0.2.4 の BOOT.bin と無圧縮カーネルに手で入れ替えて起動・動作確認(上の「SD 起動しなかった件」) |
-| plutoplus_shonan-build4 | test-oldfsbl | 2026-10-24 | FSBL を戻した試験。FSBL は原因でないと分かったので使っていない(ブランチは削除) |
-| plutoplus_shonan-build5 | e0191b1(shonan) | 2026-10-24 | SD 用 BOOT.bin が 0.2.4 のもの(md5 a6ce0ad4…)・カーネル無圧縮(0x8000)・overclock なし・鍵保存の修正入りを確認。版の表示はまだ `tezuka-e019`。実機は未書込み |
-| plutoplus_shonan-build6 | 8c48a34(shonan) | 2026-10-28 | 版の名前 `ShonanLite-Portsdown4_v1.0-8c48` を確認。`base` が `tezuka-8c48`(このリポジトリのコミット)になっていたので TEZUKA_BASE で直した |
-| plutoplus_shonan-build7 | f953bfa(shonan) | 2026-10-28 | `device-fw ShonanLite-Portsdown4_v1.0-f953`・`base tezuka-v0.3.24-a304a1f`・ログイン表示・U-Boot の表示を確認。BOOT.bin は 0.2.4(md5 一致)。実機は未書込み |
-| plutoplus_shonan_dvb-build10 | ea42271(shonan) | 2026-11-09 | RRC ×4 版。起動と DVB-S2 送信(4 方式のヘッダー解読)を確認。同じ Pluto での受信はできない(送信 4 倍・受信 2 倍の衝突) |
-| plutoplus_shonan_dvb-build11 | 260031c(rrc-x2) | 2026-11-09 | RRC ×2 版。元のアプリで 500 kS/s のロックを確認。TS がエンコーダへ届かないことがある |
-| plutoplus_shonan_dvb-build12 | 4c85fb3(rrc-x2) | 2026-11-09 | Actions のキャッシュで pluto_stream の修正が入らなかった。使わない |
-| plutoplus_shonan_dvb-build13 | 692f70e(rrc-x2) | 2026-11-09 | TS 入力のソケットの修正入り。映像が出るまで数分かかる |
-| plutoplus_shonan_dvb-build14 | 33b829d(rrc-x2) | 2026-11-09 | tsp のバッファ修正入り。500 / 1000 kS/s で映像を確認(約 3 秒)。起動直後の最初の送信は DVB-S2 にならない |
-| plutoplus_shonan_dvb-build15 | 351ae2b(rrc-x2) | 2026-11-09 | 起動直後の設定の送り直しと、状態ページの CSS の修正入り。実機確認中 |
-| plutoplus_shonan_dvb-build16 | 7da2d5e(main) | 2026-11-11 | build15 の版名を `ShonanLite-FPGA_v1.0-7da2` に変えたもの(ビットストリーム・BOOT.bin は同じ)。plutoplus-udp-fpga-firm のリリースにも掲載 |
-| plutoplus_shonan_dvb-build17 | fcca016(main) | 2026-11-12 | ファーム名を `plutoplus-udp-fpga-firm_v1.0-fcca0` に変えたもの(ビットストリーム・BOOT.bin は build15 と同じ)。plutoplus-udp-fpga-firm のリリースに掲載(build16 は取り下げ) |
+| plutoplus_udp-build2 | 6822(main) | 2026-10-24 | ビルド成功(2h39m、zip 33.5MB、uramdisk 26MB)。**そのままでは SD 起動しない**(U-Boot 2025.01)。0.2.4 の BOOT.bin と無圧縮カーネルに手で入れ替えて起動・動作確認(上の「SD 起動しなかった件」) |
+| plutoplus_udp-build4 | test-oldfsbl | 2026-10-24 | FSBL を戻した試験。FSBL は原因でないと分かったので使っていない(ブランチは削除) |
+| plutoplus_udp-build5 | e0191b1(main) | 2026-10-24 | SD 用 BOOT.bin が 0.2.4 のもの(md5 a6ce0ad4…)・カーネル無圧縮(0x8000)・overclock なし・鍵保存の修正入りを確認。版の表示はまだ `tezuka-e019`。実機は未書込み |
+| plutoplus_udp-build6 | 8c48a34(main) | 2026-10-28 | 版の名前 `plutoplus-udp-firm_v1.0-8c48` を確認。`base` が `tezuka-8c48`(このリポジトリのコミット)になっていたので TEZUKA_BASE で直した |
+| plutoplus_udp-build7 | f953bfa(main) | 2026-10-28 | `device-fw plutoplus-udp-firm_v1.0-f953`・`base tezuka-v0.3.24-a304a1f`・ログイン表示・U-Boot の表示を確認。BOOT.bin は 0.2.4(md5 一致)。実機は未書込み |
+| plutoplus_udp_fpga-build10 | ea42271(main) | 2026-11-09 | RRC ×4 版。起動と DVB-S2 送信(4 方式のヘッダー解読)を確認。同じ Pluto での受信はできない(送信 4 倍・受信 2 倍の衝突) |
+| plutoplus_udp_fpga-build11 | 260031c(main) | 2026-11-09 | RRC ×2 版。元のアプリで 500 kS/s のロックを確認。TS がエンコーダへ届かないことがある |
+| plutoplus_udp_fpga-build12 | 4c85fb3(main) | 2026-11-09 | Actions のキャッシュで pluto_stream の修正が入らなかった。使わない |
+| plutoplus_udp_fpga-build13 | 692f70e(main) | 2026-11-09 | TS 入力のソケットの修正入り。映像が出るまで数分かかる |
+| plutoplus_udp_fpga-build14 | 33b829d(main) | 2026-11-09 | tsp のバッファ修正入り。500 / 1000 kS/s で映像を確認(約 3 秒)。起動直後の最初の送信は DVB-S2 にならない |
+| plutoplus_udp_fpga-build15 | 351ae2b(main) | 2026-11-09 | 起動直後の設定の送り直しと、状態ページの CSS の修正入り。実機確認中 |
+| plutoplus_udp_fpga-build16 | 7da2d5e(main) | 2026-11-11 | build15 の版名を途中の名前に変えたもの(ビットストリーム・BOOT.bin は同じ)。取り下げ |
+| plutoplus_udp_fpga-build17 | fcca016(main) | 2026-11-12 | ファーム名を `plutoplus-udp-fpga-firm_v1.0-fcca0` に変えたもの(ビットストリーム・BOOT.bin は build15 と同じ)。plutoplus-udp-fpga-firm のリリースに掲載(build16 は取り下げ) |
 
 ## 未確認
 
-- 実機での送信(Shonan_Lite から)。起動・Web(pluto.php・pluto_temp.php・ダッシュボードの表示)・iiod・SSH は確認済み
+- 実機での送信(UDP 送信アプリから)。起動・Web(pluto.php・pluto_temp.php・ダッシュボードの表示)・iiod・SSH は確認済み
 - lighttpd 経由での tezuka ダッシュボードの WebSocket(ウォーターフォールなど)
 - U-Boot 2025.01 が SD 起動しない詳しい原因(シリアルコンソールで確認したい)
 - maia-sdr の受信と pluto_dvb の送信を同時に使ったときの動き
@@ -296,13 +296,13 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 
 > 作る手順(Vivado の準備 → FPGA のビルド → ファーム → SD カード → 実機確認)は [FPGA作成.md](FPGA作成.md) に通しでまとめてある。
 
-| 項目 | plutoplus_shonan | plutoplus_udp_fpga |
+| 項目 | plutoplus_udp | plutoplus_udp_fpga |
 |---|---|---|
 | FPGA | tezuka 本家の plutoplus(Maia-SDR 入り、2R2T) | plutoplus_dvb(DVB-S2 エンコーダ + RRC ×2 + TX FIR ×8、1R1T、Maia-SDR なし) |
 | DATV の変調 | ARM のソフト(pluto_dvb) | FPGA(pluto_stream が操作) |
 | Maia-SDR・IQEngine・ウォーターフォール | あり | なし |
 | トップページ(`http://<IP>/`) | tezuka ダッシュボード(maia-httpd 経由) | FPGA 版専用の状態ページ(版名・シリアル・送信の状態)。`info.html` も FPGA 版用 |
-| Shonan_Lite(UDP 8282)・iiod・SSH | 使える | 使える(同じ URL・ポート) |
+| UDP 送信アプリ(UDP 8282)・iiod・SSH | 使える | 使える(同じ URL・ポート) |
 
 ### なぜ Maia-SDR を外すか
 
@@ -392,7 +392,7 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 2. `plutoplus_dvb.xsa` を `board/tezuka/plutoplus_dvb/bitstream/` に置いてコミット
 3. ファーム: `gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fpga_fw --ref main -f boards=plutoplus_udp_fpga`
    → プレリリース `plutoplus_udp_fpga-build<番号>`
-4. SD カードの作り方は plutoplus_shonan と同じ(zip の `sdimg/` の中身をコピー)
+4. SD カードの作り方は plutoplus_udp と同じ(zip の `sdimg/` の中身をコピー)
 
 ### plutoplus_dvb.xsa ができた後(Mac)
 
@@ -412,7 +412,7 @@ Linux から持ってきたファイルが `~/Downloads/plutoplus_dvb_out/` に�
 2. リポジトリに置いてコミット・push(レポートも一緒に残す)
 
    ```
-   cd ~/AppDev/tezuka_fw-shonan
+   cd ~/AppDev/plutoplus-udp-fpga_fw
    B=board/tezuka/plutoplus_dvb/bitstream
    cp ~/Downloads/plutoplus_dvb_out/plutoplus_dvb.xsa $B/
    mkdir -p $B/reports && cp ~/Downloads/plutoplus_dvb_out/*.rpt $B/reports/
@@ -427,7 +427,7 @@ Linux から持ってきたファイルが `~/Downloads/plutoplus_dvb_out/` に�
    gh run watch <run の番号> --repo kazushinjo/plutoplus-udp-fpga_fw
    ```
 
-   キャッシュが効くので plutoplus_shonan の初回(2 時間 40 分)より短い見込み。pluto_stream などが増えるので rootfs は少し長くなる。
+   キャッシュが効くので plutoplus_udp の初回(2 時間 40 分)より短い見込み。pluto_stream などが増えるので rootfs は少し長くなる。
 
 4. プレリリースから取ってくる
 
@@ -438,7 +438,7 @@ Linux から持ってきたファイルが `~/Downloads/plutoplus_dvb_out/` に�
    ```
 
 5. SD カードへ書き込む: 上の「SD カードの作り方(Mac)」の 2〜5 と同じ(`sdimg/` の中身をコピー、照合、取り出し)。
-   **plutoplus_shonan の SD カードは残しておき、別の SD カードを使う**と、元に戻すのが楽
+   **plutoplus_udp の SD カードは残しておき、別の SD カードを使う**と、元に戻すのが楽
 
 ### 実機での確かめ方(FPGA 版)
 
@@ -460,7 +460,7 @@ Linux から持ってきたファイルが `~/Downloads/plutoplus_dvb_out/` に�
 
 3. 送信する
    - まず **アッテネーター(40dB など)とダミーロード/受信機をつなぐ**
-   - Shonan_Lite から送信する(いつもどおり UDP 8282)。または、ブラウザで `http://<IP>/pluto.php` を開いて設定を保存し、
+   - UDP 送信アプリから送信する(いつもどおり UDP 8282)。または、ブラウザで `http://<IP>/pluto.php` を開いて設定を保存し、
      Mac から試験映像を送る(Mac に ffmpeg が要る):
 
      ```
@@ -477,9 +477,9 @@ Linux から持ってきたファイルが `~/Downloads/plutoplus_dvb_out/` に�
      iio_attr -c -o ad9361-phy voltage0 hardwaregain # 送信ゲイン(dB)
      ```
 
-   - 受信側(MiniTiouner、Shonan_Lite の受信など)でロックし、MER・映像・音声を見る。スペクトラムアナライザーがあれば帯域と肩も見る
+   - 受信側(MiniTiouner、UDP 送信アプリの受信など)でロックし、MER・映像・音声を見る。スペクトラムアナライザーがあれば帯域と肩も見る
    - TS を止めても送信は自動では止まらない(UDP 入力の tsp が待ち続ける)。アプリの送信停止など、処理を止める操作が必要
-4. 受信まわり: Shonan_Lite の RSSI 測定、Langstone が今までどおり動くか
+4. 受信まわり: UDP 送信アプリの RSSI 測定、Langstone が今までどおり動くか
 5. うまくいかないとき: pluto_stream のメッセージを見る(S96plutostream は出力を捨てているので、手で起動し直す)
 
    ```
@@ -490,7 +490,7 @@ Linux から持ってきたファイルが `~/Downloads/plutoplus_dvb_out/` に�
 
 FPGA 版は SD カードにしか入っていない。QSPI(内蔵フラッシュ)には触れていない。
 
-- **SD カードを差し替える**: plutoplus_shonan(build2)の SD カードに戻して電源を入れ直す
+- **SD カードを差し替える**: plutoplus_udp(build2)の SD カードに戻して電源を入れ直す
 - **同じ SD カードを書き戻す**: Mac で build2 の `sdimg/` の中身を上書きコピー(「SD カードの作り方(Mac)」の 4〜5)。
   `overclock/`・`system_top_top.bin`・`tezuka_top.bin` も上書きされる
 - **SD カードを抜かずに戻す**(Pluto+ が起動していてネットワークが使えるとき)
@@ -523,7 +523,7 @@ FPGA 版は SD カードにしか入っていない。QSPI(内蔵フラッシュ
 | 作業 | 状態 |
 |---|---|
 | FPGA(RRC ×2、plutoplus-udp-fpga-firm の `main`) | Vivado でビルド済み。LUT 66.90%、DSP 54/80、WNS +0.152 ns、WHS +0.025 ns |
-| ファーム | `plutoplus_shonan_dvb-build17`(`fcca016`、`main`) |
+| ファーム | `plutoplus_udp_fpga-build17`(`fcca016`、`main`) |
 | 元のアプリのままの送受信(同じ Pluto、USB) | 500 / 1000 kS/s でロックと映像を確認(build14) |
 
 同じ Pluto で送受信するときは、受信 IQ が多いので USB か有線 LAN で接続する。
@@ -535,7 +535,7 @@ FPGA 版は SD カードにしか入っていない。QSPI(内蔵フラッシュ
 - 帯域外の不要輻射(RRC ×2 はスペクトラムアナライザーでの測定が必要)
 - 受信だけを開始し直したときの動作(`ADC clock below limit` で IQ が止まったことがある)
 - 他の受信機(MiniTiouner など)での受信、ショートフレーム
-- Shonan の RSSI 測定以外の受信機能、Langstone
+- 送信アプリの RSSI 測定以外の受信機能、Langstone
 
 ## 謝辞
 
@@ -557,7 +557,7 @@ FPGA 版は SD カードにしか入っていない。QSPI(内蔵フラッシュ
 詳しくは [LICENSE.md](LICENSE.md)。
 
 - tezuka_fw とこのリポジトリで足した設定・スクリプト・文書: GPL-3.0(リポジトリ直下の [LICENSE](https://github.com/kazushinjo/plutoplus-udp-fpga_fw/blob/main/LICENSE))
-- ファームに入る各 OSS パッケージ: それぞれのライセンス。ライセンス文と SBOM は各リリースの `plutoplus_shonan-licenses.zip`・`plutoplus_udp_fpga-licenses.zip`
+- ファームに入る各 OSS パッケージ: それぞれのライセンス。ライセンス文と SBOM は各リリースの `plutoplus_udp-licenses.zip`・`plutoplus_udp_fpga-licenses.zip`
 - TSDuck: BSD-2-Clause、jQuery・Chart.js・Socket.IO など Web 画面のライブラリ: MIT
 - datvplutofrm から持ってきた DATV の部品(udpts.sh・PHP ページ・pluto_dvb など): 元の F5OEO/datvplutofrm に
   ライセンスの明記が無いが、**作者 F5OEO 氏の許可を得て公開している**
@@ -566,9 +566,9 @@ FPGA 版は SD カードにしか入っていない。QSPI(内蔵フラッシュ
 
 # English
 
-## Pluto+ Shonan_Lite version (plutoplus_shonan)
+## Pluto+ the UDP sender app version (plutoplus_udp)
 
-tezuka's Pluto+ firmware (`configs/plutoplus_maiasdr_defconfig`) with the DATV transmit components used by Shonan_Lite (UDP only) added (the v0.39-udp branch, formerly v0.39-shonan, of [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty)).
+tezuka's Pluto+ firmware (`configs/plutoplus_maiasdr_defconfig`) with the DATV transmit components used by the UDP sender app (UDP only) added (the v0.39-udp branch of [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty)).
 All tezuka features (maia-sdr, IQEngine, dashboard, MQTT and so on) are kept.
 
 The image does not fit in the QSPI firmware area (0x1E00000 = 31,457,280 bytes), so it is **SD card boot only**.
@@ -581,7 +581,7 @@ The image does not fit in the QSPI firmware area (0x1E00000 = 31,457,280 bytes),
 | tezuka_fw (F5OEO) | github.com/F5OEO/tezuka_fw `a304a1f` (v0.3.24, 2026-10-17) |
 | Buildroot | 2026.05.2 (`buildroot.version`) |
 | Linux | ADI linux `bf1d49f` (adi-6.12.y), glibc 2.40, Bootlin toolchain |
-| DATV transmit components | [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) `v0.39-udp` (formerly `main` / `v0.39-shonan`; same content as build10 = 2649143) |
+| DATV transmit components | [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) `v0.39-udp` (formerly `main`; same content as build10 = 2649143) |
 
 The Pluto+ has the same Zynq-7010 (2 Cortex-A9 cores) and 512 MB of RAM as the plain Pluto. The FPGA and device tree are model-specific,
 but ARM executables are common, so the prebuilt `pluto_dvb` and `tsp` are used as is
@@ -592,21 +592,21 @@ but ARM executables are common, so the prebuilt `pluto_dvb` and `tsp` are used a
 It cannot be built on a Mac (Buildroot needs x86_64 Linux). Build it with GitHub Actions.
 
 ```
-gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fpga_fw --ref main -f boards=plutoplus_shonan
+gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fpga_fw --ref main -f boards=plutoplus_udp
 gh run list --repo kazushinjo/plutoplus-udp-fpga_fw --workflow main.yml --limit 3
 ```
 
-- The zip is attached to the prerelease `plutoplus_shonan-build<run-number>` (Artifacts are not relied on because of the storage quota).
+- The zip is attached to the prerelease `plutoplus_udp-build<run-number>` (Artifacts are not relied on because of the storage quota).
 - Time: about 2 h 40 min for the first build with no cache (U-Boot 36 min, kernel 46 min, rootfs 68 min).
   Later builds use the cache. While the repository was private, this used the free Actions allowance (2000 minutes per month).
 - To build locally on a Linux machine:
 
 ```
 ./getbuildroot.sh
-./build.sh plutoplus_shonan
+./build.sh plutoplus_udp
 ```
 
-The result is `build/plutoplus_shonan.zip`.
+The result is `build/plutoplus_udp.zip`.
 
 ### Making the SD card (Mac)
 
@@ -615,8 +615,8 @@ SD card used: 32 GB (shown as 31.0 GB). Use 32 GB or smaller, FAT32.
 1. Get the zip from the prerelease and extract it
 
    ```
-   gh release download plutoplus_shonan-build2 --repo kazushinjo/plutoplus-udp-fpga_fw --dir ~/Downloads/plutoplus
-   cd ~/Downloads/plutoplus && unzip plutoplus_shonan.zip
+   gh release download plutoplus_udp-build2 --repo kazushinjo/plutoplus-udp-fpga_fw --dir ~/Downloads/plutoplus
+   cd ~/Downloads/plutoplus && unzip plutoplus_udp.zip
    ```
 
 2. Insert the SD card and confirm its disk number (**always confirm: a mistake erases another disk**)
@@ -686,9 +686,9 @@ SD card used: 32 GB (shown as 31.0 GB). Use 32 GB or smaller, FAT32.
 | Network | LAN (DHCP) or USB (Pluto side 192.168.2.1, PC side 192.168.2.10) | ping replies. Find the LAN IP on the router. mDNS name is `pluto.local` |
 | DATV web page | `http://<IP>/pluto.php` | The Controller page appears |
 | tezuka dashboard | `http://<IP>/` | maia-sdr / Tezuka Dashboard appears (through lighttpd) |
-| SSH | `ssh root@<IP>` (password analog) | The login banner has the lines `Version ShonanLite-Portsdown4_v1.0-...`, `Shonan_Lite / Portsdown 4 edition for Pluto+` and `v1.0-ShonanLite-Portsdown4-...` (up to build5, `v6822-shonan` and so on) |
+| SSH | `ssh root@<IP>` (password analog) | The login banner has the lines `Version plutoplus-udp-firm_v1.0-...`, `plutoplus-udp-firm: UDP DATV firmware for Pluto+` and `v1.0-plutoplus-udp-firm-...` (up to build5, `v6822` and so on) |
 | iio | `iio_info -u ip:<IP>` | ad9361-phy and others are visible |
-| Version | `cat /opt/VERSIONS` | `device-fw ShonanLite-Portsdown4_v1.0-<commit>`, `base tezuka-<commit>`, `buildroot 2026.05.2` (up to build5, `device-fw tezuka-...`) |
+| Version | `cat /opt/VERSIONS` | `device-fw plutoplus-udp-firm_v1.0-<commit>`, `base tezuka-<commit>`, `buildroot 2026.05.2` (up to build5, `device-fw tezuka-...`) |
 
 A fixed LAN IP is set with the tezuka mechanism (`[USB_ETHERNET] ipaddr_eth` in `config.txt` on the USB drive, or `fw_setenv ipaddr_eth`).
 
@@ -702,7 +702,7 @@ A fixed LAN IP is set with the tezuka mechanism (`[USB_ETHERNET] ipaddr_eth` in 
   but to match earlier Plutos it was changed with `fw_setenv attr_val ad9364` (`attr_name=compatible`) and rebooted.
   The boot log shows `ad9361_probe : enter (ad9364)`. `mode=1r1t` (one receive, one transmit)
 - **UDP 8282 right after boot**: while there is no `settings.txt`, udpts.sh waits with empty settings (same as datvplutofrm v0.39).
-  It starts listening once settings are saved from Shonan_Lite (save.php)
+  It starts listening once settings are saved from the UDP sender app (save.php)
 - **SSH host keys**: in build2 the ed25519 and rsa keys were not stored in internal flash and changed on every reboot
   (see the fix after the SD boot failure section below). On this Pluto+ all three were saved by hand on 2026-10-24
 
@@ -710,10 +710,10 @@ A fixed LAN IP is set with the tezuka mechanism (`[USB_ETHERNET] ipaddr_eth` in 
 
 | Port / URL | Used by | Details |
 |---|---|---|
-| UDP 8282 | All versions of Shonan_Lite | Receives TS, transmits through tsp → pluto_dvb (settings in `/www/settings.txt`) |
-| `http://<IP>/save.php`, `/pluto.php` | Shonan_Lite | Saving transmit settings and rebooting (lighttpd + php-cgi) |
-| iiod (TCP 30431) | Shonan_Lite receive and RSSI, Langstone | libiio |
-| SSH 22 | Shonan_Lite | root / analog |
+| UDP 8282 | All versions of the UDP sender app | Receives TS, transmits through tsp → pluto_dvb (settings in `/www/settings.txt`) |
+| `http://<IP>/save.php`, `/pluto.php` | the UDP sender app | Saving transmit settings and rebooting (lighttpd + php-cgi) |
+| iiod (TCP 30431) | the UDP sender app receive and RSSI, Langstone | libiio |
+| SSH 22 | the UDP sender app | root / analog |
 | `http://<IP>/` (80) | Browser | tezuka dashboard (relayed to maia-httpd at 127.0.0.1:8000, including WebSocket) |
 | 443 | Browser | maia-httpd HTTPS (unchanged from tezuka) |
 | MQTT 1883 / WebSocket 9001 | tezuka dashboard | mosquitto (unchanged from tezuka) |
@@ -736,11 +736,11 @@ Since build6 these have their own names, so they are not mistaken for official t
 
 | Version | Example name |
 |---|---|
-| plutoplus_shonan | `ShonanLite-Portsdown4_v1.0-e019` |
+| plutoplus_udp | `plutoplus-udp-firm_v1.0-e019` |
 | plutoplus_udp_fpga (FPGA version) | `plutoplus-udp-fpga-firm_v1.0-e019` |
 
 - `v1.0` is the number in `board/tezuka/plutoplus_udp/VERSION`. Edit this file to raise the version. The end is this repository's commit (4 digits)
-- It appears in: `device-fw` in `/opt/VERSIONS`, Build in `info.html` on the USB drive, iiod's `fw_version` (Shonan_Lite's Pluto information and the tezuka dashboard),
+- It appears in: `device-fw` in `/opt/VERSIONS`, Build in `info.html` on the USB drive, iiod's `fw_version` (the UDP sender app's Pluto information and the tezuka dashboard),
   the SSH login banner and the U-Boot boot message (serial)
 - The tezuka version it is based on is written in `board/tezuka/plutoplus_udp/TEZUKA_BASE` (currently `tezuka-v0.3.24-a304a1f`) and shown as `base` in `/opt/VERSIONS` and `(base ...)` in the login banner.
   Update this file when merging upstream tezuka
@@ -757,8 +757,8 @@ Since build6 these have their own names, so they are not mistaken for official t
 | `overlay/etc/php.ini` | Same as datvplutofrm (`cgi.force_redirect = 0`, `post_max_size = 30M`) |
 | `overlay/etc/init.d/S90datv` | Starts udpts.sh, rtmppluto.sh and watchudp.sh at boot |
 | `overlay/etc/init.d/S89patchfirm`, `overlay/usr/sbin/device_persistent_keys` | Creates and saves the SSH host keys (ecdsa, ed25519, rsa) at boot, so they survive power loss. Extracts `/mnt/jffs2/patch.zip` if present |
-| `post-build.sh` | Moves maia-httpd to 127.0.0.1:8000, makes NCM the USB network default, adds a `v...-shonan` line to the login banner, creates fwversion.txt and releasenote.txt |
-| defconfig | lighttpd (pcre), PHP 8.5 (cgi, cli, session, sockets), bc, ffmpeg 6.1.5 (same minimal configuration as datvplutofrm v0.39-shonan). Hostname is `pluto` to match the Langstone default. Removes `postimage-qspi.sh` and builds for SD card only |
+| `post-build.sh` | Moves maia-httpd to 127.0.0.1:8000, makes NCM the USB network default, adds a `v...` line to the login banner, creates fwversion.txt and releasenote.txt |
+| defconfig | lighttpd (pcre), PHP 8.5 (cgi, cli, session, sockets), bc, ffmpeg 6.1.5 (same minimal configuration as the v0.39-dirty UDP version). Hostname is `pluto` to match the Langstone default. Removes `postimage-qspi.sh` and builds for SD card only |
 | `.github/workflows/main.yml` | Attaches the zip to a prerelease on manual builds; on a private repository, skips attest and does not stop when saving Artifacts fails |
 
 ### What was not taken from datvplutofrm
@@ -769,16 +769,16 @@ Since build6 these have their own names, so they are not mistaken for official t
 
 ### Repository and CI notes
 
-- Repository: kazushinjo/plutoplus-udp-fpga_fw (public). Only the `main` branch (`shonan` became `main` on 2026-11-11; the original tezuka is [F5OEO/tezuka_fw](https://github.com/F5OEO/tezuka_fw)).
-  The local working copy is `~/AppDev/tezuka_fw-shonan` (remote: `origin` = this repository, `upstream` = F5OEO/tezuka_fw).
+- Repository: kazushinjo/plutoplus-udp-fpga_fw (public). Only the `main` branch (`main` became `main` on 2026-11-11; the original tezuka is [F5OEO/tezuka_fw](https://github.com/F5OEO/tezuka_fw)).
+  The local working copy is `~/AppDev/plutoplus-udp-fpga_fw` (remote: `origin` = this repository, `upstream` = F5OEO/tezuka_fw).
 - Do not push tezuka's tags (`v0.3.x`). Pushing a tag runs the release build for all boards.
-  For that reason the version shows the commit rather than a tag (for example `v6822-shonan`).
+  For that reason the version shows the commit rather than a tag (for example `v6822`).
 - GitHub did not register workflows from the first push of the whole history.
   They were registered after pushing a commit that changes `main.yml`.
 - Artifacts have hit the storage quota (Artifact storage quota has been hit), so zips are received through prereleases.
 - Following tezuka's CLAUDE.md, commit messages are ASCII only.
 - The HDL for the FPGA version is in the separate public repository [kazushinjo/plutoplus-udp-fpga-firm](https://github.com/kazushinjo/plutoplus-udp-fpga-firm) (Actions disabled). See the FPGA version section.
-- To merge upstream tezuka: `git fetch upstream && git merge upstream/main` (on the shonan branch)
+- To merge upstream tezuka: `git fetch upstream && git merge upstream/main` (on the main branch)
 
 ### SD boot failure (2026-10-24)
 
@@ -797,7 +797,7 @@ With SD-H removed, the internal flash (tezuka 0.2.4) booted as usual (cables and
 | Built with the FSBL reverted to the 0.2.4 era (3355a86) (branch test-oldfsbl, build4) | Judged unnecessary after comparing contents before writing | The **written contents of the old and new fsbl.elf are identical** (only ELF metadata differs). The FSBL is not the cause |
 | U-Boot version | 0.2.4 is **U-Boot 2016.07**, current tezuka is **U-Boot 2025.01** | The newer U-Boot does not work for SD boot on this board (no serial, so the detailed cause is unconfirmed) |
 | Kernel format | 0.2.4 is uncompressed (zImage), now an **LZMA-compressed** uImage | The 0.2.4 U-Boot cannot open LZMA (why the third row did not reach Linux) |
-| **0.2.4 BOOT.bin + build2 kernel rebuilt as an uncompressed uImage + the rest of build2** | **Booted** | Confirmed version `tezuka-6822`, `v6822-shonan`, all processes and ports, pluto.php and the dashboard |
+| **0.2.4 BOOT.bin + build2 kernel rebuilt as an uncompressed uImage + the rest of build2** | **Booted** | Confirmed version `tezuka-6822`, `v6822`, all processes and ports, pluto.php and the dashboard |
 
 #### Fix (reflected in the build)
 
@@ -813,20 +813,20 @@ With SD-H removed, the internal flash (tezuka 0.2.4) booted as usual (cables and
 
 | Version | Commit | Date | Result |
 |---|---|---|---|
-| plutoplus_shonan-build2 | 6822 (shonan) | 2026-10-24 | Build succeeded (2h39m, zip 33.5 MB, uramdisk 26 MB). **Does not SD boot as is** (U-Boot 2025.01). Booted and checked after manually replacing with the 0.2.4 BOOT.bin and an uncompressed kernel (SD boot failure section above) |
-| plutoplus_shonan-build4 | test-oldfsbl | 2026-10-24 | FSBL revert test. Not used, since the FSBL turned out not to be the cause (branch deleted) |
-| plutoplus_shonan-build5 | e0191b1 (shonan) | 2026-10-24 | Confirmed the SD BOOT.bin is the 0.2.4 one (md5 a6ce0ad4...), kernel uncompressed (0x8000), no overclock, key-saving fix included. The version still shows `tezuka-e019`. Not yet written to hardware |
-| plutoplus_shonan-build6 | 8c48a34 (shonan) | 2026-10-28 | Confirmed version name `ShonanLite-Portsdown4_v1.0-8c48`. `base` was `tezuka-8c48` (this repository's commit), fixed with TEZUKA_BASE |
-| plutoplus_shonan-build7 | f953bfa (shonan) | 2026-10-28 | Confirmed `device-fw ShonanLite-Portsdown4_v1.0-f953`, `base tezuka-v0.3.24-a304a1f`, the login banner and the U-Boot message. BOOT.bin is 0.2.4 (md5 matches). Not yet written to hardware |
-| plutoplus_shonan_dvb-build10 to build13 | see the Japanese table | 2026-11-09 | Intermediate builds |
-| plutoplus_shonan_dvb-build14 | 33b829d (rrc-x2) | 2026-11-09 | RRC x2. Lock and video confirmed at 500 and 1000 kS/s with the unmodified app. The first TX after boot does not enter DVB-S2 mode |
-| plutoplus_shonan_dvb-build15 | 351ae2b (rrc-x2) | 2026-11-09 | Resends the TX settings after boot, fixes the status page CSS. Being verified on hardware |
-| plutoplus_shonan_dvb-build16 | 7da2d5e (main) | 2026-11-11 | build15 with the version name changed to `ShonanLite-FPGA_v1.0-7da2` (same bitstream and BOOT.bin). Also published on the plutoplus-udp-fpga-firm releases |
-| plutoplus_shonan_dvb-build17 | fcca016 (main) | 2026-11-12 | Firmware name changed to `plutoplus-udp-fpga-firm_v1.0-fcca0` (bitstream and BOOT.bin same as build15). Published on the plutoplus-udp-fpga-firm releases (build16 withdrawn) |
+| plutoplus_udp-build2 | 6822 (main) | 2026-10-24 | Build succeeded (2h39m, zip 33.5 MB, uramdisk 26 MB). **Does not SD boot as is** (U-Boot 2025.01). Booted and checked after manually replacing with the 0.2.4 BOOT.bin and an uncompressed kernel (SD boot failure section above) |
+| plutoplus_udp-build4 | test-oldfsbl | 2026-10-24 | FSBL revert test. Not used, since the FSBL turned out not to be the cause (branch deleted) |
+| plutoplus_udp-build5 | e0191b1 (main) | 2026-10-24 | Confirmed the SD BOOT.bin is the 0.2.4 one (md5 a6ce0ad4...), kernel uncompressed (0x8000), no overclock, key-saving fix included. The version still shows `tezuka-e019`. Not yet written to hardware |
+| plutoplus_udp-build6 | 8c48a34 (main) | 2026-10-28 | Confirmed version name `plutoplus-udp-firm_v1.0-8c48`. `base` was `tezuka-8c48` (this repository's commit), fixed with TEZUKA_BASE |
+| plutoplus_udp-build7 | f953bfa (main) | 2026-10-28 | Confirmed `device-fw plutoplus-udp-firm_v1.0-f953`, `base tezuka-v0.3.24-a304a1f`, the login banner and the U-Boot message. BOOT.bin is 0.2.4 (md5 matches). Not yet written to hardware |
+| plutoplus_udp_fpga-build10 to build13 | see the Japanese table | 2026-11-09 | Intermediate builds |
+| plutoplus_udp_fpga-build14 | 33b829d (main) | 2026-11-09 | RRC x2. Lock and video confirmed at 500 and 1000 kS/s with the unmodified app. The first TX after boot does not enter DVB-S2 mode |
+| plutoplus_udp_fpga-build15 | 351ae2b (main) | 2026-11-09 | Resends the TX settings after boot, fixes the status page CSS. Being verified on hardware |
+| plutoplus_udp_fpga-build16 | 7da2d5e (main) | 2026-11-11 | build15 with an interim version name (same bitstream and BOOT.bin). Withdrawn |
+| plutoplus_udp_fpga-build17 | fcca016 (main) | 2026-11-12 | Firmware name changed to `plutoplus-udp-fpga-firm_v1.0-fcca0` (bitstream and BOOT.bin same as build15). Published on the plutoplus-udp-fpga-firm releases (build16 withdrawn) |
 
 ### Not yet confirmed
 
-- Transmitting on the hardware (from Shonan_Lite). Boot, web (pluto.php, pluto_temp.php, dashboard display), iiod and SSH are confirmed
+- Transmitting on the hardware (from the UDP sender app). Boot, web (pluto.php, pluto_temp.php, dashboard display), iiod and SSH are confirmed
 - The tezuka dashboard's WebSocket through lighttpd (waterfall and so on)
 - The detailed cause of U-Boot 2025.01 failing SD boot (should be checked on a serial console)
 - Behavior when using maia-sdr receive and pluto_dvb transmit at the same time
@@ -839,13 +839,13 @@ The 7010 in the Pluto+ cannot hold both Maia-SDR and the DVB-S2 chain, so **Maia
 
 > The full procedure (Vivado setup → FPGA build → firmware → SD card → hardware checks) is in [FPGA作成.md](FPGA作成.md).
 
-| Item | plutoplus_shonan | plutoplus_udp_fpga |
+| Item | plutoplus_udp | plutoplus_udp_fpga |
 |---|---|---|
 | FPGA | Upstream tezuka plutoplus (with Maia-SDR, 2R2T) | plutoplus_dvb (DVB-S2 encoder + RRC x2 + TX FIR x8, 1R1T, no Maia-SDR) |
 | DATV modulation | ARM software (pluto_dvb) | FPGA (controlled by pluto_stream) |
 | Maia-SDR, IQEngine, waterfall | Yes | No |
 | Top page (`http://<IP>/`) | Tezuka dashboard (through maia-httpd) | A status page for this build (version, serial, TX state). `info.html` is also specific to this build |
-| Shonan_Lite (UDP 8282), iiod, SSH | Available | Available (same URLs and ports) |
+| the UDP sender app (UDP 8282), iiod, SSH | Available | Available (same URLs and ports) |
 
 #### Why Maia-SDR is removed
 
@@ -932,7 +932,7 @@ The 7010 in the Pluto+ cannot hold both Maia-SDR and the DVB-S2 chain, so **Maia
 2. Put `plutoplus_dvb.xsa` in `board/tezuka/plutoplus_dvb/bitstream/` and commit
 3. Firmware: `gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fpga_fw --ref main -f boards=plutoplus_udp_fpga`
    → prerelease `plutoplus_udp_fpga-build<number>`
-4. The SD card is made the same way as plutoplus_shonan (copy the contents of `sdimg/` from the zip)
+4. The SD card is made the same way as plutoplus_udp (copy the contents of `sdimg/` from the zip)
 
 #### After plutoplus_dvb.xsa is ready (Mac)
 
@@ -952,7 +952,7 @@ Assumes the files brought from Linux are in `~/Downloads/plutoplus_dvb_out/`.
 2. Put it in the repository, commit and push (keeping the reports too)
 
    ```
-   cd ~/AppDev/tezuka_fw-shonan
+   cd ~/AppDev/plutoplus-udp-fpga_fw
    B=board/tezuka/plutoplus_dvb/bitstream
    cp ~/Downloads/plutoplus_dvb_out/plutoplus_dvb.xsa $B/
    mkdir -p $B/reports && cp ~/Downloads/plutoplus_dvb_out/*.rpt $B/reports/
@@ -967,7 +967,7 @@ Assumes the files brought from Linux are in `~/Downloads/plutoplus_dvb_out/`.
    gh run watch <run-number> --repo kazushinjo/plutoplus-udp-fpga_fw
    ```
 
-   Caches apply, so it should be shorter than the first plutoplus_shonan build (2 h 40 min). pluto_stream and others are added, so rootfs takes a little longer.
+   Caches apply, so it should be shorter than the first plutoplus_udp build (2 h 40 min). pluto_stream and others are added, so rootfs takes a little longer.
 
 4. Get it from the prerelease
 
@@ -978,7 +978,7 @@ Assumes the files brought from Linux are in `~/Downloads/plutoplus_dvb_out/`.
    ```
 
 5. Write the SD card: same as steps 2 to 5 of Making the SD card (Mac) above (copy the contents of `sdimg/`, verify, eject).
-   **Keeping the plutoplus_shonan SD card and using a separate SD card** makes going back easier
+   **Keeping the plutoplus_udp SD card and using a separate SD card** makes going back easier
 
 #### Checking on the hardware (FPGA version)
 
@@ -1000,7 +1000,7 @@ Boot, network and SSH are the same as the post-boot checks. Then log in to the P
 
 3. Transmit
    - First **connect an attenuator (40 dB or so) and a dummy load or receiver**
-   - Transmit from Shonan_Lite (UDP 8282 as usual). Or open `http://<IP>/pluto.php` in a browser, save the settings,
+   - Transmit from the UDP sender app (UDP 8282 as usual). Or open `http://<IP>/pluto.php` in a browser, save the settings,
      and send a test video from the Mac (the Mac needs ffmpeg):
 
      ```
@@ -1017,9 +1017,9 @@ Boot, network and SSH are the same as the post-boot checks. Then log in to the P
      iio_attr -c -o ad9361-phy voltage0 hardwaregain # TX gain (dB)
      ```
 
-   - On the receiver (MiniTiouner, Shonan_Lite receive and so on), lock and check MER, video and audio. If you have a spectrum analyzer, also check the bandwidth and shoulders
+   - On the receiver (MiniTiouner, the UDP sender app receive and so on), lock and check MER, video and audio. If you have a spectrum analyzer, also check the bandwidth and shoulders
    - Stopping the TS does not stop the transmitter automatically (the UDP-input tsp keeps waiting). Stop it from the app
-4. Receive functions: Shonan_Lite RSSI measurement, and whether Langstone works as before
+4. Receive functions: the UDP sender app RSSI measurement, and whether Langstone works as before
 5. If it does not work: look at the pluto_stream messages (S96plutostream discards the output, so restart it by hand)
 
    ```
@@ -1030,7 +1030,7 @@ Boot, network and SSH are the same as the post-boot checks. Then log in to the P
 
 The FPGA version exists only on the SD card. The QSPI (internal flash) is not touched.
 
-- **Swap the SD card**: put the plutoplus_shonan (build2) SD card back and power cycle
+- **Swap the SD card**: put the plutoplus_udp (build2) SD card back and power cycle
 - **Rewrite the same SD card**: on the Mac, copy the contents of build2's `sdimg/` over it (steps 4 and 5 of Making the SD card (Mac)).
   `overclock/`, `system_top_top.bin` and `tezuka_top.bin` are also overwritten
 - **Go back without removing the SD card** (when the Pluto+ is running and the network is available)
@@ -1063,7 +1063,7 @@ S45msd fills in the version, serial and so on at boot. The serial number and MAC
 | Task | Status |
 |---|---|
 | FPGA (RRC x2, `main` of plutoplus-udp-fpga-firm) | Built in Vivado. LUT 66.90%, DSP 54/80, WNS +0.152 ns, WHS +0.025 ns |
-| Firmware | `plutoplus_shonan_dvb-build17` (`fcca016`, `main`) |
+| Firmware | `plutoplus_udp_fpga-build17` (`fcca016`, `main`) |
 | TX and RX on the same device with the unmodified app (USB) | Lock and video confirmed at 500 and 1000 kS/s (build14) |
 
 #### Not yet confirmed (FPGA version)
@@ -1094,7 +1094,7 @@ This repository is published with the permission of F5OEO. For the components ta
 See [LICENSE.md](LICENSE.md) for details.
 
 - tezuka_fw and the settings, scripts and documents added in this repository: GPL-3.0 ([LICENSE](https://github.com/kazushinjo/plutoplus-udp-fpga_fw/blob/main/LICENSE) at the repository root)
-- Each OSS package in the firmware: its own license. License texts and the SBOM are in each release's `plutoplus_shonan-licenses.zip` / `plutoplus_udp_fpga-licenses.zip`
+- Each OSS package in the firmware: its own license. License texts and the SBOM are in each release's `plutoplus_udp-licenses.zip` / `plutoplus_udp_fpga-licenses.zip`
 - TSDuck: BSD-2-Clause; web page libraries such as jQuery, Chart.js and Socket.IO: MIT
 - DATV components taken from datvplutofrm (udpts.sh, PHP pages, pluto_dvb and so on): the original F5OEO/datvplutofrm states no license.
   **They are published with the permission of the author, F5OEO**

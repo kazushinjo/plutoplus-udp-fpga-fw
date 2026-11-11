@@ -162,7 +162,7 @@ BR2_PACKAGE_BOARD_FPGA=y
 BR2_PACKAGE_BOARD_FPGA_BOARD="plutoplus"
 BR2_PACKAGE_BOARD_FPGA_PROJECT="tezuka"
 
-##### SHONAN_LITE DATV (board/tezuka/plutoplus_udp)
+##### UDP DATV (board/tezuka/plutoplus_udp)
 # SD card boot only (no postimage-qspi.sh): with the DATV tools below the
 # image no longer fits the 0x1E00000 QSPI firmware partition.
 # postimage-legacy-sd.sh: tezuka 0.2.4 BOOT.bin (U-Boot 2016.07) and an

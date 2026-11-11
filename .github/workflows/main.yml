@@ -1,6 +1,6 @@
 name: CI
-# plutoplus-udp-fpga_fw: dispatch with boards=plutoplus_shonan to build the
-# Pluto+ Shonan SD card image (published as a prerelease).
+# plutoplus-udp-fpga_fw: dispatch with boards=plutoplus_udp to build the
+# Pluto+ UDP SD card image (published as a prerelease).
 
 on:
   # Tag pushes publish a GitHub release with git-cliff notes and per-board
