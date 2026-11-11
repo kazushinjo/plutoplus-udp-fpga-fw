@@ -1,10 +1,10 @@
-# Pluto+ FPGA 版ファーム(plutoplus_shonan_dvb)の作り方
+# Pluto+ FPGA 版ファーム(plutoplus_udp_fpga)の作り方
 
 **日本語** | [English](#english)
 
 DVB-S2 の変調を ARM のソフト(pluto_dvb)ではなく **FPGA の DVB-S2 送信回路**で行う Pluto+ 用ファームを、
 FPGA のビルドから実機での確認まで通して作る手順。
-設計の背景・仕組みは [README.md の「FPGA 版」](README.md#fpga-版plutoplus_shonan_dvb)、
+設計の背景・仕組みは [README.md の「FPGA 版」](README.md#fpga-版plutoplus_udp_fpga)、
 Vivado まわりの細かい説明は kazushinjo/plutoplus-udp-fpga-firm の `hdl/projects/plutoplus_dvb/PLUTOPLUS_DVB.md` を参照。
 
 ## 目次
@@ -25,7 +25,7 @@ Vivado まわりの細かい説明は kazushinjo/plutoplus-udp-fpga-firm の `hd
 [Linux PC]  ① Vivado を入れる → ② FPGA(HDL)をビルド → plutoplus_dvb.xsa
                                               │ USB メモリ / scp
 [Mac]       ③ plutoplus_dvb.xsa を確認してこのリポジトリへ push
-[GitHub]    ④ Actions でファーム(plutoplus_shonan_dvb)をビルド → プレリリースの zip
+[GitHub]    ④ Actions でファーム(plutoplus_udp_fpga)をビルド → プレリリースの zip
 [Mac]       ⑤ SD カードへ書き込む
 [Pluto+]    ⑥ SD から起動して確認・送信試験
 ```
@@ -33,7 +33,7 @@ Vivado まわりの細かい説明は kazushinjo/plutoplus-udp-fpga-firm の `hd
 | リポジトリ(どちらも公開) | 中身 | 作業する場所 |
 |---|---|---|
 | kazushinjo/plutoplus-udp-fpga-firm(ブランチ `main`) | FPGA の設計(Maia-SDR を外し DVB-S2 送信回路を入れた構成) | Linux PC |
-| kazushinjo/plutoplus_fw-shonan(ブランチ `main`、このリポジトリ) | ファーム本体(Buildroot) | Mac → GitHub Actions |
+| kazushinjo/plutoplus-udp-fw(ブランチ `main`、このリポジトリ) | ファーム本体(Buildroot) | Mac → GitHub Actions |
 
 FPGA のビルドには Vivado(x86_64 Linux 専用)が、ファームのビルドには Linux が要る(ファームは GitHub Actions で作る)。
 **Mac では ①②④ はできない。**
@@ -176,12 +176,12 @@ git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025
 ## ④ ファームのビルド(GitHub Actions)
 
 ```
-gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref main -f boards=plutoplus_shonan_dvb
-gh run list  --repo kazushinjo/plutoplus_fw-shonan --workflow main.yml --limit 3
-gh run watch <run の番号> --repo kazushinjo/plutoplus_fw-shonan
+gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fw --ref main -f boards=plutoplus_udp_fpga
+gh run list  --repo kazushinjo/plutoplus-udp-fw --workflow main.yml --limit 3
+gh run watch <run の番号> --repo kazushinjo/plutoplus-udp-fw
 ```
 
-- できた zip はプレリリース `plutoplus_shonan_dvb-build<番号>` に付く(Artifacts は容量上限のため当てにしない)
+- できた zip はプレリリース `plutoplus_udp_fpga-build<番号>` に付く(Artifacts は容量上限のため当てにしない)
 - キャッシュが効くので plutoplus_shonan の初回(2 時間 40 分)より短い見込み。公開リポジトリなので Actions は無料
 - 次は自動で入る
   - SD 起動の対策(tezuka 0.2.4 の BOOT.bin と無圧縮カーネル。README の「SD 起動しなかった件」)
@@ -194,8 +194,8 @@ gh run watch <run の番号> --repo kazushinjo/plutoplus_fw-shonan
 32GB 以下・MBR・FAT32 にする。
 
 ```
-gh release download plutoplus_shonan_dvb-build<番号> --repo kazushinjo/plutoplus_fw-shonan --dir ~/Downloads/plutoplus_dvb
-cd ~/Downloads/plutoplus_dvb && unzip plutoplus_shonan_dvb.zip
+gh release download plutoplus_udp_fpga-build<番号> --repo kazushinjo/plutoplus-udp-fw --dir ~/Downloads/plutoplus_dvb
+cd ~/Downloads/plutoplus_dvb && unzip plutoplus_udp_fpga.zip
 
 diskutil list external physical                              # SD カードの番号を必ず確認(間違えると別のディスクを消す)
 diskutil eraseDisk FAT32 PLUTOPLUS MBRFormat /dev/diskN      # 中身は全部消える
@@ -304,7 +304,7 @@ FPGA 版は SD カードにしか入っていない(内蔵フラッシュには�
 
 # English
 
-## Building the Pluto+ FPGA firmware (plutoplus_shonan_dvb)
+## Building the Pluto+ FPGA firmware (plutoplus_udp_fpga)
 
 How to build, from the FPGA through to hardware checks, the Pluto+ firmware that performs DVB-S2 modulation in the **FPGA DVB-S2 transmit chain** instead of the ARM software (pluto_dvb).
 For the design background and how it works, see the FPGA version section of [README.md](README.md). For details on Vivado, see `hdl/projects/plutoplus_dvb/PLUTOPLUS_DVB.md` in kazushinjo/plutoplus-udp-fpga-firm.
@@ -315,7 +315,7 @@ For the design background and how it works, see the FPGA version section of [REA
 [Linux PC]  (1) Install Vivado → (2) Build the FPGA (HDL) → plutoplus_dvb.xsa
                                               | USB memory / scp
 [Mac]       (3) Check plutoplus_dvb.xsa and push it to this repository
-[GitHub]    (4) Build the firmware (plutoplus_shonan_dvb) with Actions → prerelease zip
+[GitHub]    (4) Build the firmware (plutoplus_udp_fpga) with Actions → prerelease zip
 [Mac]       (5) Write the SD card
 [Pluto+]    (6) Boot from SD, check, and run a transmit test
 ```
@@ -323,7 +323,7 @@ For the design background and how it works, see the FPGA version section of [REA
 | Repository (both public) | Contents | Where the work is done |
 |---|---|---|
 | kazushinjo/plutoplus-udp-fpga-firm (branch `main`) | FPGA design (Maia-SDR removed, DVB-S2 chain added) | Linux PC |
-| kazushinjo/plutoplus_fw-shonan (branch `main`, this repository) | The firmware (Buildroot) | Mac → GitHub Actions |
+| kazushinjo/plutoplus-udp-fw (branch `main`, this repository) | The firmware (Buildroot) | Mac → GitHub Actions |
 
 The FPGA build needs Vivado (x86_64 Linux only), and the firmware build needs Linux (the firmware is built with GitHub Actions).
 **Steps 1, 2 and 4 cannot be done on a Mac.**
@@ -466,12 +466,12 @@ Commit messages must be English and ASCII only (a rule of this repository).
 ### (4) Building the firmware (GitHub Actions)
 
 ```
-gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref main -f boards=plutoplus_shonan_dvb
-gh run list  --repo kazushinjo/plutoplus_fw-shonan --workflow main.yml --limit 3
-gh run watch <run-number> --repo kazushinjo/plutoplus_fw-shonan
+gh workflow run main.yml --repo kazushinjo/plutoplus-udp-fw --ref main -f boards=plutoplus_udp_fpga
+gh run list  --repo kazushinjo/plutoplus-udp-fw --workflow main.yml --limit 3
+gh run watch <run-number> --repo kazushinjo/plutoplus-udp-fw
 ```
 
-- The zip is attached to the prerelease `plutoplus_shonan_dvb-build<number>` (Artifacts are not relied on because of the storage quota)
+- The zip is attached to the prerelease `plutoplus_udp_fpga-build<number>` (Artifacts are not relied on because of the storage quota)
 - Caches apply, so it should be shorter than the first plutoplus_shonan build (2 h 40 min). The repository is public, so Actions are free
 - The following are included automatically
   - The SD boot workaround (tezuka 0.2.4 BOOT.bin and an uncompressed kernel; see the SD boot failure section of the README)
@@ -484,8 +484,8 @@ gh run watch <run-number> --repo kazushinjo/plutoplus_fw-shonan
 Use 32 GB or smaller, MBR, FAT32.
 
 ```
-gh release download plutoplus_shonan_dvb-build<number> --repo kazushinjo/plutoplus_fw-shonan --dir ~/Downloads/plutoplus_dvb
-cd ~/Downloads/plutoplus_dvb && unzip plutoplus_shonan_dvb.zip
+gh release download plutoplus_udp_fpga-build<number> --repo kazushinjo/plutoplus-udp-fw --dir ~/Downloads/plutoplus_dvb
+cd ~/Downloads/plutoplus_dvb && unzip plutoplus_udp_fpga.zip
 
 diskutil list external physical                              # always confirm the SD card number (a mistake erases another disk)
 diskutil eraseDisk FAT32 PLUTOPLUS MBRFormat /dev/diskN      # erases everything on it

@@ -1,5 +1,5 @@
 name: CI
-# plutoplus_fw-shonan: dispatch with boards=plutoplus_shonan to build the
+# plutoplus-udp-fw: dispatch with boards=plutoplus_shonan to build the
 # Pluto+ Shonan SD card image (published as a prerelease).
 
 on:
@@ -425,7 +425,7 @@ jobs:
           # legal-info, see "Generate SBOM") travel with the image.
           (cd "artifacts/tezuka-${{ matrix.board }}" && zip -qr "${{ github.workspace }}/build/${{ matrix.board }}-licenses.zip" bom README.md LICENSE)
           extra=""
-          [ -f board/tezuka/shonan/LICENSE.md ] && extra="board/tezuka/shonan/LICENSE.md"
+          [ -f board/tezuka/plutoplus_udp/LICENSE.md ] && extra="board/tezuka/plutoplus_udp/LICENSE.md"
           gh release create "$tag" "build/${{ matrix.board }}.zip" "build/${{ matrix.board }}-licenses.zip" $extra \
             --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
             --prerelease --title "$tag (untested)" \

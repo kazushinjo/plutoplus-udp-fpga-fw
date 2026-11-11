@@ -1,6 +1,6 @@
 #!/bin/sh
 # Runs after board/tezuka/common/post-build.sh for the Shonan_Lite DATV builds
-# (configs/plutoplus_shonan_defconfig and plutoplus_shonan_dvb_defconfig).
+# (configs/plutoplus_shonan_defconfig and plutoplus_udp_fpga_defconfig).
 set -e
 
 BOARD_DIR="$(dirname "$0")"
@@ -11,7 +11,7 @@ if [ -e "${TARGET_DIR}/etc/init.d/S60maia-httpd" ]; then
 	grep -q -- '--listen 0.0.0.0:80 ' "${TARGET_DIR}/etc/init.d/S60maia-httpd"
 	sed -i 's/--listen 0\.0\.0\.0:80 /--listen 127.0.0.1:8000 /' "${TARGET_DIR}/etc/init.d/S60maia-httpd"
 else
-	# No Maia-SDR (plutoplus_shonan_dvb): nothing to proxy to; lighttpd
+	# No Maia-SDR (plutoplus_udp_fpga): nothing to proxy to; lighttpd
 	# serves the Tezuka Dashboard (/root/index.html, MQTT over websocket)
 	# itself for everything that is not a DATV page.
 	CONF="${TARGET_DIR}/etc/lighttpd/lighttpd.conf"
@@ -53,7 +53,7 @@ sed -i 's/usb_ethernet_mode 2> \/dev\/null || echo rndis/usb_ethernet_mode 2> \/
 # not a tezuka release. /opt/VERSIONS "device-fw" feeds the USB drive
 # info.html (S45msd), the iiod fw_version context attribute (S23udc) and
 # the Tezuka Dashboard; the tezuka version stays as "base".
-# board/tezuka/shonan/VERSION holds our own version number.
+# board/tezuka/plutoplus_udp/VERSION holds our own version number.
 SHONAN_VER=$(cat "${BOARD_DIR}/VERSION")
 SHONAN_COMMIT=$(cd "${BOARD_DIR}" && (git rev-parse --short=4 HEAD 2>/dev/null || echo unknown))
 EDITION=ShonanLite-Portsdown4
@@ -80,6 +80,11 @@ sed -i "s/^Version #BUILD#/Version ${FW_NAME} (base ${BASE})/" "${TARGET_DIR}/et
 
 # Shown in the DVB service provider name by udpts.sh / rtmppluto.sh
 date +"%d%m" > "${TARGET_DIR}/www/fwversion.txt"
-(cd "${BOARD_DIR}" && git log --pretty=oneline --abbrev-commit -20) > "${TARGET_DIR}/www/releasenote.txt" || true
+if [ "${EDITION}" = plutoplus-udp-fpga-firm ]; then
+	# The FPGA build carries only its own name, not this repository's log.
+	echo "${FW_NAME}" > "${TARGET_DIR}/www/releasenote.txt"
+else
+	(cd "${BOARD_DIR}" && git log --pretty=oneline --abbrev-commit -20) > "${TARGET_DIR}/www/releasenote.txt" || true
+fi
 
 chmod 755 "${TARGET_DIR}"/root/*.sh "${TARGET_DIR}/root/pluto_dvb" "${TARGET_DIR}/usr/bin/tsp"

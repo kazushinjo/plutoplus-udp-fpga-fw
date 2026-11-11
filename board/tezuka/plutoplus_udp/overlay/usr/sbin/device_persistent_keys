@@ -11,7 +11,7 @@ cat /proc/mounts | grep -q mtd2 || (echo "Filesystem not mounted use device_form
 # dropbear also offers ed25519 and rsa host keys and creates them lazily on
 # the first connection (-R). Unless the board is shut down cleanly (S49 saves
 # on stop), they are never saved and change after a power cut; OpenSSH
-# clients prefer ed25519 and Shonan_Lite (StrictHostKeyChecking=accept-new)
+# clients prefer ed25519 and the UDP sender apps (StrictHostKeyChecking=accept-new)
 # then refuses to connect. Create them here so they are saved at boot.
 [[ ! -f /etc/dropbear/dropbear_ed25519_host_key ]] && dropbearkey -t ed25519 -f /etc/dropbear/dropbear_ed25519_host_key
 [[ ! -f /etc/dropbear/dropbear_rsa_host_key ]] && dropbearkey -t rsa -f /etc/dropbear/dropbear_rsa_host_key

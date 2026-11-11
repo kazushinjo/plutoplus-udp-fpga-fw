@@ -19,7 +19,7 @@ UDPIP=127.0.0.1:13000
 CALL=$(grep  "\bcallsign\b" /www/settings.txt | cut -f2 -d' ')
 # An empty callsign makes "tsp -P sdt -n -p ..." fail at once, so no TS reaches
 # pluto_dvb and nothing is transmitted (settings.txt is empty after a reboot
-# until something writes it, and Shonan_Lite Mac/iPad/iPhone did not send it).
+# until something writes it, and some UDP sender apps (Mac/iPad/iPhone) did not send it).
 [ -z "$CALL" ] && CALL=NOCALL
 FREQ=$(grep  "\bfreq\b" /www/settings.txt | cut -f2 -d' ')
 MODE=$(grep  "\bmode\b" /www/settings.txt | cut -f2 -d' ')

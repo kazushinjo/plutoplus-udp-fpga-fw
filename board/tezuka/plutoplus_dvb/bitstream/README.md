@@ -11,7 +11,7 @@ Vivado 2025.2 でのビルド手順は、そのリポジトリの `hdl/projects/
 
 `fsbl.elf` と `overclock/` は `../../plutoplus/bitstream/` の写し(基板と PS7 の設定が同じため)。
 
-`plutoplus_dvb.xsa` を置くまでは、`plutoplus_shonan_dvb` はビルドできない。
+`plutoplus_dvb.xsa` を置くまでは、`plutoplus_udp_fpga` はビルドできない。
 
 ---
 
@@ -28,4 +28,4 @@ Put the resulting `plutoplus_dvb.xsa` in this folder (and the reports in `report
 
 `fsbl.elf` and `overclock/` are copies of `../../plutoplus/bitstream/` (the board and PS7 settings are the same).
 
-`plutoplus_shonan_dvb` cannot be built until `plutoplus_dvb.xsa` is in place.
+`plutoplus_udp_fpga` cannot be built until `plutoplus_dvb.xsa` is in place.

@@ -1,4 +1,4 @@
-# plutoplus_fw-shonan
+# plutoplus-udp-fw
 
 [tezuka](https://github.com/F5OEO/tezuka_fw)(F5OEO 氏)をもとにした、**Zynq-7010 の Pluto+ 用の SD カード起動ファーム**です。
 Shonan_Lite から UDP で送られる TS を DATV(DVB-S/S2)で送信できるようにしてあります。
@@ -16,10 +16,10 @@ A **SD card boot firmware for the Zynq-7010 Pluto+**, based on [tezuka](https://
 
 | 版 / Variant | DVB-S2 の変調 / Modulation | Maia-SDR | 説明 / Details |
 |---|---|---|---|
-| `plutoplus_shonan` | ARM のソフト(pluto_dvb) / ARM software | あり / Yes | [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md) |
-| `plutoplus_shonan_dvb`(FPGA 版 / FPGA build) | FPGA | **なし / Not supported** | [plutoplus-udp-fpga-firm](https://github.com/kazushinjo/plutoplus-udp-fpga-firm)、[FPGA作成.md](board/tezuka/shonan/FPGA作成.md) |
+| `plutoplus_shonan` | ARM のソフト(pluto_dvb) / ARM software | あり / Yes | [board/tezuka/plutoplus_udp/README.md](board/tezuka/plutoplus_udp/README.md) |
+| `plutoplus_udp_fpga`(FPGA 版 / FPGA build) | FPGA | **なし / Not supported** | [plutoplus-udp-fpga-firm](https://github.com/kazushinjo/plutoplus-udp-fpga-firm)、[FPGA作成.md](board/tezuka/plutoplus_udp/FPGA作成.md) |
 
-**ダウンロード / Download:** [Releases](https://github.com/kazushinjo/plutoplus_fw-shonan/releases)(`plutoplus_shonan-build<番号>`・`plutoplus_shonan_dvb-build<番号>`)。
+**ダウンロード / Download:** [Releases](https://github.com/kazushinjo/plutoplus-udp-fw/releases)(`plutoplus_shonan-build<番号>`・`plutoplus_udp_fpga-build<番号>`)。
 FPGA 版は [plutoplus-udp-fpga-firm の Releases](https://github.com/kazushinjo/plutoplus-udp-fpga-firm/releases) にも置いています。 / The FPGA build is also on the Releases of plutoplus-udp-fpga-firm.
 
 **注意 / Notes**
@@ -29,7 +29,7 @@ FPGA 版は [plutoplus-udp-fpga-firm の Releases](https://github.com/kazushinjo
 - **SD 起動には古い U-Boot 2016.07(tezuka 0.2.4 の BOOT.bin)が必要**です。今の tezuka の U-Boot 2025.01 ではこの Pluto+ は SD 起動しません。そのため `BOOT.bin` は 0.2.4 のもの、`uImage` は無圧縮にしてあります。`BOOT.bin` を入れ替えないでください。 / **SD boot needs the old U-Boot 2016.07 (tezuka 0.2.4 BOOT.bin)**; the current U-Boot 2025.01 does not boot this Pluto+ from SD. `BOOT.bin` is therefore the 0.2.4 one and `uImage` is uncompressed. Do not replace `BOOT.bin`.
 - FPGA 版は **Maia-SDR に対応していません**(Zynq-7010 に両方は入らないため)。 / The FPGA build **does not support Maia-SDR** (the Zynq-7010 cannot hold both).
 - 送信の試験では必ずアッテネーターとダミーロードを使ってください。 / Always use an attenuator and a dummy load when testing transmission.
-- クレジットとライセンスは [下の節](#license) と [board/tezuka/shonan/LICENSE.md](board/tezuka/shonan/LICENSE.md) を参照。 / See [License](#license) and [board/tezuka/shonan/LICENSE.md](board/tezuka/shonan/LICENSE.md) for credits and licenses.
+- クレジットとライセンスは [下の節](#license) と [board/tezuka/plutoplus_udp/LICENSE.md](board/tezuka/plutoplus_udp/LICENSE.md) を参照。 / See [License](#license) and [board/tezuka/plutoplus_udp/LICENSE.md](board/tezuka/plutoplus_udp/LICENSE.md) for credits and licenses.
 
 以下は元の tezuka の README です。 / The original tezuka README follows.
 
@@ -91,9 +91,9 @@ This firmware is developed entirely in my free time. Maintaining multiple boards
 | PCIe SDR 7010 | 7010 | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | Via PCIe <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | usb-c | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | [OpenSDRLab](https://opensourcesdrlab.com/products/opensourcesdrlab-pcie-version-plutosdr-ad9363-xc7z010?DIST=RkVFGVU%3D)|
 | OpenSDRLab 7010 Mini | 7010 | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | usb-c | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | [OpenSDRLab](https://opensourcesdrlab.com/products/7010-ad9363-sdr-mini?DIST=RkVFGVU%3D)|
 
-¹ `plutoplus_shonan`(このリポジトリ): DATV の変調は FPGA の DVB 回路ではなくソフトで行う。Shonan_Lite(UDP 8282、`save.php`/`pluto.php`)の TS を `pluto_dvb` と TSDuck の `tsp` で送信する。SD カード起動専用(イメージが QSPI のファーム領域に入らない)。詳しくは [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md)。
+¹ `plutoplus_shonan`(このリポジトリ): DATV の変調は FPGA の DVB 回路ではなくソフトで行う。Shonan_Lite(UDP 8282、`save.php`/`pluto.php`)の TS を `pluto_dvb` と TSDuck の `tsp` で送信する。SD カード起動専用(イメージが QSPI のファーム領域に入らない)。詳しくは [board/tezuka/plutoplus_udp/README.md](board/tezuka/plutoplus_udp/README.md)。
 
-¹ `plutoplus_shonan` (this repository): DATV modulation is done in software rather than the FPGA DVB chain. TS from Shonan_Lite (UDP 8282, `save.php`/`pluto.php`) is transmitted with `pluto_dvb` and TSDuck's `tsp`. SD card boot only (the image does not fit in the QSPI firmware area). See [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md).
+¹ `plutoplus_shonan` (this repository): DATV modulation is done in software rather than the FPGA DVB chain. TS from Shonan_Lite (UDP 8282, `save.php`/`pluto.php`) is transmitted with `pluto_dvb` and TSDuck's `tsp`. SD card boot only (the image does not fit in the QSPI firmware area). See [board/tezuka/plutoplus_udp/README.md](board/tezuka/plutoplus_udp/README.md).
 
 
 ---
@@ -224,27 +224,27 @@ All materials are in buildroot/output/images
 - Gwenhael Goavec-Merou for inspiration https://github.com/oscimp/PlutoSDR
 - LamaBleu for helping me with buildroot and introduce me Plutosdr
 - https://github.com/hz12opensource/libresdr for overclock and fpga inspiration
-- Shonan 版の謝辞は [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md) を参照 / See that file for the acknowledgements of the Shonan edition
+- Shonan 版の謝辞は [board/tezuka/plutoplus_udp/README.md](board/tezuka/plutoplus_udp/README.md) を参照 / See that file for the acknowledgements of the Shonan edition
 - All the opensource community !
 
 ---
 
 ## License
 
-ライセンス(詳しくは [board/tezuka/shonan/LICENSE.md](board/tezuka/shonan/LICENSE.md))
+ライセンス(詳しくは [board/tezuka/plutoplus_udp/LICENSE.md](board/tezuka/plutoplus_udp/LICENSE.md))
 
 * **tezuka ファーム**(F5OEO ほか): [GNU General Public License v3.0](LICENSE)
-* **plutoplus_shonan で足したもの**(`configs/plutoplus_shonan*_defconfig`、`board/tezuka/shonan/`、`board/tezuka/plutoplus_dvb/`、CI の変更): GPL-3.0、Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)
-* **ファームに入るパッケージ**(Linux、U-Boot、BusyBox、PHP、lighttpd、FFmpeg ほか): それぞれのライセンス。全パッケージのライセンス文と SBOM は Buildroot の `legal-info` で集め、各リリースの `plutoplus_shonan-licenses.zip`・`plutoplus_shonan_dvb-licenses.zip` に付けている
+* **plutoplus_shonan で足したもの**(`configs/plutoplus_shonan*_defconfig`、`board/tezuka/plutoplus_udp/`、`board/tezuka/plutoplus_dvb/`、CI の変更): GPL-3.0、Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)
+* **ファームに入るパッケージ**(Linux、U-Boot、BusyBox、PHP、lighttpd、FFmpeg ほか): それぞれのライセンス。全パッケージのライセンス文と SBOM は Buildroot の `legal-info` で集め、各リリースの `plutoplus_shonan-licenses.zip`・`plutoplus_udp_fpga-licenses.zip` に付けている
 * **同梱しているサードパーティのファイル**: TSDuck(BSD-2-Clause)、jQuery・Chart.js・chartjs-plugin-labels・Socket.IO・js-cookie(MIT)
-* **FPGA 版(plutoplus_shonan_dvb)**: pluto_stream(GPL-2.0+)、ビットストリームは maia-hdl(MIT)・ADI HDL(各ライセンス)・dvb_fpga(CERN-OHL-W v2。ハードウェアを作るときはソースの場所を外装に書く)の組み合わせ
+* **FPGA 版(plutoplus_udp_fpga)**: pluto_stream(GPL-2.0+)、ビットストリームは maia-hdl(MIT)・ADI HDL(各ライセンス)・dvb_fpga(CERN-OHL-W v2。ハードウェアを作るときはソースの場所を外装に書く)の組み合わせ
 * **F5OEO/datvplutofrm から持ってきた DATV の部品**(`udpts.sh`、`rtmppluto.sh`、PHP の Web 画面、`pluto_dvb` の実行ファイル): 元のリポジトリにライセンスの明記はないが、作者 F5OEO 氏から公開の許可をいただいている
 
-Licenses (details in [board/tezuka/shonan/LICENSE.md](board/tezuka/shonan/LICENSE.md))
+Licenses (details in [board/tezuka/plutoplus_udp/LICENSE.md](board/tezuka/plutoplus_udp/LICENSE.md))
 
 * **tezuka firmware** (F5OEO and others): [GNU General Public License v3.0](LICENSE)
-* **What plutoplus_shonan adds** (`configs/plutoplus_shonan*_defconfig`, `board/tezuka/shonan/`, `board/tezuka/plutoplus_dvb/`, CI changes): GPL-3.0, Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)
-* **Packages in the firmware** (Linux, U-Boot, BusyBox, PHP, lighttpd, FFmpeg and others): their own licenses. License texts and the SBOM for all packages are collected by Buildroot's `legal-info` and attached to each release as `plutoplus_shonan-licenses.zip` / `plutoplus_shonan_dvb-licenses.zip`
+* **What plutoplus_shonan adds** (`configs/plutoplus_shonan*_defconfig`, `board/tezuka/plutoplus_udp/`, `board/tezuka/plutoplus_dvb/`, CI changes): GPL-3.0, Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)
+* **Packages in the firmware** (Linux, U-Boot, BusyBox, PHP, lighttpd, FFmpeg and others): their own licenses. License texts and the SBOM for all packages are collected by Buildroot's `legal-info` and attached to each release as `plutoplus_shonan-licenses.zip` / `plutoplus_udp_fpga-licenses.zip`
 * **Bundled third-party files**: TSDuck (BSD-2-Clause); jQuery, Chart.js, chartjs-plugin-labels, Socket.IO, js-cookie (MIT)
-* **FPGA version (plutoplus_shonan_dvb)**: pluto_stream (GPL-2.0+); the bitstream combines maia-hdl (MIT), ADI HDL (its licenses) and dvb_fpga (CERN-OHL-W v2; hardware built with it must show the source location on its exterior)
+* **FPGA version (plutoplus_udp_fpga)**: pluto_stream (GPL-2.0+); the bitstream combines maia-hdl (MIT), ADI HDL (its licenses) and dvb_fpga (CERN-OHL-W v2; hardware built with it must show the source location on its exterior)
 * **DATV components from F5OEO/datvplutofrm** (`udpts.sh`, `rtmppluto.sh`, the PHP web pages, the `pluto_dvb` executable): the original repository states no license; they are published with the permission of the author, F5OEO
