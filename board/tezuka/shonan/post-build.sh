@@ -57,7 +57,7 @@ sed -i 's/usb_ethernet_mode 2> \/dev\/null || echo rndis/usb_ethernet_mode 2> \/
 SHONAN_VER=$(cat "${BOARD_DIR}/VERSION")
 SHONAN_COMMIT=$(cd "${BOARD_DIR}" && (git rev-parse --short=4 HEAD 2>/dev/null || echo unknown))
 EDITION=ShonanLite-Portsdown4
-[ -e "${TARGET_DIR}/root/pluto_dvb.sw" ] && EDITION=ShonanLite-FPGA
+[ -e "${TARGET_DIR}/root/pluto_dvb.sw" ] && EDITION=plutoplus-udp-fpga-firm
 FW_NAME="${EDITION}_v${SHONAN_VER}-${SHONAN_COMMIT}"
 # The tezuka release this branch is based on; git describe cannot tell (the
 # tezuka tags are not pushed here), so it is kept in TEZUKA_BASE and must be
@@ -70,8 +70,8 @@ echo "base ${BASE}" >> "${TARGET_DIR}/opt/VERSIONS"
 # line starting with "v" that a plain "ssh root@pluto" prints.
 sed -i "s/^Version #BUILD#/Version ${FW_NAME} (base ${BASE})/" "${TARGET_DIR}/etc/motd.plain"
 {
-	if [ "${EDITION}" = ShonanLite-FPGA ]; then
-		echo "Shonan_Lite FPGA edition for Pluto+ (UDP only)"
+	if [ "${EDITION}" = plutoplus-udp-fpga-firm ]; then
+		echo "plutoplus-udp-fpga-firm: UDP-only DVB-S2 FPGA firmware for Pluto+"
 	else
 		echo "Shonan_Lite / Portsdown 4 edition for Pluto+"
 	fi

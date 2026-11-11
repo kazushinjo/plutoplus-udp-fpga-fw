@@ -185,7 +185,7 @@ gh run watch <run の番号> --repo kazushinjo/plutoplus_fw-shonan
 - キャッシュが効くので plutoplus_shonan の初回(2 時間 40 分)より短い見込み。公開リポジトリなので Actions は無料
 - 次は自動で入る
   - SD 起動の対策(tezuka 0.2.4 の BOOT.bin と無圧縮カーネル。README の「SD 起動しなかった件」)
-  - 版の名前 `ShonanLite-FPGA_v1.0-<コミット>`
+  - 版の名前 `plutoplus-udp-fpga-firm_v1.0-<コミット>`
   - 差し替えスクリプト `overlay_dvb/root/pluto_dvb.fpga`(変調方式を `tx/dvbs2/constel` へ送る修正 1518007 を含む)
 
 ## ⑤ SD カードを作る(Mac)
@@ -220,7 +220,7 @@ diskutil eject /dev/diskN
 ### 版と動いているもの
 
 ```
-cat /opt/VERSIONS          # device-fw ShonanLite-FPGA_v1.0-…
+cat /opt/VERSIONS          # device-fw plutoplus-udp-fpga-firm_v1.0-…
 ps | grep -E "pluto_stream|pluto_mqtt_ctrl|udpts|rtmppluto|lighttpd|mosquitto" | grep -v grep
 ls -l /root/pluto_dvb /root/pluto_dvb.sw     # pluto_dvb はスクリプト、pluto_dvb.sw は元のソフト版
 ```
@@ -475,7 +475,7 @@ gh run watch <run-number> --repo kazushinjo/plutoplus_fw-shonan
 - Caches apply, so it should be shorter than the first plutoplus_shonan build (2 h 40 min). The repository is public, so Actions are free
 - The following are included automatically
   - The SD boot workaround (tezuka 0.2.4 BOOT.bin and an uncompressed kernel; see the SD boot failure section of the README)
-  - The version name `ShonanLite-FPGA_v1.0-<commit>`
+  - The version name `plutoplus-udp-fpga-firm_v1.0-<commit>`
   - The replacement script `overlay_dvb/root/pluto_dvb.fpga` (including fix 1518007, which sends the modulation to `tx/dvbs2/constel`)
 
 ### (5) Writing the SD card (Mac)
@@ -510,7 +510,7 @@ diskutil eject /dev/diskN
 #### Versions and running processes
 
 ```
-cat /opt/VERSIONS          # device-fw ShonanLite-FPGA_v1.0-...
+cat /opt/VERSIONS          # device-fw plutoplus-udp-fpga-firm_v1.0-...
 ps | grep -E "pluto_stream|pluto_mqtt_ctrl|udpts|rtmppluto|lighttpd|mosquitto" | grep -v grep
 ls -l /root/pluto_dvb /root/pluto_dvb.sw     # pluto_dvb is the script, pluto_dvb.sw is the original software version
 ```
