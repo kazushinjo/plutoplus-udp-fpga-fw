@@ -1,8 +1,8 @@
 # plutoplus_fw-shonan
 
 [tezuka](https://github.com/F5OEO/tezuka_fw)(F5OEO 氏)をもとにした、**Zynq-7010 の Pluto+ 用の SD カード起動ファーム**です。
-Shonan_Lite と Portsdown 4 で DATV(DVB-S2)送信ができるようにしてあります。
-A **SD card boot firmware for the Zynq-7010 Pluto+**, based on [tezuka](https://github.com/F5OEO/tezuka_fw) by F5OEO, with DATV (DVB-S2) transmit support for Shonan_Lite and Portsdown 4.
+Shonan_Lite から UDP で送られる TS を DATV(DVB-S/S2)で送信できるようにしてあります。
+A **SD card boot firmware for the Zynq-7010 Pluto+**, based on [tezuka](https://github.com/F5OEO/tezuka_fw) by F5OEO, with DATV (DVB-S/S2) transmit of a TS sent over UDP from Shonan_Lite.
 
 > このリポジトリは F5OEO 氏の許可を得て公開しています。 / Published with the permission of F5OEO.
 
@@ -91,9 +91,9 @@ This firmware is developed entirely in my free time. Maintaining multiple boards
 | PCIe SDR 7010 | 7010 | <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | Via PCIe <span><img src="https://img.shields.io/badge/-%E2%9C%93-green" alt="Yes"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | usb-c | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | [OpenSDRLab](https://opensourcesdrlab.com/products/opensourcesdrlab-pcie-version-plutosdr-ad9363-xc7z010?DIST=RkVFGVU%3D)|
 | OpenSDRLab 7010 Mini | 7010 | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | usb-c | <span><img src="https://img.shields.io/badge/-%E2%9C%97-red" alt="No"></span> | [OpenSDRLab](https://opensourcesdrlab.com/products/7010-ad9363-sdr-mini?DIST=RkVFGVU%3D)|
 
-¹ `plutoplus_shonan`(このリポジトリ): DATV の変調は FPGA の DVB 回路ではなくソフトで行う。Shonan_Lite(UDP 8282、`save.php`/`pluto.php`)と Portsdown 4(rtmp 7272)の TS を `pluto_dvb` と TSDuck の `tsp` で送信する。SD カード起動専用(イメージが QSPI のファーム領域に入らない)。詳しくは [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md)。
+¹ `plutoplus_shonan`(このリポジトリ): DATV の変調は FPGA の DVB 回路ではなくソフトで行う。Shonan_Lite(UDP 8282、`save.php`/`pluto.php`)の TS を `pluto_dvb` と TSDuck の `tsp` で送信する。SD カード起動専用(イメージが QSPI のファーム領域に入らない)。詳しくは [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md)。
 
-¹ `plutoplus_shonan` (this repository): DATV modulation is done in software rather than the FPGA DVB chain. TS from Shonan_Lite (UDP 8282, `save.php`/`pluto.php`) and Portsdown 4 (rtmp 7272) is transmitted with `pluto_dvb` and TSDuck's `tsp`. SD card boot only (the image does not fit in the QSPI firmware area). See [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md).
+¹ `plutoplus_shonan` (this repository): DATV modulation is done in software rather than the FPGA DVB chain. TS from Shonan_Lite (UDP 8282, `save.php`/`pluto.php`) is transmitted with `pluto_dvb` and TSDuck's `tsp`. SD card boot only (the image does not fit in the QSPI firmware area). See [board/tezuka/shonan/README.md](board/tezuka/shonan/README.md).
 
 
 ---

@@ -3,7 +3,7 @@
 **日本語** | [English](#english)
 
 tezuka の Pluto+ 用ファーム(`configs/plutoplus_maiasdr_defconfig`)に、
-Shonan_Lite と Portsdown 4 が使う DATV 送信の部品([kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) の `main` ブランチ、旧 `v0.39-shonan`)を足したもの。
+Shonan_Lite が使う DATV 送信の部品(UDP 専用)([kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) の `main` ブランチ、旧 `v0.39-shonan`)を足したもの。
 tezuka の機能(maia-sdr、IQEngine、ダッシュボード、MQTT など)はすべて残している。
 
 イメージが QSPI のファーム領域(0x1E00000 = 31,457,280 バイト)に入らないため、**SD カード起動専用**。
@@ -19,15 +19,14 @@ tezuka の機能(maia-sdr、IQEngine、ダッシュボード、MQTT など)は�
 6. [使い方(ポート・URL)](#使い方ポートurl)
 7. [SD カードの中身を更新する](#sd-カードの中身を更新する)
 8. [足したもの](#足したもの)
-9. [Portsdown 4 から使う機能](#portsdown-4-から使う機能)
-10. [datvplutofrm から持ってこなかったもの](#datvplutofrm-から持ってこなかったもの)
-11. [リポジトリと CI の注意](#リポジトリと-ci-の注意)
-12. [SD 起動しなかった件(2026-10-24)](#sd-起動しなかった件2026-10-24)
-12. [ビルド履歴](#ビルド履歴)
-13. [未確認](#未確認)
-14. [FPGA 版(plutoplus_shonan_dvb)](#fpga-版plutoplus_shonan_dvb)
-15. [謝辞](#謝辞)
-16. [ライセンス](#ライセンス)
+9. [datvplutofrm から持ってこなかったもの](#datvplutofrm-から持ってこなかったもの)
+10. [リポジトリと CI の注意](#リポジトリと-ci-の注意)
+11. [SD 起動しなかった件(2026-10-24)](#sd-起動しなかった件2026-10-24)
+11. [ビルド履歴](#ビルド履歴)
+12. [未確認](#未確認)
+13. [FPGA 版(plutoplus_shonan_dvb)](#fpga-版plutoplus_shonan_dvb)
+14. [謝辞](#謝辞)
+15. [ライセンス](#ライセンス)
 
 ## 元にしたもの
 
@@ -37,7 +36,6 @@ tezuka の機能(maia-sdr、IQEngine、ダッシュボード、MQTT など)は�
 | Buildroot | 2026.05.2(`buildroot.version`) |
 | Linux | ADI linux `bf1d49f`(adi-6.12.y)、glibc 2.40、Bootlin ツールチェーン |
 | DATV 送信の部品 | [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) `main`(旧 `v0.39-shonan`、build10 = 2649143 と同じ内容) |
-| Portsdown 4 | BritishAmateurTelevisionClub/portsdown4 `0b886da`(2026-10-18)のソースで利用機能を確認 |
 
 Pluto+ は無印 Pluto と同じ Zynq-7010(Cortex-A9 2 コア)・RAM 512MB。FPGA とデバイスツリーは機種専用だが、
 ARM 側の実行ファイルは共通なので `pluto_dvb` と `tsp` はビルド済みのものをそのまま使っている
@@ -168,9 +166,8 @@ LAN の固定 IP は tezuka の仕組み(USB ドライブの `config.txt` の `[
 |---|---|---|
 | UDP 8282 | Shonan_Lite 全版 | TS を受けて tsp → pluto_dvb で送信(設定は `/www/settings.txt`) |
 | `http://<IP>/save.php`・`/pluto.php` | Shonan_Lite | 送信設定の保存・再起動(lighttpd + php-cgi) |
-| rtmp 7272 | Portsdown 4 | `rtmp://<IP>:7272/,周波数,…,/コール,` → rtmppluto.sh → ffmpeg → tsp → pluto_dvb |
-| iiod(TCP 30431) | Shonan_Lite の受信・RSSI、Langstone、Portsdown 4 | libiio |
-| SSH 22 | Shonan_Lite、Portsdown 4 | root / analog |
+| iiod(TCP 30431) | Shonan_Lite の受信・RSSI、Langstone | libiio |
+| SSH 22 | Shonan_Lite | root / analog |
 | `http://<IP>/`(80) | ブラウザ | tezuka ダッシュボード(maia-httpd 127.0.0.1:8000 へ中継、WebSocket も) |
 | 443 | ブラウザ | maia-httpd の HTTPS(tezuka のまま) |
 | MQTT 1883 / WebSocket 9001 | tezuka ダッシュボード | mosquitto(tezuka のまま) |
@@ -201,7 +198,6 @@ tezuka の正式版と間違えないよう、build6 から独自の名前にし
   SSH のログイン表示、U-Boot の起動表示(シリアル)
 - 元にした tezuka の版は `board/tezuka/shonan/TEZUKA_BASE`(今は `tezuka-v0.3.24-a304a1f`)に書いておき、`/opt/VERSIONS` の `base` とログイン表示の `(base …)` に出す。
   本家 tezuka を取り込んだら、このファイルも書き換える
-- Portsdown 4 は SSH の出力のうち `v` で始まる行を版として表示する → `v1.0-ShonanLite-Portsdown4-e019`
 - USB ドライブの名前(`TEZUKA`)とログイン表示の tezuka のロゴ・「By F5OEO and contributors」は、元の作者の表示としてそのまま
 
 ## 足したもの
@@ -218,20 +214,6 @@ tezuka の正式版と間違えないよう、build6 から独自の名前にし
 | `post-build.sh` | maia-httpd を 127.0.0.1:8000 へ移す、USB ネットワークの既定を NCM にする、ログイン表示に `v…-shonan` 行、fwversion.txt・releasenote.txt 作成 |
 | defconfig | lighttpd(pcre)、PHP 8.5(cgi・cli・session・sockets)、bc、ffmpeg 6.1.5(datvplutofrm v0.39-shonan と同じ最小構成)。ホスト名は Langstone の既定に合わせて `pluto`。`postimage-qspi.sh` を外し SD カード用だけ作る |
 | `.github/workflows/main.yml` | 手動ビルドで zip をプレリリースに付ける、非公開リポジトリのときは attest を飛ばし Artifacts の保存失敗で止まらない |
-
-## Portsdown 4 から使う機能
-
-BritishAmateurTelevisionClub/portsdown4(0b886da、2026-10-18)のソースで確認したもの。
-
-| Portsdown 4 が使うもの | この版での扱い |
-|---|---|
-| `rtmp://<pluto>:7272/,周波数,…,/コール,`(DVB-S/S2 送信) | rtmppluto.sh → ffmpeg → tsp → pluto_dvb。ffmpeg 6.1.5 にも rtmppluto.sh が読む「App field don't match up」「Unexpected stream」の表示がある |
-| DVB-T 送信・バンドビューアなど(Pi から libiio で IQ をやりとり) | tezuka の iiod |
-| SSH(root/analog)の reboot・`cat /proc/cpuinfo` | tezuka のまま |
-| `fw_setenv attr_name compatible` / `attr_val ad9364`、`maxcpus`、`xo_correction` | tezuka の u-boot(adi_config_devicetree)と S21misc が同じ変数を読む |
-| 版の表示(`ssh root@<pluto>` の出力から `^v` の行を拾う) | tezuka のログイン表示には無いので、post-build.sh で `v…-shonan` の行を足した |
-
-Portsdown 4 の設定(`plutoip`)は Pluto+ の LAN の IP にする。
 
 ## datvplutofrm から持ってこなかったもの
 
@@ -299,12 +281,11 @@ SD-H を外すと内蔵フラッシュ(tezuka 0.2.4)は今までどおり起動�
 
 ## 未確認
 
-- 実機での送信(Shonan_Lite・Portsdown 4 から)。起動・Web(pluto.php・pluto_temp.php・ダッシュボードの表示)・iiod・SSH は確認済み
+- 実機での送信(Shonan_Lite から)。起動・Web(pluto.php・pluto_temp.php・ダッシュボードの表示)・iiod・SSH は確認済み
 - lighttpd 経由での tezuka ダッシュボードの WebSocket(ウォーターフォールなど)
 - U-Boot 2025.01 が SD 起動しない詳しい原因(シリアルコンソールで確認したい)
 - maia-sdr の受信と pluto_dvb の送信を同時に使ったときの動き
 - Pluto+ の PTT(GPIO0/MIO0)と、requests.php の PTT ボタン(AD9361 の GPO を操作する)の対応
-- Shonan_Lite 各版・Portsdown 4 からの接続
 
 ## FPGA 版(plutoplus_shonan_dvb)
 
@@ -319,7 +300,7 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 | DATV の変調 | ARM のソフト(pluto_dvb) | FPGA(pluto_stream が操作) |
 | Maia-SDR・IQEngine・ウォーターフォール | あり | なし |
 | トップページ(`http://<IP>/`) | tezuka ダッシュボード(maia-httpd 経由) | FPGA 版専用の状態ページ(版名・シリアル・送信の状態)。`info.html` も FPGA 版用 |
-| Shonan_Lite(UDP 8282)・Portsdown 4(rtmp 7272)・iiod・SSH | 使える | 使える(同じ URL・ポート) |
+| Shonan_Lite(UDP 8282)・iiod・SSH | 使える | 使える(同じ URL・ポート) |
 
 ### なぜ Maia-SDR を外すか
 
@@ -563,7 +544,6 @@ FPGA 版は SD カードにしか入っていない。QSPI(内蔵フラッシュ
 - Daniel Estévez 氏: Maia-SDR
 - Suoto 氏と Open Research Institute: DVB-S2 エンコーダ dvb_fpga
 - Analog Devices: Linux・HDL・libiio
-- British Amateur Television Club: Portsdown 4
 - Thierry Lelegard 氏: TSDuck
 - CNES: libgse
 - Buildroot、FFmpeg、PHP、lighttpd ほか、ファームに入っているオープンソースの各プロジェクト
@@ -586,7 +566,7 @@ FPGA 版は SD カードにしか入っていない。QSPI(内蔵フラッシュ
 
 ## Pluto+ Shonan_Lite version (plutoplus_shonan)
 
-tezuka's Pluto+ firmware (`configs/plutoplus_maiasdr_defconfig`) with the DATV transmit components used by Shonan_Lite and Portsdown 4 added (the v0.39-shonan branch of [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty)).
+tezuka's Pluto+ firmware (`configs/plutoplus_maiasdr_defconfig`) with the DATV transmit components used by Shonan_Lite (UDP only) added (the v0.39-shonan branch of [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty)).
 All tezuka features (maia-sdr, IQEngine, dashboard, MQTT and so on) are kept.
 
 The image does not fit in the QSPI firmware area (0x1E00000 = 31,457,280 bytes), so it is **SD card boot only**.
@@ -600,7 +580,6 @@ The image does not fit in the QSPI firmware area (0x1E00000 = 31,457,280 bytes),
 | Buildroot | 2026.05.2 (`buildroot.version`) |
 | Linux | ADI linux `bf1d49f` (adi-6.12.y), glibc 2.40, Bootlin toolchain |
 | DATV transmit components | [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) `main` (formerly `v0.39-shonan`; same content as build10 = 2649143) |
-| Portsdown 4 | Features in use confirmed from the source of BritishAmateurTelevisionClub/portsdown4 `0b886da` (2026-10-18) |
 
 The Pluto+ has the same Zynq-7010 (2 Cortex-A9 cores) and 512 MB of RAM as the plain Pluto. The FPGA and device tree are model-specific,
 but ARM executables are common, so the prebuilt `pluto_dvb` and `tsp` are used as is
@@ -731,9 +710,8 @@ A fixed LAN IP is set with the tezuka mechanism (`[USB_ETHERNET] ipaddr_eth` in 
 |---|---|---|
 | UDP 8282 | All versions of Shonan_Lite | Receives TS, transmits through tsp → pluto_dvb (settings in `/www/settings.txt`) |
 | `http://<IP>/save.php`, `/pluto.php` | Shonan_Lite | Saving transmit settings and rebooting (lighttpd + php-cgi) |
-| rtmp 7272 | Portsdown 4 | `rtmp://<IP>:7272/,frequency,...,/callsign,` → rtmppluto.sh → ffmpeg → tsp → pluto_dvb |
-| iiod (TCP 30431) | Shonan_Lite receive and RSSI, Langstone, Portsdown 4 | libiio |
-| SSH 22 | Shonan_Lite, Portsdown 4 | root / analog |
+| iiod (TCP 30431) | Shonan_Lite receive and RSSI, Langstone | libiio |
+| SSH 22 | Shonan_Lite | root / analog |
 | `http://<IP>/` (80) | Browser | tezuka dashboard (relayed to maia-httpd at 127.0.0.1:8000, including WebSocket) |
 | 443 | Browser | maia-httpd HTTPS (unchanged from tezuka) |
 | MQTT 1883 / WebSocket 9001 | tezuka dashboard | mosquitto (unchanged from tezuka) |
@@ -764,7 +742,6 @@ Since build6 these have their own names, so they are not mistaken for official t
   the SSH login banner and the U-Boot boot message (serial)
 - The tezuka version it is based on is written in `board/tezuka/shonan/TEZUKA_BASE` (currently `tezuka-v0.3.24-a304a1f`) and shown as `base` in `/opt/VERSIONS` and `(base ...)` in the login banner.
   Update this file when merging upstream tezuka
-- Portsdown 4 shows lines starting with `v` in the SSH output as the version → `v1.0-ShonanLite-Portsdown4-e019`
 - The USB drive name (`TEZUKA`), the tezuka logo in the login banner and "By F5OEO and contributors" are kept as the original author's credits
 
 ### What was added
@@ -781,20 +758,6 @@ Since build6 these have their own names, so they are not mistaken for official t
 | `post-build.sh` | Moves maia-httpd to 127.0.0.1:8000, makes NCM the USB network default, adds a `v...-shonan` line to the login banner, creates fwversion.txt and releasenote.txt |
 | defconfig | lighttpd (pcre), PHP 8.5 (cgi, cli, session, sockets), bc, ffmpeg 6.1.5 (same minimal configuration as datvplutofrm v0.39-shonan). Hostname is `pluto` to match the Langstone default. Removes `postimage-qspi.sh` and builds for SD card only |
 | `.github/workflows/main.yml` | Attaches the zip to a prerelease on manual builds; on a private repository, skips attest and does not stop when saving Artifacts fails |
-
-### Features used from Portsdown 4
-
-Confirmed from the source of BritishAmateurTelevisionClub/portsdown4 (0b886da, 2026-10-18).
-
-| What Portsdown 4 uses | How this version handles it |
-|---|---|
-| `rtmp://<pluto>:7272/,frequency,...,/callsign,` (DVB-S/S2 transmit) | rtmppluto.sh → ffmpeg → tsp → pluto_dvb. ffmpeg 6.1.5 also has the "App field don't match up" and "Unexpected stream" messages that rtmppluto.sh reads |
-| DVB-T transmit, band viewer and so on (IQ exchanged from the Pi with libiio) | tezuka's iiod |
-| SSH (root/analog) reboot and `cat /proc/cpuinfo` | Unchanged from tezuka |
-| `fw_setenv attr_name compatible` / `attr_val ad9364`, `maxcpus`, `xo_correction` | tezuka's u-boot (adi_config_devicetree) and S21misc read the same variables |
-| Version display (picks lines matching `^v` from the output of `ssh root@<pluto>`) | Not in the tezuka login banner, so post-build.sh adds a `v...-shonan` line |
-
-Set Portsdown 4's setting (`plutoip`) to the Pluto+ LAN IP.
 
 ### What was not taken from datvplutofrm
 
@@ -859,12 +822,11 @@ With SD-H removed, the internal flash (tezuka 0.2.4) booted as usual (cables and
 
 ### Not yet confirmed
 
-- Transmitting on the hardware (from Shonan_Lite and Portsdown 4). Boot, web (pluto.php, pluto_temp.php, dashboard display), iiod and SSH are confirmed
+- Transmitting on the hardware (from Shonan_Lite). Boot, web (pluto.php, pluto_temp.php, dashboard display), iiod and SSH are confirmed
 - The tezuka dashboard's WebSocket through lighttpd (waterfall and so on)
 - The detailed cause of U-Boot 2025.01 failing SD boot (should be checked on a serial console)
 - Behavior when using maia-sdr receive and pluto_dvb transmit at the same time
 - The mapping between the Pluto+ PTT (GPIO0/MIO0) and the PTT button in requests.php (which drives the AD9361 GPO)
-- Connections from each version of Shonan_Lite and from Portsdown 4
 
 ### FPGA version (plutoplus_shonan_dvb)
 
@@ -879,7 +841,7 @@ The 7010 in the Pluto+ cannot hold both Maia-SDR and the DVB-S2 chain, so **Maia
 | DATV modulation | ARM software (pluto_dvb) | FPGA (controlled by pluto_stream) |
 | Maia-SDR, IQEngine, waterfall | Yes | No |
 | Top page (`http://<IP>/`) | Tezuka dashboard (through maia-httpd) | A status page for this build (version, serial, TX state). `info.html` is also specific to this build |
-| Shonan_Lite (UDP 8282), Portsdown 4 (rtmp 7272), iiod, SSH | Available | Available (same URLs and ports) |
+| Shonan_Lite (UDP 8282), iiod, SSH | Available | Available (same URLs and ports) |
 
 #### Why Maia-SDR is removed
 
@@ -1117,7 +1079,6 @@ This firmware is built on the work of the following people and projects.
 - Daniel Estévez: Maia-SDR
 - Suoto and Open Research Institute: the dvb_fpga DVB-S2 encoder
 - Analog Devices: Linux, HDL, libiio
-- British Amateur Television Club: Portsdown 4
 - Thierry Lelegard: TSDuck
 - CNES: libgse
 - Buildroot, FFmpeg, PHP, lighttpd and the other open source projects included in the firmware
