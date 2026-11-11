@@ -333,7 +333,7 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
 
 ### FPGA の設計(HDL)
 
-- リポジトリ: **kazushinjo/Plutoplus-FPGA-firm**(非公開)、ブランチ `rrc-x2`(RRC ×2。`main` は RRC ×4)。機能の一覧は `hdl/projects/plutoplus_dvb/fpga.md`
+- リポジトリ: **kazushinjo/Plutoplus-FPGA-firm**(公開)、ブランチ `main`(RRC ×2。2026-11-11 に `rrc-x2` を統合)。機能の一覧は `hdl/projects/plutoplus_dvb/fpga.md`
   - 元: F5OEO/maia-sdr の `refactor` ブランチ `5f28808`(2026-10-20)。tezuka 用の FPGA プロジェクト(元は `maia-hdl/projects/tezuka`)が入っている
   - 変更: `6f37fcd`(plutoplus_dvb の追加)、`95c0f68`(手順書 `hdl/projects/plutoplus_dvb/PLUTOPLUS_DVB.md`)、`da82dc5`(plutoplus_dvb に使うファイルだけに整理。整理前はブランチ `backup/before-cleanup-20261028`)、`3e2bed7`・`bf8b7c0`(名前から maia・tezuka を外す: `hdl/`・`projects/plutoplus_dvb`・`dma.tcl`、できるファイルは `plutoplus_dvb.xsa`)
   - 手元の作業場所: `~/AppDev/Plutoplus-FPGA-firm`(remote: `origin` = このリポジトリ、`upstream` = F5OEO/maia-sdr)
@@ -407,7 +407,7 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
    5. `~/plutoplus_dvb_out/` の `plutoplus_dvb.xsa`・`system_top_utilization_placed.rpt`・`system_top_timing_summary_routed.rpt` を Mac へ持ってくる
       (資源が収まっているか、タイミング(WNS・WHS)が負になっていないかを確認)
 2. `plutoplus_dvb.xsa` を `board/tezuka/plutoplus_dvb/bitstream/` に置いてコミット
-3. ファーム: `gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref rrc-x2 -f boards=plutoplus_shonan_dvb`
+3. ファーム: `gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref shonan -f boards=plutoplus_shonan_dvb`
    → プレリリース `plutoplus_shonan_dvb-build<番号>`
 4. SD カードの作り方は plutoplus_shonan と同じ(zip の `sdimg/` の中身をコピー)
 
@@ -433,13 +433,13 @@ Linux から持ってきたファイルが `~/Downloads/plutoplus_dvb_out/` に�
    B=board/tezuka/plutoplus_dvb/bitstream
    cp ~/Downloads/plutoplus_dvb_out/plutoplus_dvb.xsa $B/
    mkdir -p $B/reports && cp ~/Downloads/plutoplus_dvb_out/*.rpt $B/reports/
-   git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025.2" && git push origin rrc-x2
+   git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025.2" && git push origin shonan
    ```
 
 3. ファームをビルドする(GitHub Actions)
 
    ```
-   gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref rrc-x2 -f boards=plutoplus_shonan_dvb
+   gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref shonan -f boards=plutoplus_shonan_dvb
    gh run list --repo kazushinjo/plutoplus_fw-shonan --workflow main.yml --limit 3
    gh run watch <run の番号> --repo kazushinjo/plutoplus_fw-shonan
    ```
@@ -539,8 +539,8 @@ FPGA 版は SD カードにしか入っていない。QSPI(内蔵フラッシュ
 
 | 作業 | 状態 |
 |---|---|
-| FPGA(RRC ×2、ブランチ `rrc-x2`) | Vivado でビルド済み。LUT 66.90%、DSP 54/80、WNS +0.152 ns、WHS +0.025 ns |
-| ファーム | `plutoplus_shonan_dvb-build15`(`351ae2b`、rrc-x2)。`shonan` へは未統合 |
+| FPGA(RRC ×2、Plutoplus-FPGA-firm の `main`) | Vivado でビルド済み。LUT 66.90%、DSP 54/80、WNS +0.152 ns、WHS +0.025 ns |
+| ファーム | `plutoplus_shonan_dvb-build15`(`351ae2b`)。2026-11-11 に `shonan` へ統合済み |
 | 元のアプリのままの送受信(同じ Pluto、USB) | 500 / 1000 kS/s でロックと映像を確認(build14) |
 
 同じ Pluto で送受信するときは、受信 IQ が多いので USB か有線 LAN で接続する。
@@ -893,7 +893,7 @@ The 7010 in the Pluto+ cannot hold both Maia-SDR and the DVB-S2 chain, so **Maia
 
 #### FPGA design (HDL)
 
-- Repository: **kazushinjo/Plutoplus-FPGA-firm** (private), branch `rrc-x2` (RRC x2; `main` is RRC x4). Function list: `hdl/projects/plutoplus_dvb/fpga.md`
+- Repository: **kazushinjo/Plutoplus-FPGA-firm** (public), branch `main` (RRC x2; `rrc-x2` merged on 2026-11-11). Function list: `hdl/projects/plutoplus_dvb/fpga.md`
   - Origin: the `refactor` branch `5f28808` of F5OEO/maia-sdr (2026-10-20), which contains the tezuka FPGA project (originally `maia-hdl/projects/tezuka`)
   - Changes: `6f37fcd` (adding plutoplus_dvb), `95c0f68` (the guide `hdl/projects/plutoplus_dvb/PLUTOPLUS_DVB.md`), `da82dc5` (cleaned up to only the files used for plutoplus_dvb; the earlier state is on the branch `backup/before-cleanup-20261028`), `3e2bed7` and `bf8b7c0` (removing maia and tezuka from the names: `hdl/`, `projects/plutoplus_dvb`, `dma.tcl`, output `plutoplus_dvb.xsa`)
   - Local working copy: `~/AppDev/Plutoplus-FPGA-firm` (remote: `origin` = this repository, `upstream` = F5OEO/maia-sdr)
@@ -964,7 +964,7 @@ The 7010 in the Pluto+ cannot hold both Maia-SDR and the DVB-S2 chain, so **Maia
    5. Bring `plutoplus_dvb.xsa`, `system_top_utilization_placed.rpt` and `system_top_timing_summary_routed.rpt` from `~/plutoplus_dvb_out/` to the Mac
       (confirm that resources fit and that timing (WNS, WHS) is not negative)
 2. Put `plutoplus_dvb.xsa` in `board/tezuka/plutoplus_dvb/bitstream/` and commit
-3. Firmware: `gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref rrc-x2 -f boards=plutoplus_shonan_dvb`
+3. Firmware: `gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref shonan -f boards=plutoplus_shonan_dvb`
    → prerelease `plutoplus_shonan_dvb-build<number>`
 4. The SD card is made the same way as plutoplus_shonan (copy the contents of `sdimg/` from the zip)
 
@@ -990,13 +990,13 @@ Assumes the files brought from Linux are in `~/Downloads/plutoplus_dvb_out/`.
    B=board/tezuka/plutoplus_dvb/bitstream
    cp ~/Downloads/plutoplus_dvb_out/plutoplus_dvb.xsa $B/
    mkdir -p $B/reports && cp ~/Downloads/plutoplus_dvb_out/*.rpt $B/reports/
-   git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025.2" && git push origin rrc-x2
+   git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025.2" && git push origin shonan
    ```
 
 3. Build the firmware (GitHub Actions)
 
    ```
-   gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref rrc-x2 -f boards=plutoplus_shonan_dvb
+   gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref shonan -f boards=plutoplus_shonan_dvb
    gh run list --repo kazushinjo/plutoplus_fw-shonan --workflow main.yml --limit 3
    gh run watch <run-number> --repo kazushinjo/plutoplus_fw-shonan
    ```
@@ -1096,8 +1096,8 @@ S45msd fills in the version, serial and so on at boot. The serial number and MAC
 
 | Task | Status |
 |---|---|
-| FPGA (RRC x2, branch `rrc-x2`) | Built in Vivado. LUT 66.90%, DSP 54/80, WNS +0.152 ns, WHS +0.025 ns |
-| Firmware | `plutoplus_shonan_dvb-build15` (`351ae2b`, rrc-x2). Not merged into `shonan` |
+| FPGA (RRC x2, `main` of Plutoplus-FPGA-firm) | Built in Vivado. LUT 66.90%, DSP 54/80, WNS +0.152 ns, WHS +0.025 ns |
+| Firmware | `plutoplus_shonan_dvb-build15` (`351ae2b`). Merged into `shonan` on 2026-11-11 |
 | TX and RX on the same device with the unmodified app (USB) | Lock and video confirmed at 500 and 1000 kS/s (build14) |
 
 #### Not yet confirmed (FPGA version)
