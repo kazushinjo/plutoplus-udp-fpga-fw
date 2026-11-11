@@ -3,7 +3,7 @@
 **日本語** | [English](#english)
 
 tezuka の Pluto+ 用ファーム(`configs/plutoplus_maiasdr_defconfig`)に、
-Shonan_Lite と Portsdown 4 が使う DATV 送信の部品(kazushinjo/datvplutofrm の v0.39-shonan ブランチ)を足したもの。
+Shonan_Lite と Portsdown 4 が使う DATV 送信の部品([kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) の v0.39-shonan ブランチ)を足したもの。
 tezuka の機能(maia-sdr、IQEngine、ダッシュボード、MQTT など)はすべて残している。
 
 イメージが QSPI のファーム領域(0x1E00000 = 31,457,280 バイト)に入らないため、**SD カード起動専用**。
@@ -36,7 +36,7 @@ tezuka の機能(maia-sdr、IQEngine、ダッシュボード、MQTT など)は�
 | tezuka_fw(F5OEO) | github.com/F5OEO/tezuka_fw `a304a1f`(v0.3.24、2026-10-17) |
 | Buildroot | 2026.05.2(`buildroot.version`) |
 | Linux | ADI linux `bf1d49f`(adi-6.12.y)、glibc 2.40、Bootlin ツールチェーン |
-| DATV 送信の部品 | kazushinjo/datvplutofrm `v0.39-shonan`(build10 = 2649143 と同じ内容) |
+| DATV 送信の部品 | [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) `v0.39-shonan`(build10 = 2649143 と同じ内容) |
 | Portsdown 4 | BritishAmateurTelevisionClub/portsdown4 `0b886da`(2026-10-18)のソースで利用機能を確認 |
 
 Pluto+ は無印 Pluto と同じ Zynq-7010(Cortex-A9 2 コア)・RAM 512MB。FPGA とデバイスツリーは機種専用だが、
@@ -586,7 +586,7 @@ FPGA 版は SD カードにしか入っていない。QSPI(内蔵フラッシュ
 
 ## Pluto+ Shonan_Lite version (plutoplus_shonan)
 
-tezuka's Pluto+ firmware (`configs/plutoplus_maiasdr_defconfig`) with the DATV transmit components used by Shonan_Lite and Portsdown 4 added (the v0.39-shonan branch of kazushinjo/datvplutofrm).
+tezuka's Pluto+ firmware (`configs/plutoplus_maiasdr_defconfig`) with the DATV transmit components used by Shonan_Lite and Portsdown 4 added (the v0.39-shonan branch of [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty)).
 All tezuka features (maia-sdr, IQEngine, dashboard, MQTT and so on) are kept.
 
 The image does not fit in the QSPI firmware area (0x1E00000 = 31,457,280 bytes), so it is **SD card boot only**.
@@ -599,7 +599,7 @@ The image does not fit in the QSPI firmware area (0x1E00000 = 31,457,280 bytes),
 | tezuka_fw (F5OEO) | github.com/F5OEO/tezuka_fw `a304a1f` (v0.3.24, 2026-10-17) |
 | Buildroot | 2026.05.2 (`buildroot.version`) |
 | Linux | ADI linux `bf1d49f` (adi-6.12.y), glibc 2.40, Bootlin toolchain |
-| DATV transmit components | kazushinjo/datvplutofrm `v0.39-shonan` (same content as build10 = 2649143) |
+| DATV transmit components | [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) `v0.39-shonan` (same content as build10 = 2649143) |
 | Portsdown 4 | Features in use confirmed from the source of BritishAmateurTelevisionClub/portsdown4 `0b886da` (2026-10-18) |
 
 The Pluto+ has the same Zynq-7010 (2 Cortex-A9 cores) and 512 MB of RAM as the plain Pluto. The FPGA and device tree are model-specific,

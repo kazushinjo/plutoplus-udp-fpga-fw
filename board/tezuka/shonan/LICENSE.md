@@ -48,7 +48,7 @@ OpenSSL(Apache-2.0)、maia-sdr ほか、Buildroot が組み込む各パッケー
 ## datvplutofrm から持ってきた DATV の部品
 
 `board/tezuka/shonan/overlay/` の次のものは、F5OEO/datvplutofrm(F5OEO、F5UII ほか)を
-kazushinjo/datvplutofrm の `v0.39-shonan` ブランチで手直ししたものを、そのまま持ってきている。
+[kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) の `v0.39-shonan` ブランチで手直ししたものを、そのまま持ってきている。
 
 | 部品 | 作者 | ライセンス |
 |---|---|---|
@@ -176,7 +176,7 @@ OpenSSL (Apache-2.0), maia-sdr and the other packages Buildroot includes follow 
 ### DATV components taken from datvplutofrm
 
 The following items in `board/tezuka/shonan/overlay/` are taken as is from F5OEO/datvplutofrm (F5OEO, F5UII and others),
-as modified on the `v0.39-shonan` branch of kazushinjo/datvplutofrm.
+as modified on the `v0.39-shonan` branch of [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty).
 
 | Component | Authors | License |
 |---|---|---|
