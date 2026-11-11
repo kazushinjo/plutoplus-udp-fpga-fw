@@ -189,7 +189,7 @@ BR2_PACKAGE_PHP_EXT_SESSION=y
 BR2_PACKAGE_PHP_EXT_SOCKETS=y
 # udpts.sh / rtmppluto.sh
 BR2_PACKAGE_BC=y
-# rtmp 7272 (Portsdown 4) and the remux=1 path of udpts.sh
+# rtmppluto.sh (rtmp 7272) and the remux=1 path of udpts.sh
 BR2_PACKAGE_FFMPEG=y
 BR2_PACKAGE_FFMPEG_FFMPEG=y
 BR2_PACKAGE_FFMPEG_SWSCALE=y

@@ -191,7 +191,7 @@ tezuka の正式版と間違えないよう、build6 から独自の名前にし
 | 版 | 名前の例 |
 |---|---|
 | plutoplus_shonan | `ShonanLite-Portsdown4_v1.0-e019` |
-| plutoplus_shonan_dvb(FPGA 版) | `ShonanLite-Portsdown4-FPGA_v1.0-e019` |
+| plutoplus_shonan_dvb(FPGA 版) | `ShonanLite-FPGA_v1.0-e019` |
 
 - `v1.0` は `board/tezuka/shonan/VERSION` の数字。版を上げるときはこのファイルを書き換える。最後はこのリポジトリのコミット番号(4 桁)
 - 出る場所: `/opt/VERSIONS` の `device-fw`、USB ドライブの `info.html` の Build、iiod の `fw_version`(Shonan_Lite の「Pluto 情報」・tezuka ダッシュボード)、
@@ -735,7 +735,7 @@ Since build6 these have their own names, so they are not mistaken for official t
 | Version | Example name |
 |---|---|
 | plutoplus_shonan | `ShonanLite-Portsdown4_v1.0-e019` |
-| plutoplus_shonan_dvb (FPGA version) | `ShonanLite-Portsdown4-FPGA_v1.0-e019` |
+| plutoplus_shonan_dvb (FPGA version) | `ShonanLite-FPGA_v1.0-e019` |
 
 - `v1.0` is the number in `board/tezuka/shonan/VERSION`. Edit this file to raise the version. The end is this repository's commit (4 digits)
 - It appears in: `device-fw` in `/opt/VERSIONS`, Build in `info.html` on the USB drive, iiod's `fw_version` (Shonan_Lite's Pluto information and the tezuka dashboard),
