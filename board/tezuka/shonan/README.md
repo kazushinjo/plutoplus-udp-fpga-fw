@@ -3,7 +3,7 @@
 **日本語** | [English](#english)
 
 tezuka の Pluto+ 用ファーム(`configs/plutoplus_maiasdr_defconfig`)に、
-Shonan_Lite と Portsdown 4 が使う DATV 送信の部品([kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) の v0.39-shonan ブランチ)を足したもの。
+Shonan_Lite と Portsdown 4 が使う DATV 送信の部品([kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) の `main` ブランチ、旧 `v0.39-shonan`)を足したもの。
 tezuka の機能(maia-sdr、IQEngine、ダッシュボード、MQTT など)はすべて残している。
 
 イメージが QSPI のファーム領域(0x1E00000 = 31,457,280 バイト)に入らないため、**SD カード起動専用**。
@@ -36,7 +36,7 @@ tezuka の機能(maia-sdr、IQEngine、ダッシュボード、MQTT など)は�
 | tezuka_fw(F5OEO) | github.com/F5OEO/tezuka_fw `a304a1f`(v0.3.24、2026-10-17) |
 | Buildroot | 2026.05.2(`buildroot.version`) |
 | Linux | ADI linux `bf1d49f`(adi-6.12.y)、glibc 2.40、Bootlin ツールチェーン |
-| DATV 送信の部品 | [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) `v0.39-shonan`(build10 = 2649143 と同じ内容) |
+| DATV 送信の部品 | [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) `main`(旧 `v0.39-shonan`、build10 = 2649143 と同じ内容) |
 | Portsdown 4 | BritishAmateurTelevisionClub/portsdown4 `0b886da`(2026-10-18)のソースで利用機能を確認 |
 
 Pluto+ は無印 Pluto と同じ Zynq-7010(Cortex-A9 2 コア)・RAM 512MB。FPGA とデバイスツリーは機種専用だが、
@@ -48,7 +48,7 @@ ARM 側の実行ファイルは共通なので `pluto_dvb` と `tsp` はビル�
 Mac ではビルドできない(Buildroot は x86_64 Linux が必要)。GitHub Actions で作る。
 
 ```
-gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref shonan -f boards=plutoplus_shonan
+gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref main -f boards=plutoplus_shonan
 gh run list --repo kazushinjo/plutoplus_fw-shonan --workflow main.yml --limit 3
 ```
 
@@ -241,7 +241,7 @@ Portsdown 4 の設定(`plutoip`)は Pluto+ の LAN の IP にする。
 
 ## リポジトリと CI の注意
 
-- リポジトリ: kazushinjo/plutoplus_fw-shonan(公開)。既定ブランチ `shonan`、`main` は tezuka の元のまま。
+- リポジトリ: kazushinjo/plutoplus_fw-shonan(公開)。ブランチは `main` だけ(2026-11-11 に `shonan` を `main` にした。元の tezuka は [F5OEO/tezuka_fw](https://github.com/F5OEO/tezuka_fw))。
   手元の作業場所は `~/AppDev/tezuka_fw-shonan`(remote: `origin` = このリポジトリ、`upstream` = F5OEO/tezuka_fw)。
 - tezuka のタグ(`v0.3.x`)は push しない。タグを push すると全機種のリリースビルドが動く。
   そのため版の表示はタグでなくコミット番号になる(例: `v6822-shonan`)。
@@ -407,7 +407,7 @@ Pluto+ の 7010 には Maia-SDR と DVB-S2 送信回路の両方は入らない�
    5. `~/plutoplus_dvb_out/` の `plutoplus_dvb.xsa`・`system_top_utilization_placed.rpt`・`system_top_timing_summary_routed.rpt` を Mac へ持ってくる
       (資源が収まっているか、タイミング(WNS・WHS)が負になっていないかを確認)
 2. `plutoplus_dvb.xsa` を `board/tezuka/plutoplus_dvb/bitstream/` に置いてコミット
-3. ファーム: `gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref shonan -f boards=plutoplus_shonan_dvb`
+3. ファーム: `gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref main -f boards=plutoplus_shonan_dvb`
    → プレリリース `plutoplus_shonan_dvb-build<番号>`
 4. SD カードの作り方は plutoplus_shonan と同じ(zip の `sdimg/` の中身をコピー)
 
@@ -433,13 +433,13 @@ Linux から持ってきたファイルが `~/Downloads/plutoplus_dvb_out/` に�
    B=board/tezuka/plutoplus_dvb/bitstream
    cp ~/Downloads/plutoplus_dvb_out/plutoplus_dvb.xsa $B/
    mkdir -p $B/reports && cp ~/Downloads/plutoplus_dvb_out/*.rpt $B/reports/
-   git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025.2" && git push origin shonan
+   git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025.2" && git push origin main
    ```
 
 3. ファームをビルドする(GitHub Actions)
 
    ```
-   gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref shonan -f boards=plutoplus_shonan_dvb
+   gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref main -f boards=plutoplus_shonan_dvb
    gh run list --repo kazushinjo/plutoplus_fw-shonan --workflow main.yml --limit 3
    gh run watch <run の番号> --repo kazushinjo/plutoplus_fw-shonan
    ```
@@ -540,7 +540,7 @@ FPGA 版は SD カードにしか入っていない。QSPI(内蔵フラッシュ
 | 作業 | 状態 |
 |---|---|
 | FPGA(RRC ×2、Plutoplus-FPGA-firm の `main`) | Vivado でビルド済み。LUT 66.90%、DSP 54/80、WNS +0.152 ns、WHS +0.025 ns |
-| ファーム | `plutoplus_shonan_dvb-build15`(`351ae2b`)。2026-11-11 に `shonan` へ統合済み |
+| ファーム | `plutoplus_shonan_dvb-build15`(`351ae2b`)。2026-11-11 に `main` へ統合済み |
 | 元のアプリのままの送受信(同じ Pluto、USB) | 500 / 1000 kS/s でロックと映像を確認(build14) |
 
 同じ Pluto で送受信するときは、受信 IQ が多いので USB か有線 LAN で接続する。
@@ -574,7 +574,7 @@ FPGA 版は SD カードにしか入っていない。QSPI(内蔵フラッシュ
 
 詳しくは [LICENSE.md](LICENSE.md)。
 
-- tezuka_fw とこのリポジトリで足した設定・スクリプト・文書: GPL-3.0(リポジトリ直下の [LICENSE](https://github.com/kazushinjo/plutoplus_fw-shonan/blob/shonan/LICENSE))
+- tezuka_fw とこのリポジトリで足した設定・スクリプト・文書: GPL-3.0(リポジトリ直下の [LICENSE](https://github.com/kazushinjo/plutoplus_fw-shonan/blob/main/LICENSE))
 - ファームに入る各 OSS パッケージ: それぞれのライセンス。ライセンス文と SBOM は各リリースの `plutoplus_shonan-licenses.zip`・`plutoplus_shonan_dvb-licenses.zip`
 - TSDuck: BSD-2-Clause、jQuery・Chart.js・Socket.IO など Web 画面のライブラリ: MIT
 - datvplutofrm から持ってきた DATV の部品(udpts.sh・PHP ページ・pluto_dvb など): 元の F5OEO/datvplutofrm に
@@ -599,7 +599,7 @@ The image does not fit in the QSPI firmware area (0x1E00000 = 31,457,280 bytes),
 | tezuka_fw (F5OEO) | github.com/F5OEO/tezuka_fw `a304a1f` (v0.3.24, 2026-10-17) |
 | Buildroot | 2026.05.2 (`buildroot.version`) |
 | Linux | ADI linux `bf1d49f` (adi-6.12.y), glibc 2.40, Bootlin toolchain |
-| DATV transmit components | [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) `v0.39-shonan` (same content as build10 = 2649143) |
+| DATV transmit components | [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) `main` (formerly `v0.39-shonan`; same content as build10 = 2649143) |
 | Portsdown 4 | Features in use confirmed from the source of BritishAmateurTelevisionClub/portsdown4 `0b886da` (2026-10-18) |
 
 The Pluto+ has the same Zynq-7010 (2 Cortex-A9 cores) and 512 MB of RAM as the plain Pluto. The FPGA and device tree are model-specific,
@@ -611,7 +611,7 @@ but ARM executables are common, so the prebuilt `pluto_dvb` and `tsp` are used a
 It cannot be built on a Mac (Buildroot needs x86_64 Linux). Build it with GitHub Actions.
 
 ```
-gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref shonan -f boards=plutoplus_shonan
+gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref main -f boards=plutoplus_shonan
 gh run list --repo kazushinjo/plutoplus_fw-shonan --workflow main.yml --limit 3
 ```
 
@@ -804,7 +804,7 @@ Set Portsdown 4's setting (`plutoip`) to the Pluto+ LAN IP.
 
 ### Repository and CI notes
 
-- Repository: kazushinjo/plutoplus_fw-shonan (public). The default branch is `shonan`; `main` stays as original tezuka.
+- Repository: kazushinjo/plutoplus_fw-shonan (public). Only the `main` branch (`shonan` became `main` on 2026-11-11; the original tezuka is [F5OEO/tezuka_fw](https://github.com/F5OEO/tezuka_fw)).
   The local working copy is `~/AppDev/tezuka_fw-shonan` (remote: `origin` = this repository, `upstream` = F5OEO/tezuka_fw).
 - Do not push tezuka's tags (`v0.3.x`). Pushing a tag runs the release build for all boards.
   For that reason the version shows the commit rather than a tag (for example `v6822-shonan`).
@@ -964,7 +964,7 @@ The 7010 in the Pluto+ cannot hold both Maia-SDR and the DVB-S2 chain, so **Maia
    5. Bring `plutoplus_dvb.xsa`, `system_top_utilization_placed.rpt` and `system_top_timing_summary_routed.rpt` from `~/plutoplus_dvb_out/` to the Mac
       (confirm that resources fit and that timing (WNS, WHS) is not negative)
 2. Put `plutoplus_dvb.xsa` in `board/tezuka/plutoplus_dvb/bitstream/` and commit
-3. Firmware: `gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref shonan -f boards=plutoplus_shonan_dvb`
+3. Firmware: `gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref main -f boards=plutoplus_shonan_dvb`
    → prerelease `plutoplus_shonan_dvb-build<number>`
 4. The SD card is made the same way as plutoplus_shonan (copy the contents of `sdimg/` from the zip)
 
@@ -990,13 +990,13 @@ Assumes the files brought from Linux are in `~/Downloads/plutoplus_dvb_out/`.
    B=board/tezuka/plutoplus_dvb/bitstream
    cp ~/Downloads/plutoplus_dvb_out/plutoplus_dvb.xsa $B/
    mkdir -p $B/reports && cp ~/Downloads/plutoplus_dvb_out/*.rpt $B/reports/
-   git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025.2" && git push origin shonan
+   git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025.2" && git push origin main
    ```
 
 3. Build the firmware (GitHub Actions)
 
    ```
-   gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref shonan -f boards=plutoplus_shonan_dvb
+   gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref main -f boards=plutoplus_shonan_dvb
    gh run list --repo kazushinjo/plutoplus_fw-shonan --workflow main.yml --limit 3
    gh run watch <run-number> --repo kazushinjo/plutoplus_fw-shonan
    ```
@@ -1097,7 +1097,7 @@ S45msd fills in the version, serial and so on at boot. The serial number and MAC
 | Task | Status |
 |---|---|
 | FPGA (RRC x2, `main` of Plutoplus-FPGA-firm) | Built in Vivado. LUT 66.90%, DSP 54/80, WNS +0.152 ns, WHS +0.025 ns |
-| Firmware | `plutoplus_shonan_dvb-build15` (`351ae2b`). Merged into `shonan` on 2026-11-11 |
+| Firmware | `plutoplus_shonan_dvb-build15` (`351ae2b`). Merged into `main` on 2026-11-11 |
 | TX and RX on the same device with the unmodified app (USB) | Lock and video confirmed at 500 and 1000 kS/s (build14) |
 
 #### Not yet confirmed (FPGA version)
@@ -1128,7 +1128,7 @@ This repository is published with the permission of F5OEO. For the components ta
 
 See [LICENSE.md](LICENSE.md) for details.
 
-- tezuka_fw and the settings, scripts and documents added in this repository: GPL-3.0 ([LICENSE](https://github.com/kazushinjo/plutoplus_fw-shonan/blob/shonan/LICENSE) at the repository root)
+- tezuka_fw and the settings, scripts and documents added in this repository: GPL-3.0 ([LICENSE](https://github.com/kazushinjo/plutoplus_fw-shonan/blob/main/LICENSE) at the repository root)
 - Each OSS package in the firmware: its own license. License texts and the SBOM are in each release's `plutoplus_shonan-licenses.zip` / `plutoplus_shonan_dvb-licenses.zip`
 - TSDuck: BSD-2-Clause; web page libraries such as jQuery, Chart.js and Socket.IO: MIT
 - DATV components taken from datvplutofrm (udpts.sh, PHP pages, pluto_dvb and so on): the original F5OEO/datvplutofrm states no license.

@@ -33,7 +33,7 @@ Vivado まわりの細かい説明は kazushinjo/Plutoplus-FPGA-firm の `hdl/pr
 | リポジトリ(どちらも公開) | 中身 | 作業する場所 |
 |---|---|---|
 | kazushinjo/Plutoplus-FPGA-firm(ブランチ `main`) | FPGA の設計(Maia-SDR を外し DVB-S2 送信回路を入れた構成) | Linux PC |
-| kazushinjo/plutoplus_fw-shonan(ブランチ `shonan`、このリポジトリ) | ファーム本体(Buildroot) | Mac → GitHub Actions |
+| kazushinjo/plutoplus_fw-shonan(ブランチ `main`、このリポジトリ) | ファーム本体(Buildroot) | Mac → GitHub Actions |
 
 FPGA のビルドには Vivado(x86_64 Linux 専用)が、ファームのビルドには Linux が要る(ファームは GitHub Actions で作る)。
 **Mac では ①②④ はできない。**
@@ -168,7 +168,7 @@ cd ~/AppDev/tezuka_fw-shonan
 B=board/tezuka/plutoplus_dvb/bitstream
 cp ~/Downloads/plutoplus_dvb_out/plutoplus_dvb.xsa $B/
 mkdir -p $B/reports && cp ~/Downloads/plutoplus_dvb_out/*.rpt $B/reports/
-git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025.2" && git push origin shonan
+git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025.2" && git push origin main
 ```
 
 コミットメッセージは英語・ASCII だけにする(このリポジトリの決まり)。
@@ -176,7 +176,7 @@ git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025
 ## ④ ファームのビルド(GitHub Actions)
 
 ```
-gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref shonan -f boards=plutoplus_shonan_dvb
+gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref main -f boards=plutoplus_shonan_dvb
 gh run list  --repo kazushinjo/plutoplus_fw-shonan --workflow main.yml --limit 3
 gh run watch <run の番号> --repo kazushinjo/plutoplus_fw-shonan
 ```
@@ -323,7 +323,7 @@ For the design background and how it works, see the FPGA version section of [REA
 | Repository (both public) | Contents | Where the work is done |
 |---|---|---|
 | kazushinjo/Plutoplus-FPGA-firm (branch `main`) | FPGA design (Maia-SDR removed, DVB-S2 chain added) | Linux PC |
-| kazushinjo/plutoplus_fw-shonan (branch `shonan`, this repository) | The firmware (Buildroot) | Mac → GitHub Actions |
+| kazushinjo/plutoplus_fw-shonan (branch `main`, this repository) | The firmware (Buildroot) | Mac → GitHub Actions |
 
 The FPGA build needs Vivado (x86_64 Linux only), and the firmware build needs Linux (the firmware is built with GitHub Actions).
 **Steps 1, 2 and 4 cannot be done on a Mac.**
@@ -458,7 +458,7 @@ cd ~/AppDev/tezuka_fw-shonan
 B=board/tezuka/plutoplus_dvb/bitstream
 cp ~/Downloads/plutoplus_dvb_out/plutoplus_dvb.xsa $B/
 mkdir -p $B/reports && cp ~/Downloads/plutoplus_dvb_out/*.rpt $B/reports/
-git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025.2" && git push origin shonan
+git add $B && git commit -m "plutoplus_dvb: add bitstream built with Vivado 2025.2" && git push origin main
 ```
 
 Commit messages must be English and ASCII only (a rule of this repository).
@@ -466,7 +466,7 @@ Commit messages must be English and ASCII only (a rule of this repository).
 ### (4) Building the firmware (GitHub Actions)
 
 ```
-gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref shonan -f boards=plutoplus_shonan_dvb
+gh workflow run main.yml --repo kazushinjo/plutoplus_fw-shonan --ref main -f boards=plutoplus_shonan_dvb
 gh run list  --repo kazushinjo/plutoplus_fw-shonan --workflow main.yml --limit 3
 gh run watch <run-number> --repo kazushinjo/plutoplus_fw-shonan
 ```

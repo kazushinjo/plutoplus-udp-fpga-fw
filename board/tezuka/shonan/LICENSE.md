@@ -6,7 +6,7 @@
 
 ## 全体(tezuka_fw と、このリポジトリで足したもの)
 
-- tezuka_fw(F5OEO and contributors): **GNU General Public License v3.0**(リポジトリ直下の [LICENSE](https://github.com/kazushinjo/plutoplus_fw-shonan/blob/shonan/LICENSE))
+- tezuka_fw(F5OEO and contributors): **GNU General Public License v3.0**(リポジトリ直下の [LICENSE](https://github.com/kazushinjo/plutoplus_fw-shonan/blob/main/LICENSE))
 - このリポジトリで足した設定・スクリプト・文書
   (`configs/plutoplus_shonan_defconfig`、`board/tezuka/shonan/` の post-build.sh・lighttpd.conf・S89patchfirm・README.md など、
   `.github/workflows/main.yml` の変更): tezuka_fw に合わせて **GPL-3.0**。Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)
@@ -48,7 +48,7 @@ OpenSSL(Apache-2.0)、maia-sdr ほか、Buildroot が組み込む各パッケー
 ## datvplutofrm から持ってきた DATV の部品
 
 `board/tezuka/shonan/overlay/` の次のものは、F5OEO/datvplutofrm(F5OEO、F5UII ほか)を
-[kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) の `v0.39-shonan` ブランチで手直ししたものを、そのまま持ってきている。
+[kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty) の `main` ブランチ(旧 `v0.39-shonan`)で手直ししたものを、そのまま持ってきている。
 
 | 部品 | 作者 | ライセンス |
 |---|---|---|
@@ -135,7 +135,7 @@ This firmware combines many pieces of software. The license of each part is as f
 
 ### Overall (tezuka_fw and what this repository adds)
 
-- tezuka_fw (F5OEO and contributors): **GNU General Public License v3.0** ([LICENSE](https://github.com/kazushinjo/plutoplus_fw-shonan/blob/shonan/LICENSE) at the repository root)
+- tezuka_fw (F5OEO and contributors): **GNU General Public License v3.0** ([LICENSE](https://github.com/kazushinjo/plutoplus_fw-shonan/blob/main/LICENSE) at the repository root)
 - Settings, scripts and documents added in this repository
   (`configs/plutoplus_shonan_defconfig`; post-build.sh, lighttpd.conf, S89patchfirm, README.md and others in `board/tezuka/shonan/`;
   the changes to `.github/workflows/main.yml`): **GPL-3.0**, matching tezuka_fw. Copyright (C) 2026 Kazu Shinjo (JA6FUF/JH1XHX)
@@ -176,7 +176,7 @@ OpenSSL (Apache-2.0), maia-sdr and the other packages Buildroot includes follow 
 ### DATV components taken from datvplutofrm
 
 The following items in `board/tezuka/shonan/overlay/` are taken as is from F5OEO/datvplutofrm (F5OEO, F5UII and others),
-as modified on the `v0.39-shonan` branch of [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty).
+as modified on the `main` branch (formerly `v0.39-shonan`) of [kazushinjo/v0.39-dirty](https://github.com/kazushinjo/v0.39-dirty).
 
 | Component | Authors | License |
 |---|---|---|
