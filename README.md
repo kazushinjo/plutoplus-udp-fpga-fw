@@ -32,6 +32,101 @@ FPGA 版は [plutoplus-udp-fpga-firm の Releases](https://github.com/kazushinjo
 - 送信の試験では必ずアッテネーターとダミーロードを使ってください。 / Always use an attenuator and a dummy load when testing transmission.
 - クレジットとライセンスは [下の節](#license) と [board/tezuka/plutoplus_udp_fpga/LICENSE.md](board/tezuka/plutoplus_udp_fpga/LICENSE.md) を参照。 / See [License](#license) and [board/tezuka/plutoplus_udp_fpga/LICENSE.md](board/tezuka/plutoplus_udp_fpga/LICENSE.md) for credits and licenses.
 
+## SD カードへの書き込み方 / Writing the SD card
+
+1. ファームの zip(`plutoplus_udp_fpga.zip`)を手に入れて展開する。中の `sdimg/` フォルダを使う(`flash/` は空)。
+   / Get the firmware zip (`plutoplus_udp_fpga.zip`) and unzip it. Use the `sdimg/` folder inside (`flash/` is empty).
+2. **32GB 以下**の SD カードを **MBR・FAT32** で初期化する(中身は全部消える)。 / Format an SD card of **32 GB or less** as **MBR + FAT32** (everything on it is erased).
+   - Mac: ディスク番号を `diskutil list external physical` で確かめてから(**間違えると別のディスクを消す**)
+     / check the disk number first (**a wrong number erases another disk**):
+     ```sh
+     diskutil eraseDisk FAT32 PLUTOPLUS MBRFormat /dev/diskN
+     ```
+   - Windows: エクスプローラーで SD カードを右クリック →「フォーマット」→ ファイルシステム **FAT32**。 / Explorer → right-click the card → Format → **FAT32**.
+   - Linux: `sudo mkfs.vfat -F 32 -n PLUTOPLUS /dev/sdX1`(MBR のパーティションが 1 つの場合 / with a single MBR partition)
+3. `sdimg/` の**中身**を SD カードの一番上にコピーする(`sdimg` フォルダごとではない)。 / Copy the **contents** of `sdimg/` to the top of the card (not the `sdimg` folder itself).
+   - Mac では隠しファイルを作らないように / On a Mac, avoid hidden files:
+     ```sh
+     COPYFILE_DISABLE=1 cp -R sdimg/ /Volumes/PLUTOPLUS/
+     dot_clean -m /Volumes/PLUTOPLUS
+     ```
+   - SD カードの一番上に次の 7 つがあればよい / The top of the card should hold these 7 files:
+     `BOOT.bin` `devicetree.dtb` `plutoplus_dvb_top.bin` `system_top.bin` `uEnv.txt` `uImage` `uramdisk.image.xz`
+4. 取り出す(Mac は `diskutil eject /dev/diskN`)。 / Eject the card.
+
+> [!IMPORTANT]
+> `BOOT.bin` は SD 起動できる古い U-Boot(tezuka 0.2.4)、`uImage` は無圧縮です。ほかのファームのものと入れ替えないでください。
+> / `BOOT.bin` is the old SD-bootable U-Boot (tezuka 0.2.4) and `uImage` is uncompressed. Do not replace them with files from other firmware.
+
+**起動中に更新する / Updating while running** — SD カードは起動中の Pluto+ で `/boot` に見えるので、抜かずに入れ替えられる。
+/ The card appears as `/boot` on the running Pluto+, so it can be updated without removing it:
+
+```sh
+scp sdimg/* root@<IP>:/boot/        # パスワード / password: analog
+ssh root@<IP> "sync; reboot"
+```
+
+## Pluto+ の設定方法 / Setting up the Pluto+
+
+### ジャンパ / Jumpers
+
+電源とケーブルを外し、上ぶた(ネジ 4 本)を開けて設定する。位置は基板のシルクを見る。 / Power off, open the top cover (4 screws) and set them; see the board silkscreen.
+
+| ジャンパ / Jumper | 設定 / Setting | 理由 / Why |
+| --- | --- | --- |
+| SD-H | **1V8** か **3V3**(基板のシルクにある方) / **1V8** or **3V3** (whichever the silkscreen shows) | SD カードから起動する。外すと内蔵フラッシュのファームで起動 / Boot from the SD card; removing it boots the internal flash firmware |
+| URST | **MIO46** | 内蔵 LAN を使う(MIO52 は ADI 公式ファーム用) / Use the built-in LAN (MIO52 is for the ADI firmware) |
+| EXCLK | 普段は外す(外部基準クロックのときだけ GND) / Normally open (GND only with an external reference clock) | |
+
+### 起動 / Booting
+
+1. SD カードを挿し、micro USB で電源を入れる(5V 2A 以上)。LAN ケーブルもつなぐ。 / Insert the card and power it from micro USB (5 V, 2 A or more). Connect the LAN cable.
+2. **緑と青**の LED が点けば FPGA まで進んでいる(青は FPGA の DONE)。20〜40 秒で起動し、USB ドライブ `TEZUKA` が出る。
+   **緑だけで青が点かなければ起動失敗**(SD カードの中身・ジャンパを見直す)。
+   / **Green and blue** LEDs mean the FPGA is loaded (blue = FPGA DONE); it boots in 20–40 s and a USB drive `TEZUKA` appears.
+   **Green only, no blue, means the boot failed** (check the card contents and jumpers).
+3. 確かめる / Check:
+   - `ping <IP>`、ブラウザで `http://<IP>/`(状態ページ。版名・送信の状態) / the status page shows the version and TX state
+   - `ssh root@<IP>`(パスワード `analog`)で `cat /opt/VERSIONS` → `device-fw plutoplus-udp-fpga-firm_v1.0-FPGA-…`
+   - UDP 送信アプリの「設定」→「Pluto 情報」→「バージョン」 / In the UDP sender app: Config → Pluto Info → Version
+
+### ネットワークと周波数範囲の設定 / Network and frequency range
+
+設定は Pluto+ の**内蔵フラッシュに保存**され、SD 起動でも内蔵ファームでも同じ値を使う。USB ドライブ `TEZUKA` の `config.txt` を書き換えて
+**ドライブを取り出す**と保存される(`SUCCESS_ENV_UPDATE` が出る)。設定後は電源を入れ直す。
+/ Settings are **stored in the Pluto+ internal flash** and shared by the SD and internal firmware. Edit `config.txt` on the `TEZUKA` USB drive and
+**eject the drive** to save (`SUCCESS_ENV_UPDATE` appears), then power cycle.
+
+```ini
+[USB_ETHERNET]
+ipaddr_eth = 192.168.0.20
+netmask_eth = 255.255.255.0
+gateway_eth = 192.168.0.1
+
+[SYSTEM]
+usb_ethernet_mode = ncm
+```
+
+- `ipaddr_eth` は内蔵 LAN の固定 IP。空にすると DHCP。 / `ipaddr_eth` is the built-in LAN static IP; leave it empty for DHCP.
+- `usb_ethernet_mode = ncm` は USB ネットワークの方式。Mac・Windows 10 以降はドライバ不要。 / `ncm` needs no driver on Mac or Windows 10 and later.
+- 値の後ろにコメントを書かない(値の一部として読まれる)。 / Do not put comments after a value (they would be read as part of it).
+
+- USB でつないだときの Pluto+ は `192.168.2.1`(PC 側 `192.168.2.10`)。 / Over USB the Pluto+ is `192.168.2.1` (PC side `192.168.2.10`).
+- 固定 IP は、LAN のリンクが一時的に切れても消えずに残る(このファームの修正)。 / The static IP stays even if the LAN link drops for a while (fixed in this firmware).
+- **周波数範囲を 46.875 MHz〜6 GHz にする(ad9364 扱い) / Extend to 46.875 MHz–6 GHz (ad9364)** — SSH で入って / over SSH:
+  ```sh
+  fw_setenv attr_name compatible
+  fw_setenv attr_val ad9364
+  reboot
+  ```
+  `dmesg | grep ad9361_probe` が `enter (ad9364)` になれば有効。戻すときは `fw_setenv attr_val ad9363a`。AD9363 の保証範囲(325 MHz〜3.8 GHz)の外は個体によって性能が落ちることがある。
+  / Active when `dmesg | grep ad9361_probe` shows `enter (ad9364)`; revert with `fw_setenv attr_val ad9363a`. Outside the AD9363 rated range (325 MHz–3.8 GHz) performance may drop.
+- Pluto のユーザー名 `root`・パスワード `analog` は変えない(UDP 送信アプリが SSH で使う)。 / Keep `root` / `analog`; the UDP sender apps use SSH.
+
+### 元のファームに戻す / Going back to the internal firmware
+
+SD-H のジャンパを外して電源を入れ直す。 / Remove the SD-H jumper and power cycle.
+
 ## UDP 専用であること / UDP-only
 
 このファームの DATV 送信は **UDP 専用**です。UDP 送信アプリから UDP 8282 に送られた MPEG-TS を `tsp` → FPGA の DVB-S2 送信回路(`pluto_stream` が操作)で DVB-S/S2 送信することだけを目的にしています。
