@@ -19,7 +19,7 @@ A **SD card boot firmware for the Zynq-7010 Pluto+ (FPGA build)**, based on [tez
 | `plutoplus_udp_fpga`(このリポジトリ / this repository) | FPGA | **なし / Not supported** | [board/tezuka/plutoplus_udp_fpga/README.md](board/tezuka/plutoplus_udp_fpga/README.md)、[FPGA作成.md](board/tezuka/plutoplus_udp_fpga/FPGA作成.md)、HDL: [plutoplus-udp-fpga-firm](https://github.com/kazushinjo/plutoplus-udp-fpga-firm) |
 | `plutoplus_udp`(ソフト版 / software build) | ARM のソフト(pluto_dvb) / ARM software | あり / Yes | 別リポジトリ / separate repository: kazushinjo/plutoplus-udp-fw |
 
-**ダウンロード / Download:** [Releases](https://github.com/kazushinjo/plutoplus-udp-fpga-fw/releases)(`plutoplus_udp_fpga-build<番号>`)。
+**ダウンロード / Download:** [Releases](https://github.com/kazushinjo/plutoplus-udp-fpga-fw/releases) の `plutoplus-udp-fpga-firm_v1.0-FPGA-<コミット>-sdimg.zip`(SD カードに書き込むデータ / the data to write to the SD card)。
 FPGA 版は [plutoplus-udp-fpga-firm の Releases](https://github.com/kazushinjo/plutoplus-udp-fpga-firm/releases) にも置きます。 / The FPGA build is also published on the Releases of plutoplus-udp-fpga-firm.
 
 **注意 / Notes**
