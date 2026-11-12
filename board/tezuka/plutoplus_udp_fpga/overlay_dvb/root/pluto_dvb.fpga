@@ -39,6 +39,24 @@ pub() {
 	mosquitto_pub -h 127.0.0.1 -t "$ROOT/$1" -m "$2"
 }
 
+# The AD9361 can be left in the "alert" state (synthesizers on, neither RX nor
+# TX running) when another iio client (a receiver on this Pluto) changes the
+# sample rate / FIR while pluto_stream reconfigures the TX: the driver fails
+# ("ADC clock below limit") and does not go back to FDD. Nothing is then
+# transmitted although pluto_stream reports run 1 / mute 0. While this script
+# is keying the transmitter, put it back to FDD whenever it is found in alert.
+PHY=""
+for d in /sys/bus/iio/devices/iio:device*; do
+	[ "$(cat "$d/name" 2>/dev/null)" = ad9361-phy ] && PHY=$d && break
+done
+ensure_fdd() {
+	[ -n "$PHY" ] || return 0
+	if [ "$(cat "$PHY/ensm_mode" 2>/dev/null)" = alert ]; then
+		echo fdd > "$PHY/ensm_mode" 2>/dev/null
+		logger -t pluto_dvb "ad9361 ensm was alert while transmitting, set back to fdd"
+	fi
+}
+
 [ -n "$INPUT" ] && exec <"$INPUT"
 
 # Wait for the first TS packet before keying the transmitter, as the
@@ -94,11 +112,19 @@ while [ $i -lt 5 ]; do
 	i=$((i + 1))
 done
 
+ensure_fdd
+# Keep checking while the TS is being forwarded; stops with this script
+# (also when watchudp.sh kills it with killall -9 pluto_dvb).
+PARENT=$$
+( while kill -0 "$PARENT" 2>/dev/null; do sleep 2; ensure_fdd; done ) &
+GUARD=$!
+
 # Input ended (sender stopped, or the tsp in front was killed): unkey.
 # udpts.sh / watchudp.sh restart the chain with "killall -9 tsp pluto_dvb"
 # when settings.txt changes; the next run publishes the new settings.
 # Same real-time buffering as the tsp in udpts.sh. With the default buffer tsp
 # sends nothing until it has filled, which takes minutes at low bitrates.
 { cat "$FIRST"; rm -f "$FIRST"; cat; } | tsp -r --buffer-size-mb 0.01 --max-flushed-packets 100 --max-input-packets 50 -O ip "$TS_IN"
+kill "$GUARD" 2>/dev/null
 pub tx/stream/run 0
 pub tx/mute 1
