@@ -3,9 +3,10 @@
 # tezuka's version flushes the address when the link goes down and only
 # restores it with DHCP when the link comes back, so with a static
 # ipaddr_eth the address was lost for good after any link drop longer than
-# ifplugd's delay (the LAN stopped answering until a reboot). Here a static
-# address is kept on link down and put back (address and default route) on
-# link up; DHCP works as before.
+# ifplugd's delay (the LAN stopped answering until a reboot).
+# Here the address is never removed on link down (static or DHCP). On link
+# up a static address and default route are put back if missing, and DHCP
+# renews the lease as before.
 ETH_IPADDR=$(fw_printenv -n ipaddr_eth 2> /dev/null)
 
 if [ -z "$ETH_IPADDR" ] || [ "$ETH_IPADDR" = "dhcp" ]; then
@@ -14,7 +15,7 @@ if [ -z "$ETH_IPADDR" ] || [ "$ETH_IPADDR" = "dhcp" ]; then
 		/sbin/udhcpc -i "$1" -t 15 -T 4 -n -q -x hostname:"$(hostname)"
 		;;
 	down)
-		/sbin/ip addr flush dev "$1"
+		# keep the address; udhcpc replaces it on the next lease if it changes
 		;;
 	esac
 	exit 0
