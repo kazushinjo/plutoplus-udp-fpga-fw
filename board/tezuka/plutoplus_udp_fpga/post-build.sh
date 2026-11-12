@@ -67,7 +67,10 @@ sed -i 's/usb_ethernet_mode 2> \/dev\/null || echo rndis/usb_ethernet_mode 2> \/
 FW_VER=$(cat "${BOARD_DIR}/VERSION")
 FW_COMMIT=$(cd "${BOARD_DIR}" && (git rev-parse --short=4 HEAD 2>/dev/null || echo unknown))
 EDITION=plutoplus-udp-fpga-firm
-FW_NAME="${EDITION}_v${FW_VER}-${FW_COMMIT}"
+# The UDP sender apps (Pi4/Pi5/Win/Mac/iPad/iPhone/Android) enable 16APSK and
+# 32APSK only when fw_version contains "FPGA" (upper case, case-sensitive), so
+# the upper-case tag must stay in the name.
+FW_NAME="${EDITION}_v${FW_VER}-FPGA-${FW_COMMIT}"
 # The tezuka release this branch is based on; git describe cannot tell (the
 # tezuka tags are not pushed here), so it is kept in TEZUKA_BASE and must be
 # updated when upstream tezuka is merged.

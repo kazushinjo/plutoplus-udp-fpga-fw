@@ -193,8 +193,9 @@ tezuka の正式版と間違えないよう、build6 から独自の名前にし
 
 | 版 | 名前の例 |
 |---|---|
-| plutoplus_udp_fpga(FPGA 版) | `plutoplus-udp-fpga-firm_v1.0-e019` |
+| plutoplus_udp_fpga(FPGA 版) | `plutoplus-udp-fpga-firm_v1.0-FPGA-e019` |
 
+- FPGA 版の名前には大文字の `FPGA` を必ず入れる。UDP 送信アプリ(全版)は `fw_version` に大文字の `FPGA` があるときだけ 16APSK・32APSK を選べるようにしている(2026-11-12、`v1.0-6f40` は小文字だけで APSK が選べなかった)
 - `v1.0` は `board/tezuka/plutoplus_udp_fpga/VERSION` の数字。版を上げるときはこのファイルを書き換える。最後はこのリポジトリのコミット番号(4 桁)
 - 出る場所: `/opt/VERSIONS` の `device-fw`、USB ドライブの `info.html` の Build、iiod の `fw_version`(UDP 送信アプリの「Pluto 情報」・tezuka ダッシュボード)、
   SSH のログイン表示、U-Boot の起動表示(シリアル)
@@ -748,8 +749,9 @@ Since build6 these have their own names, so they are not mistaken for official t
 
 | Version | Example name |
 |---|---|
-| plutoplus_udp_fpga (FPGA version) | `plutoplus-udp-fpga-firm_v1.0-e019` |
+| plutoplus_udp_fpga (FPGA version) | `plutoplus-udp-fpga-firm_v1.0-FPGA-e019` |
 
+- The FPGA build name must contain an upper-case `FPGA`: the UDP sender apps (all versions) enable 16APSK/32APSK only when `fw_version` contains it (on 2026-11-12, `v1.0-6f40` had only lower-case and APSK could not be selected)
 - `v1.0` is the number in `board/tezuka/plutoplus_udp_fpga/VERSION`. Edit this file to raise the version. The end is this repository's commit (4 digits)
 - It appears in: `device-fw` in `/opt/VERSIONS`, Build in `info.html` on the USB drive, iiod's `fw_version` (the UDP sender app's Pluto information and the tezuka dashboard),
   the SSH login banner and the U-Boot boot message (serial)
