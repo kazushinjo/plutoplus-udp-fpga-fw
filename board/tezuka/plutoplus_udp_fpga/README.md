@@ -215,6 +215,7 @@ tezuka の正式版と間違えないよう、build6 から独自の名前にし
 | `overlay/etc/init.d/S89patchfirm`, `overlay/usr/sbin/device_persistent_keys` | SSH のホスト鍵(ecdsa・ed25519・rsa)を起動時に作って保存する。電源断の後も鍵が変わらない。`/mnt/jffs2/patch.zip` があれば展開 |
 | `post-build.sh` | maia-httpd を 127.0.0.1:8000 へ移す、USB ネットワークの既定を NCM にする、ログイン表示に `v…` 行、fwversion.txt・releasenote.txt 作成、PTT を使わないので tezuka の `watchconsoletx.sh`(送信中に AD9361 の GPO と PTT の LED をオンにする)を起動しない。tezuka ダッシュボードが無いので、その状態を流す `api_controller.sh`(2 秒ごとに `fw_printenv` などを多数実行し CPU を多く使う)も起動しない |
 | `overlay/etc/ifplugd/ifplugd.action` | tezuka のものを置き換え。LAN のリンクが 5 秒以上切れると固定 IP(`ipaddr_eth`)が消えたまま戻らず、再起動まで LAN が応答しなくなっていた。リンクが切れても IP を消さない(固定 IP・DHCP とも)。つながったら、固定 IP は IP と既定のルートを付け直し、DHCP は取り直す |
+| `overlay/root/watchudp.sh` | `settings.txt` の**中身が変わったときだけ**送信を始め直す(元は更新時刻で判断していた)。Pi4 版は受信を始めるたびに同じ内容を書き直すため、そのたびに送信と AD9361 がやり直しになり、同じ Pluto での受信が止まって受信をやり直す、という繰り返しになっていた |
 | defconfig | lighttpd(pcre)、PHP 8.5(cgi・cli・session・sockets)、bc、ffmpeg 6.1.5(v0.39-dirty の UDP 版と同じ最小構成)。ホスト名は Langstone の既定に合わせて `pluto`。`postimage-qspi.sh` を外し SD カード用だけ作る |
 | `.github/workflows/main.yml` | 手動ビルドで zip をプレリリースに付ける、非公開リポジトリのときは attest を飛ばし Artifacts の保存失敗で止まらない |
 
@@ -768,6 +769,7 @@ Since build6 these have their own names, so they are not mistaken for official t
 | `overlay/etc/init.d/S89patchfirm`, `overlay/usr/sbin/device_persistent_keys` | Creates and saves the SSH host keys (ecdsa, ed25519, rsa) at boot, so they survive power loss. Extracts `/mnt/jffs2/patch.zip` if present |
 | `post-build.sh` | Moves maia-httpd to 127.0.0.1:8000, makes NCM the USB network default, adds a `v...` line to the login banner, creates fwversion.txt and releasenote.txt, does not start tezuka's `watchconsoletx.sh` (turns on the AD9361 GPO and the PTT LED while transmitting) since PTT is not used; also does not start `api_controller.sh`, which only feeds the tezuka dashboard (absent here) and used a large share of the CPU (dozens of commands including fw_printenv every 2 s) |
 | `overlay/etc/ifplugd/ifplugd.action` | Replaces tezuka's. A LAN link drop longer than 5 s removed the static address (`ipaddr_eth`) for good, so the LAN stopped answering until a reboot. The address is now never removed on link down (static or DHCP); on link up a static address and default route are put back, and DHCP renews the lease |
+| `overlay/root/watchudp.sh` | Restarts the TX pipeline **only when the content** of `settings.txt` changes (it used the file time). The Pi4 app rewrites the same values before every RX start, which restarted TX and the AD9361 each time, stalled the receiver on the same Pluto and made it restart again, in a loop |
 | defconfig | lighttpd (pcre), PHP 8.5 (cgi, cli, session, sockets), bc, ffmpeg 6.1.5 (same minimal configuration as the v0.39-dirty UDP version). Hostname is `pluto` to match the Langstone default. Removes `postimage-qspi.sh` and builds for SD card only |
 | `.github/workflows/main.yml` | Attaches the zip to a prerelease on manual builds; on a private repository, skips attest and does not stop when saving Artifacts fails |
 
