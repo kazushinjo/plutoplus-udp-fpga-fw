@@ -5,7 +5,7 @@
 DVB-S2 の変調を ARM のソフト(pluto_dvb)ではなく **FPGA の DVB-S2 送信回路**で行う Pluto+ 用ファームを、
 FPGA のビルドから実機での確認まで通して作る手順。
 設計の背景・仕組みは [README.md の「FPGA 版」](README.md#fpga-版plutoplus_udp_fpga)、
-Vivado まわりの細かい説明は kazushinjo/plutoplus-udp-fpga-firm の `hdl/projects/plutoplus_dvb/PLUTOPLUS_DVB.md` を参照。
+Vivado まわりの細かい説明は このリポジトリの `hdl/projects/plutoplus_dvb/PLUTOPLUS_DVB.md` を参照。
 
 ## 目次
 
@@ -32,7 +32,7 @@ Vivado まわりの細かい説明は kazushinjo/plutoplus-udp-fpga-firm の `hd
 
 | リポジトリ(どちらも公開) | 中身 | 作業する場所 |
 |---|---|---|
-| kazushinjo/plutoplus-udp-fpga-firm(ブランチ `main`) | FPGA の設計(Maia-SDR を外し DVB-S2 送信回路を入れた構成) | Linux PC |
+| このリポジトリの `hdl/`(ブランチ `main`) | FPGA の設計(Maia-SDR を外し DVB-S2 送信回路を入れた構成) | Linux PC |
 | kazushinjo/plutoplus-udp-fpga-fw(ブランチ `main`、このリポジトリ) | ファーム本体(Buildroot) | Mac → GitHub Actions |
 
 FPGA のビルドには Vivado(x86_64 Linux 専用)が、ファームのビルドには Linux が要る(ファームは GitHub Actions で作る)。
@@ -93,8 +93,8 @@ sudo locale-gen en_US.UTF-8
 ## ② FPGA(HDL)のビルド(Linux PC)
 
 ```
-git clone -b main https://github.com/kazushinjo/plutoplus-udp-fpga-firm.git
-cd plutoplus-udp-fpga-firm
+git clone -b main https://github.com/kazushinjo/plutoplus-udp-fpga-fw.git
+cd plutoplus-udp-fpga-fw
 
 VIVADO_SETTINGS=/tools/Xilinx/2025.2/Vivado/settings64.sh \
   hdl/projects/plutoplus_dvb/build_plutoplus_dvb.sh ~/plutoplus_dvb_out
@@ -295,7 +295,7 @@ FPGA 版は SD カードにしか入っていない(内蔵フラッシュには�
 
 | 作業 | 状態 |
 |---|---|
-| HDL の変更・ビルドスクリプト・手順書 | 済み(plutoplus-udp-fpga-firm に push) |
+| HDL の変更・ビルドスクリプト・手順書 | 済み(このリポジトリの `hdl/` に push) |
 | Vivado でのビルド(②) | まだ(Linux PC の準備から) |
 | ファーム側の設定・差し替えスクリプト | 済み(変調方式の命令名を 2026-10-28 に修正、1518007) |
 | ファームのビルド(④)・実機(⑥) | まだ(plutoplus_dvb.xsa 待ち) |
@@ -307,7 +307,7 @@ FPGA 版は SD カードにしか入っていない(内蔵フラッシュには�
 ## Building the Pluto+ FPGA firmware (plutoplus_udp_fpga)
 
 How to build, from the FPGA through to hardware checks, the Pluto+ firmware that performs DVB-S2 modulation in the **FPGA DVB-S2 transmit chain** instead of the ARM software (pluto_dvb).
-For the design background and how it works, see the FPGA version section of [README.md](README.md). For details on Vivado, see `hdl/projects/plutoplus_dvb/PLUTOPLUS_DVB.md` in kazushinjo/plutoplus-udp-fpga-firm.
+For the design background and how it works, see the FPGA version section of [README.md](README.md). For details on Vivado, see `hdl/projects/plutoplus_dvb/PLUTOPLUS_DVB.md` in this repository.
 
 ### Overall flow
 
@@ -322,7 +322,7 @@ For the design background and how it works, see the FPGA version section of [REA
 
 | Repository (both public) | Contents | Where the work is done |
 |---|---|---|
-| kazushinjo/plutoplus-udp-fpga-firm (branch `main`) | FPGA design (Maia-SDR removed, DVB-S2 chain added) | Linux PC |
+| `hdl/` of this repository (branch `main`) | FPGA design (Maia-SDR removed, DVB-S2 chain added) | Linux PC |
 | kazushinjo/plutoplus-udp-fpga-fw (branch `main`, this repository) | The firmware (Buildroot) | Mac → GitHub Actions |
 
 The FPGA build needs Vivado (x86_64 Linux only), and the firmware build needs Linux (the firmware is built with GitHub Actions).
@@ -383,8 +383,8 @@ sudo locale-gen en_US.UTF-8
 ### (2) Building the FPGA (HDL) on the Linux PC
 
 ```
-git clone -b main https://github.com/kazushinjo/plutoplus-udp-fpga-firm.git
-cd plutoplus-udp-fpga-firm
+git clone -b main https://github.com/kazushinjo/plutoplus-udp-fpga-fw.git
+cd plutoplus-udp-fpga-fw
 
 VIVADO_SETTINGS=/tools/Xilinx/2025.2/Vivado/settings64.sh \
   hdl/projects/plutoplus_dvb/build_plutoplus_dvb.sh ~/plutoplus_dvb_out
@@ -585,7 +585,7 @@ The FPGA version exists only on the SD card (the internal flash is not touched).
 
 | Task | Status |
 |---|---|
-| HDL changes, build script, guides | Done (pushed to plutoplus-udp-fpga-firm) |
+| HDL changes, build script, guides | Done (pushed to `hdl/` of this repository) |
 | Build in Vivado (step 2) | Not yet (starting with the Linux PC setup) |
 | Firmware settings and replacement script | Done (modulation command name fixed on 2026-10-28, 1518007) |
 | Firmware build (step 4), hardware (step 6) | Not yet (waiting for plutoplus_dvb.xsa) |

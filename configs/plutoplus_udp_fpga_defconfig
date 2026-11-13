@@ -164,7 +164,7 @@ BR2_PACKAGE_BOARD_FPGA_PROJECT="plutoplus_dvb"
 ##### UDP DATV (board/tezuka/plutoplus_udp_fpga)
 # plutoplus_udp_fpga (plutoplus-udp-fpga-firm): UDP-only DVB-S2 transmit on
 # the plutoplus_dvb bitstream (DVB-S2 encoder in the FPGA, no Maia-SDR;
-# built from kazushinjo/plutoplus-udp-fpga-firm, see board/tezuka/plutoplus_dvb).
+# built from hdl/ of this repository, see board/tezuka/plutoplus_dvb).
 # Maia-SDR packages and overlays are left out; pluto_stream drives the FPGA
 # encoder and /root/pluto_dvb becomes a stand-in that feeds it
 # (board/tezuka/plutoplus_udp_fpga/overlay_dvb).

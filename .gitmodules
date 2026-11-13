@@ -1,0 +1,6 @@
+[submodule "hdl/adi-hdl"]
+	path = hdl/adi-hdl
+	url = https://github.com/analogdevicesinc/hdl
+[submodule "hdl/dvb_fpga"]
+	path = hdl/dvb_fpga
+	url = https://github.com/OpenResearchInstitute/dvb_fpga
