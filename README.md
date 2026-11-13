@@ -5,6 +5,10 @@ UDP 送信アプリから UDP で送られる TS を DATV(DVB-S/S2)で送信で�
 A **SD card boot firmware for the Zynq-7010 Pluto+ (FPGA build)**, based on [tezuka](https://github.com/F5OEO/tezuka_fw) by F5OEO, with DATV (DVB-S/S2) transmit of a TS sent over UDP from a UDP sender app. **DVB-S2 modulation is done in the FPGA transmit chain.**
 
 > このリポジトリは F5OEO 氏の許可を得て公開しています。 / Published with the permission of F5OEO.
+>
+> これは Analog Devices の公式ファームではなく、Analog Devices のサポート対象外です。Pluto+ などの機器メーカーの公式ファームでもありません。Analog Devices・ADALM-Pluto は Analog Devices, Inc. の商標です。
+>
+> This is not an official Analog Devices firmware and is not supported by Analog Devices, nor an official firmware of the Pluto+ or other hardware makers. Analog Devices and ADALM-Pluto are trademarks of Analog Devices, Inc.
 
 > [!IMPORTANT]
 > **UDP 専用のファームです。** Portsdown 4 で使っているアナログチューナー用のファームではありません。
